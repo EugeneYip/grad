@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Calendar,
   Clock,
@@ -408,7 +408,10 @@ const practicalInfo = [
     items: [
       { label: bi("緊急電話", "Emergency"), value: "911" },
       { label: bi("Northeastern 校警", "Northeastern Public Safety"), value: "(617) 373-3333" },
+      { label: bi("駐波士頓臺北經濟文化辦事處", "TECO Boston"), value: bi("(617) 737-2050（一般）／(617) 650-9252（急難）", "(617) 737-2050 (general) / (617) 650-9252 (emergency)") },
+      { label: bi("駐紐約臺北經濟文化辦事處", "TECO New York"), value: bi("(212) 317-7300（一般）／(917) 743-4546（急難）", "(212) 317-7300 (general) / (917) 743-4546 (emergency)") },
       { label: bi("香港駐紐約經貿辦事處", "HKETO New York"), value: "(212) 752-3320" },
+      { label: bi("外交部旅外國人急難救助專線", "Taiwan MOFA Global Hotline"), value: "011-800-0885-0885" },
       { label: bi("Amtrak 客服", "Amtrak"), value: "1-800-USA-RAIL" },
       { label: bi("Avis 取車點 BO4", "Avis BO4 pickup"), value: "(617) 534-1404" },
     ],
@@ -1238,42 +1241,68 @@ const dining = [
   { name: "Reading Terminal Market", typeZh: "費城市集", typeEn: "Philadelphia market", addr: "1136 Arch St, Philadelphia, PA 19107", suggestedZh: "5/3 晚餐或 5/4 早餐", suggestedEn: "Dinner May 3 or breakfast May 4", icon: Utensils },
 ];
 
-const preTripChecklist = [
+const checklist = [
   {
-    title: bi("行前一個月", "One month out"),
+    id: "arrival",
+    iconKey: "plane",
+    title: bi("抵達當日要點", "Arrival Day Notes"),
+    note: bi("4/26 早上於 Logan 接機後直接進飯店休息。", "Pickup at Logan on the morning of April 26, then straight to the hotel."),
     items: [
-      bi("Avis 預訂 BO4 取車、J5D 還車，5/2 上午 7:00 至 5/5 上午 10:00", "Reserve Avis BO4 pickup and J5D drop-off, May 2 at 7 AM through May 5 at 10 AM"),
-      bi("Avis 訂單僅保留 E-Toll Unlimited（與必要時 Additional Driver），其餘保險加購建議取消", "On the Avis booking, keep only E-Toll Unlimited (and Additional Driver if needed); decline the rest"),
-      bi("查詢主要付款信用卡的租車保險是 primary 或 secondary", "Check whether your main credit card's rental coverage is primary or secondary"),
-      bi("致電 4211 Suites 確認連續四晚停車費，以及 5/4 整日車輛離場是否仍計費", "Call 4211 Suites to confirm 4-night parking fees and whether May 4 (car offsite) still bills"),
-      bi("確認紐約飯店地址與 5/11 航班時間、機場代碼", "Confirm the NYC hotel address and the May 11 flight time and airport code"),
+      bi("AS536 於 Logan Terminal B 降落，行李提領在 Level 1。", "AS536 lands at Logan Terminal B; baggage claim is on Level 1."),
+      bi("Eugene 於 Terminal B Level 1 行李提領區外接機。", "Eugene meets the family outside Terminal B Level 1 baggage claim."),
+      bi("Uber 從 Terminal B Departures（上層）上車前往 The Revolution Hotel。", "Uber pickup is on the upper level (Terminal B Departures) heading to The Revolution Hotel."),
+      bi("飯店辦理入住約下午 3 點；若行李抵達較早，可先寄放於大廳。", "Hotel check-in is around 3 PM. Bags can be stored in the lobby beforehand."),
+      bi("入境美國採電子 I-94，多數情況不需要紙本。", "US entry uses electronic I-94; paper form is usually not required."),
     ],
   },
   {
-    title: bi("行前兩週", "Two weeks out"),
+    id: "vehicle",
+    iconKey: "car",
+    title: bi("車輛與駕駛", "Vehicle"),
+    note: bi("Avis 取車與還車兩端時間皆為硬性約定。", "Both Avis pickup and return times are firm."),
     items: [
-      bi("購買並啟用美國 eSIM（Airalo、Holafly 或 Nomad）", "Purchase and activate a US eSIM (Airalo, Holafly, or Nomad)"),
-      bi("確認萬國轉接器（Type G 轉 Type A／B）", "Confirm a Type G to Type A/B universal adapter"),
-      bi("檢查家中所有電器是否雙電壓", "Check that all personal electronics are dual voltage"),
-      bi("畢業典禮票券由 Eugene 透過 Tassel 系統預先轉發", "Eugene forwards graduation tickets in advance through Tassel"),
-      bi("下載 Uber、Google Maps、Amtrak、OpenTable App", "Install Uber, Google Maps, Amtrak, and OpenTable apps"),
+      bi("5/2 上午 7:00 於 Avis BO4 取車（Boston Back Bay Station Garage，100 Clarendon St）。", "May 2 at 7:00 AM, pick up at Avis BO4 (Boston Back Bay Station Garage, 100 Clarendon St)."),
+      bi("5/5 上午 10:00 於 Avis J5D 還車（1324 Arch St，營業 07:00 至 19:00，不接受 after-hours）。", "May 5 at 10:00 AM, return at Avis J5D (1324 Arch St; hours 7 AM to 7 PM; no after-hours)."),
+      bi("Avis 訂單保留 E-Toll Unlimited；I-95 沿線過路費密集。", "Keep E-Toll Unlimited on the Avis booking; I-95 has heavy tolls."),
+      bi("信用卡 Primary CDW 為基礎判斷依據，已決定可省去 LDW 等加購保險。", "Primary CDW from the credit card is the baseline; the supplemental LDW etc. can be declined."),
+      bi("國際駕照與護照副本上車前帶在身上。", "Carry the international driving permit and a copy of the passport before pickup."),
     ],
   },
   {
-    title: bi("出發前三日", "Three days out"),
+    id: "payment",
+    iconKey: "credit",
+    title: bi("付款與通訊", "Payment & Connectivity"),
+    note: bi("感應式付款覆蓋大部分情境，現金留給特定餐廳與小費。", "Tap-to-pay covers most situations; cash is for specific restaurants and tipping."),
     items: [
-      bi("Apple Pay／Google Pay 加入信用卡，便於 MBTA 與 OMNY 直接感應", "Add credit cards to Apple Pay or Google Pay for MBTA and OMNY tap-to-pay"),
-      bi("換取至少 100 美元現金供 The Daily Catch 與小費使用", "Withdraw at least $100 in cash for The Daily Catch and tips"),
-      bi("準備一張隨身緊急聯絡卡，含飯店、Northeastern 校警、駐紐約經貿辦", "Print a small emergency card listing hotels, Northeastern Public Safety, and HKETO New York"),
-      bi("檢查護照、I-94 紀錄、ESTA／簽證有效性", "Verify passport, I-94 record, and ESTA / visa validity"),
+      bi("eSIM（Airalo、Holafly 或 Nomad）入境後立即啟用。", "Activate the eSIM (Airalo, Holafly, or Nomad) immediately upon entry."),
+      bi("Apple Pay 與 Google Pay 內已加入信用卡，可直接刷 MBTA、OMNY、商店。", "Credit cards are pre-loaded into Apple Pay and Google Pay; they work for MBTA, OMNY, and most stores."),
+      bi("隨身備至少 100 美元現金（The Daily Catch 只收現金、各類小費）。", "Carry at least $100 in cash (The Daily Catch is cash only; tipping uses cash)."),
+      bi("關閉香港 SIM 漫遊，避免額外費用。", "Disable roaming on the Hong Kong SIM to avoid extra charges."),
     ],
   },
   {
-    title: bi("出發當日", "Departure day"),
+    id: "documents",
+    iconKey: "graduation",
+    title: bi("票券與證件", "Tickets & Documents"),
+    note: bi("典禮票券、護照與緊急聯絡資訊隨身備齊。", "Ceremony tickets, passport, and emergency contact info should be on hand."),
     items: [
-      bi("檢查行李件數，準備 12 小時長途飛行的水、藥品、舒適用品", "Verify bag count; prepare water, medication, and comfort items for the 12-hour flight"),
-      bi("飯店與 Uber 預約 4/26 早晨抵達後的接駁", "Reserve Uber for hotel transfer after April 26 arrival"),
-      bi("入境美國時 I-94 自動入境，大多無需紙本", "Entry to the US uses electronic I-94; paper form usually not needed"),
+      bi("護照、ESTA／簽證有效性已確認。", "Passport and ESTA / visa validity confirmed."),
+      bi("畢業典禮票券由 Eugene 透過 Tassel 系統預先轉發，手機可顯示或列印。", "Ceremony tickets forwarded in advance through Tassel; show on phone or print."),
+      bi("緊急聯絡卡：飯店地址、Northeastern 校警、TECO Boston、TECO 紐約、HKETO 紐約。", "Emergency card: hotels, Northeastern Public Safety, TECO Boston, TECO New York, HKETO New York."),
+      bi("Uber、Google Maps、Amtrak、OpenTable 等 App 已下載並登入。", "Uber, Google Maps, Amtrak, and OpenTable apps installed and logged in."),
+    ],
+  },
+  {
+    id: "venue-rules",
+    iconKey: "luggage",
+    title: bi("場館與餐廳特殊規則", "Venue & Restaurant Rules"),
+    note: bi("整段行程中容易忽略卻會直接影響當天的細節。", "Easy-to-overlook details that directly affect specific days."),
+    items: [
+      bi("4/30 Leader Bank Pavilion 包包尺寸限 12 × 12 × 6 英寸；超過尺寸不得入場。", "April 30 Leader Bank Pavilion bag limit is 12 × 12 × 6 inches; oversized bags cannot enter."),
+      bi("4/27 The Daily Catch 只收現金、不接受訂位；建議 17:30 抵達避開排隊。", "April 27 The Daily Catch is cash only and does not take reservations; arrive by 5:30 PM to skip the queue."),
+      bi("USS Constitution 週一閉館，5/1（週五）才開放參觀。", "USS Constitution is closed Mondays; visit on May 1 (Friday)."),
+      bi("5/2 American Dream 紐澤西免稅僅限服飾與鞋類；停車費 6 美元。", "May 2 American Dream tax exemption applies only to clothing and footwear; parking fee is $6."),
+      bi("4211 Suites 連續四晚停車費已確認（含 5/4 車輛離場一日）。", "4211 Suites four-night parking fee confirmed (including the May 4 day when the car is offsite)."),
     ],
   },
 ];
@@ -1407,33 +1436,42 @@ function RouteDiagram({ lang }) {
         </p>
       </CardHeader>
       <CardContent className="p-4 md:p-5">
-        <div className="flex flex-col md:flex-row md:items-stretch gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {routeNodes.map((node, idx) => {
             const tone = toneFor(node.tone);
             const Icon = ICON_MAP[node.iconKey] || Info;
             return (
-              <React.Fragment key={node.id}>
-                <div
-                  className="flex-1 min-w-0 rounded-2xl border p-4 shadow-sm"
-                  style={{ borderColor: C.tan, background: C.bgWarm }}
+              <div
+                key={node.id}
+                className="relative rounded-2xl border p-4 shadow-sm flex flex-col"
+                style={{ borderColor: C.tan, background: C.bgWarm }}
+              >
+                <span
+                  className="absolute top-2.5 right-3 font-mono text-[10px] tracking-wider"
+                  style={{ color: C.gold, opacity: 0.55 }}
                 >
-                  <div className="flex items-center gap-2.5 mb-2">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ background: tone.bg, color: tone.text }}>
-                      <Icon className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold leading-tight" style={{ color: C.ink }}>{t(node.label, lang)}</p>
-                      <p className="text-[11px] mt-0.5" style={{ color: C.gold }}>{node.date}</p>
-                    </div>
+                  0{idx + 1}
+                </span>
+                <div className="flex items-start gap-2.5 mb-2.5">
+                  <div
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                    style={{ background: tone.bg, color: tone.text }}
+                  >
+                    <Icon className="h-4 w-4" />
                   </div>
-                  <p className="text-[12px] leading-5" style={{ color: C.body }}>{t(node.note, lang)}</p>
+                  <div className="min-w-0 flex-1 pr-5">
+                    <p className="text-[10px] uppercase tracking-wider font-semibold leading-tight" style={{ color: C.gold }}>
+                      {node.date}
+                    </p>
+                    <p className="text-[14px] font-semibold leading-snug mt-0.5" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
+                      {t(node.label, lang)}
+                    </p>
+                  </div>
                 </div>
-                {idx < routeNodes.length - 1 && (
-                  <div className="hidden md:flex items-center justify-center flex-shrink-0 px-1">
-                    <ArrowRight className="h-5 w-5" style={{ color: C.gold }} />
-                  </div>
-                )}
-              </React.Fragment>
+                <p className="text-[12px] leading-snug mt-auto pt-1" style={{ color: C.body }}>
+                  {t(node.note, lang)}
+                </p>
+              </div>
             );
           })}
         </div>
@@ -1961,7 +1999,7 @@ export default function App() {
     { value: "logistics", icon: Car, label: bi("交通與住宿", "Logistics") },
     { value: "dining", icon: Utensils, label: bi("餐飲", "Dining") },
     { value: "practical", icon: Info, label: bi("實用資訊", "Practical") },
-    { value: "checklist", icon: CheckCheck, label: bi("行前準備", "Pre-Trip") },
+    { value: "checklist", icon: CheckCheck, label: bi("確認清單", "Checklist") },
   ];
 
   return (
@@ -2573,29 +2611,38 @@ export default function App() {
             <TabsContent value="checklist" className="mt-0">
               <div className="py-8 sm:py-12 space-y-6 max-w-6xl mx-auto px-3 sm:px-4">
                 <SectionTitle
-                  eyebrow={bi("行前準備", "Pre-Trip")}
-                  title={bi("四階段確認清單", "Four-Stage Checklist")}
-                  subtitle={bi("從一個月前到出發當日，照表勾選即可。", "From one month out through departure day, check items off as you go.")}
+                  eyebrow={bi("確認清單", "Checklist")}
+                  title={bi("依類別整理的注意事項", "Notes by Category")}
+                  subtitle={bi("行程開始前的最後檢查，重點分為五大類，逐項確認後再出發。", "Final check before the trip begins. Items are grouped into five categories; confirm each before departure.")}
                   lang={lang}
                 />
-                <div className="space-y-4 sm:space-y-5">
-                  {preTripChecklist.map((phase, idx) => {
-                    const accentColors = [C.navy, C.teal, C.gold, "#1e6e3a"];
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                  {checklist.map((cat, idx) => {
+                    const Icon = ICON_MAP[cat.iconKey] || Info;
+                    const accentColors = [C.navy, C.teal, C.gold, C.plum, "#1e6e3a"];
+                    const accent = accentColors[idx % accentColors.length];
                     return (
-                      <Card key={idx} style={{ borderColor: C.tan, background: "#ffffff", borderLeft: `4px solid ${accentColors[idx]}` }}>
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center gap-3">
-                            <NumberedSquare number={idx + 1} size="sm" />
-                            <CardTitle className="text-base sm:text-lg" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
-                              {t(phase.title, lang)}
-                            </CardTitle>
+                      <Card key={cat.id} style={{ borderColor: C.tan, background: "#ffffff", borderLeft: `4px solid ${accent}` }}>
+                        <CardHeader className="pb-3 border-b" style={{ borderColor: C.tanLight, background: C.bgWarm }}>
+                          <div className="flex items-start gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" style={{ background: accent, color: "#ffffff" }}>
+                              <Icon className="h-5 w-5" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <CardTitle className="text-base sm:text-lg leading-tight" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
+                                {t(cat.title, lang)}
+                              </CardTitle>
+                              <CardDescription className="text-[12px] sm:text-[13px] mt-1 leading-relaxed" style={{ color: C.body }}>
+                                {t(cat.note, lang)}
+                              </CardDescription>
+                            </div>
                           </div>
                         </CardHeader>
-                        <CardContent className="pl-4">
+                        <CardContent className="pt-4">
                           <ul className="space-y-2.5">
-                            {phase.items.map((item, i) => (
+                            {cat.items.map((item, i) => (
                               <li key={i} className="flex gap-3 text-[13px] sm:text-sm">
-                                <div className="flex-shrink-0 w-5 h-5 rounded border-2 mt-0.5" style={{ borderColor: C.tan }} />
+                                <div className="flex-shrink-0 w-5 h-5 rounded border-2 mt-0.5" style={{ borderColor: accent }} />
                                 <span className="leading-relaxed" style={{ color: C.body }}>{t(item, lang)}</span>
                               </li>
                             ))}
@@ -2642,6 +2689,8 @@ export default function App() {
               <div className="space-y-1.5 text-[12px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
                 <div>{lang === "zh" ? "緊急電話" : "Emergency"}: 911</div>
                 <div>Northeastern: (617) 373-3333</div>
+                <div>TECO Boston: (617) 650-9252</div>
+                <div>TECO NY: (917) 743-4546</div>
                 <div>HKETO NY: (212) 752-3320</div>
               </div>
             </div>
@@ -2657,9 +2706,8 @@ export default function App() {
             </div>
           </div>
           <Separator className="my-7 sm:my-8" style={{ background: "rgba(212,175,55,0.2)" }} />
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[11px] sm:text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
-            <div>{t(meta.title, lang)} · {meta.dates}</div>
-            <div className="font-mono">v7 · Editorial Edition</div>
+          <div className="text-[11px] sm:text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+            {t(meta.title, lang)} · {meta.dates}
           </div>
         </div>
       </footer>
