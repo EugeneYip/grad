@@ -1,1434 +1,2268 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
-  AlertTriangle,
-  ArrowRight,
-  BadgeCheck,
-  Briefcase,
-  Building2,
-  Bus,
-  CalendarDays,
-  Camera,
-  Car,
-  CheckCircle2,
-  ChevronDown,
-  ChevronRight,
-  ChevronUp,
+  Calendar,
   Clock,
-  Coffee,
-  CreditCard,
-  DollarSign,
-  ExternalLink,
-  Flag,
-  GraduationCap,
-  Hotel,
-  Info,
-  Landmark,
-  Languages,
-  Luggage,
-  Map,
   MapPin,
-  Menu,
-  Navigation,
-  ParkingCircle,
   Plane,
-  Route,
-  Search,
-  ShieldCheck,
-  ShipWheel,
-  ShoppingBag,
-  Ticket,
   Train,
-  Umbrella,
-  Users,
+  Car,
+  Bus,
   Utensils,
-  WalletCards,
+  Coffee,
+  GraduationCap,
+  Building,
+  Building2,
+  Hotel,
+  AlertTriangle,
+  Info,
+  CheckCircle2,
   XCircle,
+  CheckCheck,
+  DollarSign,
+  CreditCard,
+  ParkingCircle,
+  Users,
+  Phone,
+  ExternalLink,
+  ChevronRight,
+  Languages,
+  Compass,
+  Map,
+  Anchor,
+  Landmark,
+  Flag,
+  ShoppingBag,
+  Briefcase,
+  Sparkles,
+  Cloud,
+  Sun,
+  Zap,
+  Smartphone,
+  Trees,
+  Shield,
+  HandCoins,
+  Receipt,
+  Luggage,
+  Lightbulb,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert";
+import { Separator } from "@/components/ui/separator";
 
-const mapSearch = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-const mapDirections = (origin, destination, mode = "driving") =>
-  `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+// =============================================================================
+// HELPERS
+// =============================================================================
 
-const ICONS = {
-  alert: AlertTriangle,
-  badge: BadgeCheck,
-  bag: ShoppingBag,
-  briefcase: Briefcase,
-  building: Building2,
-  bus: Bus,
-  calendar: CalendarDays,
-  camera: Camera,
-  car: Car,
-  check: CheckCircle2,
-  clock: Clock,
-  coffee: Coffee,
-  credit: CreditCard,
-  dollar: DollarSign,
-  flag: Flag,
-  graduation: GraduationCap,
-  hotel: Hotel,
-  info: Info,
-  landmark: Landmark,
-  luggage: Luggage,
-  map: Map,
-  pin: MapPin,
-  museum: Landmark,
-  navigation: Navigation,
-  parking: ParkingCircle,
-  plane: Plane,
-  route: Route,
-  shield: ShieldCheck,
-  ship: ShipWheel,
-  ticket: Ticket,
-  train: Train,
-  umbrella: Umbrella,
-  users: Users,
-  food: Utensils,
-  wallet: WalletCards,
-  x: XCircle,
+const t = (obj, lang) => {
+  if (obj === null || obj === undefined) return "";
+  if (typeof obj === "string") return obj;
+  return obj[lang] ?? obj.zh ?? obj.en ?? "";
 };
 
-const addresses = {
-  bostonHotel: "The Revolution Hotel, 40 Berkeley St, Boston, MA 02116",
-  fenway: "Fenway Park, 4 Jersey St, Boston, MA 02215",
-  leader: "Leader Bank Pavilion, 290 Northern Ave, Boston, MA 02210",
-  northeastern: "Northeastern University, 360 Huntington Ave, Boston, MA 02115",
-  backBayAvis: "Avis Boston Back Bay Station Garage, 100 Clarendon St, Boston, MA 02116",
-  loganAvis: "Avis Boston Logan International Airport, 15 Transportation Way, East Boston, MA 02128",
-  americanDream: "American Dream, 1 American Dream Way, East Rutherford, NJ 07073",
-  phillyHotel: "4211 Suites, 4211 Chestnut St, Philadelphia, PA 19104",
-  avisJ5D: "Avis PHL Convention Ctr Parking, 1324 Arch St, Philadelphia, PA 19107",
-  station30: "William H. Gray III 30th Street Station, 2955 Market St, Philadelphia, PA 19104",
-  nationalMall: "National Mall, Washington, DC",
-  nyPenn: "New York Penn Station, New York, NY 10001",
+const bi = (zh, en) => ({ zh, en });
+
+const mapLink = (q) =>
+  `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+
+// =============================================================================
+// SVG LOGO + ILLUSTRATION COMPONENTS
+// =============================================================================
+
+const HuskyMark = ({ className = "h-10 w-10" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="2" />
+    <text x="50" y="38" textAnchor="middle" fontFamily="Georgia, serif" fontSize="11" fill="currentColor" letterSpacing="2">NORTHEASTERN</text>
+    <path d="M 32 48 L 38 42 L 44 48 L 50 42 L 56 48 L 62 42 L 68 48 L 68 60 Q 50 70 32 60 Z" fill="currentColor" opacity="0.85" />
+    <circle cx="42" cy="55" r="2" fill="#fafaf7" />
+    <circle cx="58" cy="55" r="2" fill="#fafaf7" />
+    <text x="50" y="80" textAnchor="middle" fontFamily="Georgia, serif" fontSize="9" fill="currentColor" letterSpacing="3">1898</text>
+  </svg>
+);
+
+const FenwayBadge = ({ className = "h-12 w-12" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <rect x="10" y="40" width="80" height="50" fill="none" stroke="currentColor" strokeWidth="2" />
+    <rect x="20" y="20" width="60" height="25" fill="currentColor" opacity="0.9" />
+    <text x="50" y="38" textAnchor="middle" fontFamily="Georgia, serif" fontSize="11" fill="#fafaf7" letterSpacing="1.5">FENWAY</text>
+    <line x1="10" y1="55" x2="90" y2="55" stroke="currentColor" strokeWidth="0.5" />
+    <line x1="10" y1="65" x2="90" y2="65" stroke="currentColor" strokeWidth="0.5" />
+    <line x1="10" y1="75" x2="90" y2="75" stroke="currentColor" strokeWidth="0.5" />
+    <circle cx="50" cy="80" r="3" fill="currentColor" />
+  </svg>
+);
+
+const LeaderBankBadge = ({ className = "h-12 w-12" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <path d="M 10 70 Q 50 30 90 70" fill="none" stroke="currentColor" strokeWidth="2.5" />
+    <path d="M 15 72 Q 50 35 85 72" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+    <line x1="10" y1="70" x2="10" y2="85" stroke="currentColor" strokeWidth="2" />
+    <line x1="90" y1="70" x2="90" y2="85" stroke="currentColor" strokeWidth="2" />
+    <line x1="50" y1="35" x2="50" y2="85" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2,2" />
+    <line x1="5" y1="85" x2="95" y2="85" stroke="currentColor" strokeWidth="2" />
+    <path d="M 5 88 Q 50 95 95 88" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+  </svg>
+);
+
+const BostonMark = ({ className = "h-8 w-8" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <path d="M 20 80 L 20 60 L 30 60 L 30 50 L 40 50 L 40 35 L 50 25 L 60 35 L 60 50 L 70 50 L 70 60 L 80 60 L 80 80 Z" fill="none" stroke="currentColor" strokeWidth="2" />
+    <path d="M 50 25 L 50 15 L 53 15 L 53 18 L 50 18" fill="none" stroke="currentColor" strokeWidth="1.5" />
+    <line x1="10" y1="80" x2="90" y2="80" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const PhillyMark = ({ className = "h-8 w-8" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <path d="M 35 25 Q 35 20 40 20 L 60 20 Q 65 20 65 25 L 65 35 L 70 35 L 70 75 L 30 75 L 30 35 L 35 35 Z" fill="none" stroke="currentColor" strokeWidth="2" />
+    <line x1="50" y1="20" x2="50" y2="15" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="50" cy="55" r="4" fill="currentColor" opacity="0.6" />
+    <line x1="20" y1="75" x2="80" y2="75" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const NyMark = ({ className = "h-8 w-8" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <line x1="20" y1="80" x2="20" y2="40" stroke="currentColor" strokeWidth="2" />
+    <line x1="35" y1="80" x2="35" y2="30" stroke="currentColor" strokeWidth="2" />
+    <line x1="50" y1="80" x2="50" y2="20" stroke="currentColor" strokeWidth="2" />
+    <line x1="50" y1="20" x2="50" y2="10" stroke="currentColor" strokeWidth="1" />
+    <line x1="65" y1="80" x2="65" y2="35" stroke="currentColor" strokeWidth="2" />
+    <line x1="80" y1="80" x2="80" y2="45" stroke="currentColor" strokeWidth="2" />
+    <line x1="10" y1="80" x2="90" y2="80" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const DcMark = ({ className = "h-8 w-8" }) => (
+  <svg viewBox="0 0 100 100" className={className} aria-hidden="true">
+    <path d="M 30 75 L 30 60 Q 30 50 35 50 L 40 50 L 40 40 L 45 40 L 45 25 Q 50 20 55 25 L 55 40 L 60 40 L 60 50 L 65 50 Q 70 50 70 60 L 70 75 Z" fill="none" stroke="currentColor" strokeWidth="2" />
+    <line x1="50" y1="25" x2="50" y2="15" stroke="currentColor" strokeWidth="1.5" />
+    <circle cx="50" cy="13" r="2" fill="currentColor" />
+    <line x1="20" y1="75" x2="80" y2="75" stroke="currentColor" strokeWidth="1.5" />
+  </svg>
+);
+
+const TripRouteMap = ({ className = "w-full h-auto" }) => (
+  <svg viewBox="0 0 600 220" className={className} aria-hidden="true">
+    <defs>
+      <pattern id="dots" patternUnits="userSpaceOnUse" width="6" height="6">
+        <circle cx="3" cy="3" r="0.6" fill="currentColor" opacity="0.18" />
+      </pattern>
+    </defs>
+    <rect width="600" height="220" fill="url(#dots)" />
+    <path d="M 500 60 Q 420 90 360 100 Q 280 115 200 135 Q 130 150 80 145" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="6,4" opacity="0.6" />
+    <g>
+      <circle cx="500" cy="60" r="10" fill="currentColor" />
+      <circle cx="500" cy="60" r="16" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+      <text x="500" y="38" textAnchor="middle" fontSize="13" fill="currentColor" fontWeight="600" fontFamily="Georgia, serif">Boston</text>
+      <text x="500" y="84" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.7">4/26 - 5/2</text>
+    </g>
+    <g>
+      <circle cx="320" cy="105" r="5" fill="currentColor" opacity="0.55" />
+      <text x="320" y="92" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.7">American Dream</text>
+      <text x="320" y="124" textAnchor="middle" fontSize="9" fill="currentColor" opacity="0.5">5/2 stop</text>
+    </g>
+    <g>
+      <circle cx="200" cy="138" r="10" fill="currentColor" />
+      <circle cx="200" cy="138" r="16" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+      <text x="200" y="116" textAnchor="middle" fontSize="13" fill="currentColor" fontWeight="600" fontFamily="Georgia, serif">Philadelphia</text>
+      <text x="200" y="162" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.7">5/2 - 5/5</text>
+    </g>
+    <g>
+      <circle cx="155" cy="178" r="4" fill="currentColor" opacity="0.55" />
+      <text x="155" y="198" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.7">DC day trip · 5/4</text>
+      <line x1="200" y1="142" x2="155" y2="174" stroke="currentColor" strokeWidth="1" strokeDasharray="2,2" opacity="0.4" />
+    </g>
+    <g>
+      <circle cx="80" cy="145" r="10" fill="currentColor" />
+      <circle cx="80" cy="145" r="16" fill="none" stroke="currentColor" strokeWidth="1" opacity="0.4" />
+      <text x="80" y="123" textAnchor="middle" fontSize="13" fill="currentColor" fontWeight="600" fontFamily="Georgia, serif">New York</text>
+      <text x="80" y="169" textAnchor="middle" fontSize="10" fill="currentColor" opacity="0.7">5/5 - 5/11</text>
+    </g>
+  </svg>
+);
+
+// =============================================================================
+// META + SUMMARY
+// =============================================================================
+
+const meta = {
+  title: bi("東岸畢業典禮行程", "East Coast Graduation Itinerary"),
+  subtitle: bi(
+    "Northeastern University 2026 屆畢業典禮暨家庭旅行",
+    "Northeastern Class of 2026 Commencement & Family Trip"
+  ),
+  dates: "April 26 to May 11, 2026",
+  travelers: bi("家庭兩位旅客", "Two travelers"),
+  segments: [
+    { city: "Boston", cityZh: "波士頓", icon: BostonMark, dateRange: bi("4/26 至 5/2", "April 26 to May 2"), nights: bi("六晚", "6 nights"), theme: bi("畢業典禮主軸", "Graduation week") },
+    { city: "Philadelphia", cityZh: "費城", icon: PhillyMark, dateRange: bi("5/2 至 5/5", "May 2 to May 5"), nights: bi("三晚", "3 nights"), theme: bi("含 DC 一日往返", "With DC day trip") },
+    { city: "New York", cityZh: "紐約", icon: NyMark, dateRange: bi("5/5 至 5/11", "May 5 to May 11"), nights: bi("六晚", "6 nights"), theme: bi("自由行段落", "Self-guided segment") },
+  ],
 };
 
-const uiText = {
-  zh: {
-    docTitle: "2026 東北大學畢業家庭行程視覺化指南",
-    subtitle:
-      "以畢業典禮為核心，整合波士頓、費城、華盛頓特區與紐約的住宿、交通、餐廳、景點、租車、停車、票券與風險控制。",
-    defaultNote: "主要版本為中文。右下角可切換純英文版本。",
-    quickNav: "快速導覽",
-    searchPlaceholder: "搜尋日期、地點、餐廳、風險或交通",
-    openMap: "開啟地圖",
-    openSource: "開啟來源",
-    routeMap: "城市與交通主線",
-    routeMapNote: "此圖用來判斷地理動線，不是精準距離圖。",
-    stickyTitle: "目前最重要的操作判斷",
-    summary: "摘要",
-    all: "全部",
-    boston: "波士頓",
-    ceremonies: "畢業典禮",
-    transport: "交通與租車",
-    philly: "費城",
-    dc: "華盛頓特區",
-    nyc: "紐約",
-    risks: "風險與待確認",
-    maps: "地圖目錄",
-    sources: "官方來源",
-    dayPlan: "逐日行程",
-    ceremonyDetails: "畢業典禮細節",
-    transportLogic: "交通與租車決策",
-    riskBoard: "風險控制板",
-    mapDirectory: "Google Maps 地圖目錄",
-    sourceDirectory: "官方資訊來源與待確認項目",
-    intensity: "強度",
-    theme: "主軸",
-    avoid: "不要加排",
-    mapLinks: "相關地圖",
-    readerMode: "讀者版",
-    switchToEnglish: "English",
-    switchToChinese: "中文",
-    unresolved: "仍需確認",
-    completeCheck: "完整性檢查",
-  },
-  en: {
-    docTitle: "2026 Northeastern Commencement Family Travel Guide",
-    subtitle:
-      "A visual, reader-facing itinerary infrastructure for Boston, Philadelphia, Washington, DC, and New York, built around commencement logistics, family pacing, transportation, dining, maps, car rental, parking, tickets, and risk control.",
-    defaultNote: "Chinese is the primary version. Use the floating button at the lower right to switch to English only.",
-    quickNav: "Quick navigation",
-    searchPlaceholder: "Search dates, places, food, risks, or transport",
-    openMap: "Open map",
-    openSource: "Open source",
-    routeMap: "City and transport spine",
-    routeMapNote: "This diagram explains geographic logic. It is not a precise distance map.",
-    stickyTitle: "Current highest-priority operating decisions",
-    summary: "Summary",
-    all: "All",
-    boston: "Boston",
-    ceremonies: "Ceremonies",
-    transport: "Transport and car rental",
-    philly: "Philadelphia",
-    dc: "Washington, DC",
-    nyc: "New York",
-    risks: "Risks and confirmations",
-    maps: "Map directory",
-    sources: "Official sources",
-    dayPlan: "Daily itinerary",
-    ceremonyDetails: "Commencement details",
-    transportLogic: "Transport and rental decisions",
-    riskBoard: "Risk control board",
-    mapDirectory: "Google Maps directory",
-    sourceDirectory: "Official sources and pending confirmations",
-    intensity: "Intensity",
-    theme: "Theme",
-    avoid: "Do not add",
-    mapLinks: "Map links",
-    readerMode: "Reader mode",
-    switchToEnglish: "English",
-    switchToChinese: "中文",
-    unresolved: "Still pending",
-    completeCheck: "Completeness check",
-  },
-};
+// =============================================================================
+// TRAVEL TIPS (reader-facing, replaces internal alerts)
+// =============================================================================
 
-const stickyItems = [
+const travelTips = [
   {
-    icon: "car",
-    tone: "amber",
-    zh: "5/2 不應使用中午 12:00 取車。若保留 American Dream，需改成早上 8:00 至 8:30 左右取車，或至少能在上午離開波士頓。",
-    en: "Do not keep a 12:00 PM pickup on May 2 if American Dream remains in the plan. Reprice an 8:00 to 8:30 AM city pickup, or at least leave Boston in the morning.",
+    id: "lirr",
+    severity: "key",
+    icon: Train,
+    title: bi("從費城到紐約搭的是 Amtrak", "Philadelphia to New York runs on Amtrak"),
+    body: bi(
+      "Long Island Rail Road（LIRR）只行駛紐約市與長島之間，並不開到費城。費城至紐約這一段是 Amtrak Northeast Regional，從 30th Street Station 到 New York Penn Station／Moynihan Train Hall，車程約 1 小時 25 分鐘。下車後若還要前往長島，再從 Penn Station 轉 LIRR 即可。",
+      "Long Island Rail Road (LIRR) only operates between New York City and Long Island. It does not serve Philadelphia. The Philadelphia to New York leg is Amtrak Northeast Regional, running from 30th Street Station to New York Penn Station / Moynihan Train Hall, about 1 hour 25 minutes. After arriving at Penn Station, transfer to LIRR if Long Island is the next stop."
+    ),
   },
   {
-    icon: "parking",
-    tone: "red",
-    zh: "Avis 30th Street Station PH4 已關閉。費城還車以 J5D Convention Center Parking 為主，並避免 after-hours return。",
-    en: "Avis 30th Street Station PH4 is closed. Use J5D Convention Center Parking as the practical Philadelphia return point and avoid after-hours return.",
+    id: "avis-ph4",
+    severity: "key",
+    icon: AlertTriangle,
+    title: bi("Avis 30th Street Station 已關閉", "Avis at 30th Street Station has closed"),
+    body: bi(
+      "Avis 在 Philadelphia 30th Street Station 的分點（PH4）自 2025 年 2 月 1 日起停業。本次行程改用 Convention Center Parking 分點（J5D），地址 1324 Arch Street，5/5 星期二營業時間 07:00 至 19:00。",
+      "The Avis branch at Philadelphia 30th Street Station (PH4) closed on February 1, 2025. This itinerary uses the Convention Center Parking branch (J5D) at 1324 Arch Street instead. Tuesday May 5 hours: 07:00 to 19:00."
+    ),
   },
   {
-    icon: "graduation",
-    tone: "blue",
-    zh: "4/29 與 4/30 是畢業典禮核心日，不再加排重景點。票券、服裝、手機電量、小包與提早抵達優先。",
-    en: "April 29 and April 30 are ceremony-first days. Do not add heavy sightseeing. Tickets, regalia, phone battery, small bags, and early arrival come first.",
+    id: "daily-catch",
+    severity: "important",
+    icon: HandCoins,
+    title: bi("The Daily Catch 只收現金", "The Daily Catch is cash only"),
+    body: bi(
+      "波士頓 North End 的 The Daily Catch（323 Hanover Street）不接受信用卡、不接受訂位、店面很小。建議 17:30 抵達避開排隊高峰，並事先準備美金現金。",
+      "The Daily Catch in Boston's North End (323 Hanover Street) does not take credit cards, does not take reservations, and the dining room is small. Arrive by 5:30 PM to avoid the queue and bring USD in cash."
+    ),
   },
   {
-    icon: "train",
-    tone: "slate",
-    zh: "費城到紐約應使用 Amtrak 或 NJ Transit。LIRR 不從費城發車，只在抵達紐約後可能有用。",
-    en: "Philadelphia to New York should be Amtrak or NJ Transit. LIRR does not run from Philadelphia and matters only after reaching New York.",
+    id: "leader-bank-bag",
+    severity: "important",
+    icon: Briefcase,
+    title: bi("Leader Bank Pavilion 包包尺寸限 12 × 12 × 6 英寸", "Leader Bank Pavilion bag limit is 12 × 12 × 6 inches"),
+    body: bi(
+      "4/30 畢業慶祝會場的包包尺寸是硬規定，超過尺寸無法入場。場館有 Bag Check 寄放服務，每件 5 美元。建議當天直接攜帶小包，不要把採買袋帶進場。",
+      "The bag size limit at the April 30 ceremony venue is strict. Oversized bags cannot enter. Bag check is available on site for $5 per item. Bring a small bag from the start, not a shopping tote."
+    ),
+  },
+  {
+    id: "venue-confusion",
+    severity: "note",
+    icon: MapPin,
+    title: bi("Leader Bank Pavilion 不是 Leader Bank Seaport 分行", "Leader Bank Pavilion is not the Leader Bank Seaport branch"),
+    body: bi(
+      "場館真實地址是 290 Northern Avenue。附近有一家同名銀行分行，導航時請務必輸入完整地址，避免誤導。",
+      "The venue address is 290 Northern Avenue. A same-name bank branch exists nearby. Use the full address in your GPS to avoid confusion."
+    ),
+  },
+  {
+    id: "nj-tax",
+    severity: "note",
+    icon: Receipt,
+    title: bi("紐澤西免稅僅限服飾與鞋類", "New Jersey tax exemption is for clothing and footwear only"),
+    body: bi(
+      "5/2 American Dream 購物時，毛皮製品、配件（手錶、珠寶、皮帶、領帶）、運動裝備仍須課 6.625% 銷售稅。真正划算的品類是 Uniqlo、Zara、H&M、PRIMARK、lululemon、UGG、Vans 等服飾與鞋類旗艦店。",
+      "When shopping at American Dream on May 2, fur, accessories (watches, jewelry, belts, ties), and sports equipment remain subject to 6.625% sales tax. The genuine savings are at clothing and footwear flagships such as Uniqlo, Zara, H&M, PRIMARK, lululemon, UGG, and Vans."
+    ),
+  },
+  {
+    id: "american-dream-parking",
+    severity: "note",
+    icon: ParkingCircle,
+    title: bi("American Dream 停車費為 6 美元", "American Dream parking is $6"),
+    body: bi(
+      "前 15 分鐘免費，超過後每車每次造訪 6 美元。請預留進預算。",
+      "The first 15 minutes are free, then $6 per visit per vehicle. Budget accordingly."
+    ),
   },
 ];
 
-const routeNodes = [
-  { id: "bos", label: { zh: "波士頓", en: "Boston" }, date: "4/26–5/2", icon: "graduation", note: { zh: "住宿、畢業典禮、哈佛、自由之路、水岸線", en: "Hotel, ceremonies, Harvard, Freedom Trail, waterfront" } },
-  { id: "ad", label: { zh: "American Dream", en: "American Dream" }, date: "5/2", icon: "bag", note: { zh: "午餐與限時購物，取代 Texas Roadhouse", en: "Lunch and controlled shopping, replaces Texas Roadhouse" } },
-  { id: "phl", label: { zh: "費城", en: "Philadelphia" }, date: "5/2–5/5", icon: "landmark", note: { zh: "4211 Suites、UPenn、還車與上 Amtrak", en: "4211 Suites, UPenn, car return, Amtrak" } },
-  { id: "dc", label: { zh: "華盛頓特區", en: "Washington, DC" }, date: "5/4", icon: "flag", note: { zh: "開車一日遊，固定車庫，保守路線", en: "Driving day trip, one garage, conservative route" } },
-  { id: "nyc", label: { zh: "紐約", en: "New York" }, date: "5/5–5/11", icon: "train", note: { zh: "住宿與航班未定，暫用模組化行程", en: "Hotel and flight pending, modular plan only" } },
-];
+// =============================================================================
+// PRACTICAL INFO
+// =============================================================================
 
-const ceremonies = [
+const practicalInfo = [
   {
-    key: "fenway",
-    logo: "NU",
-    tone: "blue",
-    title: { zh: "第一場：Graduate Commencement", en: "Ceremony 1: Graduate Commencement" },
-    date: { zh: "2026 年 4 月 29 日，星期三", en: "Wednesday, April 29, 2026" },
-    time: { zh: "上午 10:00 開始", en: "10:00 AM start" },
-    venue: { zh: "Fenway Park", en: "Fenway Park" },
-    address: addresses.fenway,
-    duration: { zh: "約 90 至 120 分鐘", en: "Approximately 90 to 120 minutes" },
-    weather: { zh: "雨天照常舉行，需依天氣穿著", en: "Rain or shine. Dress for weather." },
-    graduate: [
-      { zh: "畢業生上午 8:00 於 Gate B 報到，位置在 Van Ness Street。", en: "Graduate arrival is 8:00 AM at Gate B on Van Ness Street." },
-      { zh: "學生進場隊伍約上午 8:45 開始。", en: "Student procession begins around 8:45 AM." },
-      { zh: "穿著 cap、gown、hood、alumni pin。", en: "Wear cap, gown, hood, and alumni pin." },
-      { zh: "畢業生需先處理自己的 field ticket，再處理來賓票。", en: "The graduate must claim the field ticket before handling guest tickets." },
+    id: "weather",
+    icon: Cloud,
+    title: bi("天氣與穿著", "Weather & Clothing"),
+    items: [
+      { label: bi("氣溫範圍", "Temperature range"), value: bi("攝氏 8 至 18 度（華氏 50 至 65 度）", "8 to 18 °C (50 to 65 °F)") },
+      { label: bi("早晚溫差", "Day to night swing"), value: bi("早晚較涼，可達攝氏 5 度以下", "Mornings and evenings can drop below 5 °C") },
+      { label: bi("Seaport 風勢", "Seaport breeze"), value: bi("Leader Bank Pavilion 為水邊戶外帳棚，4/30 晚上請務必攜帶外套", "Leader Bank Pavilion is an open tented venue by the water. Bring a jacket on April 30 evening") },
+      { label: bi("建議穿著", "Recommended"), value: bi("洋蔥式穿搭、防風外套、舒適步行鞋、輕便雨具", "Layered outfits, windbreaker, comfortable walking shoes, light rain gear") },
     ],
-    guests: [
-      { zh: "來賓上午 8:00 入場，入口為 Gates A、D、E。", en: "Guest gates open at 8:00 AM at Gates A, D, and E." },
-      { zh: "每位符合資格的研究生最多可領 6 張來賓票。", en: "Each eligible graduate student may claim up to 6 guest tickets." },
-      { zh: "2 歲以上兒童需要票。2 歲或以下若能坐在成人腿上，不需票，但嬰兒車禁止入場。", en: "Children older than 2 need tickets. Children 2 or younger sitting on an adult's lap do not need a ticket, but strollers are prohibited." },
-      { zh: "Fenway concessions 在典禮開始前開放，並在典禮開始後關閉。", en: "Fenway concessions open before the ceremony and close once it begins." },
+  },
+  {
+    id: "timezone",
+    icon: Clock,
+    title: bi("時區與時差", "Time Zone & Jet Lag"),
+    items: [
+      { label: bi("美東時區", "Eastern Time"), value: bi("EDT，UTC 減 4 小時", "EDT, UTC minus 4") },
+      { label: bi("與香港時差", "Hong Kong difference"), value: bi("香港領先 12 小時", "Hong Kong is 12 hours ahead") },
+      { label: bi("時差調整建議", "Jet lag tips"), value: bi("抵達當日避免午睡超過 2 小時，傍晚自然光照射有助於調整生理時鐘，第三晚通常即可恢復", "Avoid naps longer than 2 hours on arrival day. Get evening daylight to reset circadian rhythm. Most travelers feel normal by the third night") },
+    ],
+  },
+  {
+    id: "power",
+    icon: Zap,
+    title: bi("電壓與插頭", "Voltage & Plugs"),
+    items: [
+      { label: bi("美國規格", "United States"), value: bi("110 至 120V，60Hz，Type A／B 插頭", "110 to 120V, 60Hz, Type A/B plugs") },
+      { label: bi("香港規格", "Hong Kong"), value: bi("220V，50Hz，Type G 插頭（三方腳）", "220V, 50Hz, Type G three-pin plugs") },
+      { label: bi("解決方案", "Adapter"), value: bi("需準備 Type G 轉 Type A／B 萬國轉接器；多數手機與筆電充電器支援 100 至 240V，無須變壓器；吹風機與電捲棒須確認支援雙電壓", "Bring a Type G to A/B adapter. Most phone and laptop chargers support 100 to 240V and need no voltage converter. Hair dryers and curling irons must be dual voltage") },
+    ],
+  },
+  {
+    id: "tipping",
+    icon: HandCoins,
+    title: bi("給小費標準", "Tipping Standards"),
+    items: [
+      { label: bi("餐廳", "Sit-down restaurant"), value: bi("餐前小計的 18 至 20%（六人以上多會自動加算）", "18 to 20% of pre-tax subtotal; parties of six or more often auto-added") },
+      { label: bi("Uber／Lyft", "Uber / Lyft"), value: bi("車資的 15 至 20%", "15 to 20% of fare") },
+      { label: bi("飯店打掃", "Hotel housekeeping"), value: bi("每晚 2 至 5 美元，現金放枕頭旁", "$2 to $5 per night in cash, leave by pillow") },
+      { label: bi("行李員", "Bellhop"), value: bi("每件 1 至 2 美元", "$1 to $2 per bag") },
+      { label: bi("吧檯外帶咖啡", "Counter coffee pickup"), value: bi("可選擇不給或捨入零頭", "Optional or round up") },
+    ],
+  },
+  {
+    id: "mobile",
+    icon: Smartphone,
+    title: bi("行動網路", "Mobile Data"),
+    items: [
+      { label: bi("eSIM 推薦", "eSIM options"), value: bi("Airalo、Holafly、Nomad 皆有美國方案；十日方案約 15 至 25 美元，網速約 4G 等級", "Airalo, Holafly, and Nomad all offer US plans. Ten-day plans run $15 to $25 with 4G-equivalent speeds") },
+      { label: bi("實體 SIM 替代", "Physical SIM"), value: bi("T-Mobile Tourist Plan 50 美元含 30 天無限通話與 30GB 數據", "T-Mobile Tourist Plan: $50 for 30 days with unlimited calls and 30GB data") },
+      { label: bi("漫遊提醒", "Roaming caution"), value: bi("若使用香港 SIM 直接漫遊，每日上限費約港幣 168 元，整趟下來會超過 eSIM 成本", "Direct roaming on a Hong Kong SIM caps at around HKD 168 per day, exceeding eSIM cost over the full trip") },
+    ],
+  },
+  {
+    id: "cards",
+    icon: CreditCard,
+    title: bi("付款方式", "Payment"),
+    items: [
+      { label: bi("普及度", "Acceptance"), value: bi("Visa、Mastercard、American Express 普及；街邊小店偶有最低消費 10 美元限制", "Visa, Mastercard, and American Express widely accepted. Small shops sometimes set $10 minimums") },
+      { label: bi("Tap-to-pay", "Tap-to-pay"), value: bi("Apple Pay 與 Google Pay 普及，可作為主要付款方式", "Apple Pay and Google Pay are widely supported and reliable as primary payment") },
+      { label: bi("現金需求", "Cash"), value: bi("建議備至少 100 美元現金。The Daily Catch、部分小費、計程車輔助", "Carry at least $100 in cash for The Daily Catch, gratuities, and as taxi backup") },
+    ],
+  },
+  {
+    id: "transit",
+    icon: Bus,
+    title: bi("城市內交通", "City Transit"),
+    items: [
+      { label: bi("波士頓 MBTA", "Boston MBTA"), value: bi("可使用 Apple Pay／Google Pay 直接感應上車（CharlieCard Tap），單程 2.40 美元；亦可於車站購買實體 CharlieCard", "Tap Apple Pay or Google Pay directly at the gate (CharlieCard Tap). Single ride $2.40. Physical CharlieCards available at stations") },
+      { label: bi("紐約 MTA", "New York MTA"), value: bi("OMNY 系統支援 tap-to-pay；單程 2.90 美元；連續使用同一張卡片至 12 次後當週免費", "OMNY accepts tap-to-pay. Single ride $2.90. After 12 rides on the same card in one week, additional rides that week are free") },
+      { label: bi("Uber／Lyft", "Uber / Lyft"), value: bi("兩者價格相近，建議兩個 App 都安裝比價；尖峰時段 surge pricing 較常見", "Prices are similar. Install both apps to compare. Surge pricing is common at rush hour") },
+    ],
+  },
+  {
+    id: "emergency",
+    icon: Phone,
+    title: bi("緊急聯絡", "Emergency Contacts"),
+    items: [
+      { label: bi("緊急電話", "Emergency"), value: "911" },
+      { label: bi("Northeastern 校警", "Northeastern Public Safety"), value: "(617) 373-3333" },
+      { label: bi("香港駐紐約經貿辦事處", "HKETO New York"), value: "(212) 752-3320" },
+      { label: bi("Amtrak 客服", "Amtrak"), value: "1-800-USA-RAIL" },
+      { label: bi("Avis 取車點 BO4", "Avis BO4 pickup"), value: "(617) 534-1404" },
+    ],
+  },
+];
+
+// =============================================================================
+// DAYS DATA
+// =============================================================================
+
+const days = [
+  {
+    id: "0426",
+    date: "4/26",
+    weekday: { zh: "週日", en: "Sun" },
+    cityKey: "boston",
+    city: bi("波士頓", "Boston"),
+    title: bi("抵達日", "Arrival"),
+    subtitle: bi("只做最低限度的活動，把體力留給後面六天", "Bare minimum only; conserve energy for the week ahead"),
+    icon: Plane,
+    intensity: "low",
+    flightInfo: {
+      legs: [
+        { code: "BR872", route: "HKG → TPE", time: "4/25 19:40 → 21:30" },
+        { code: "BR026", route: "TPE → SEA", time: "4/25 23:40 → 19:30" },
+        { code: "AS536", route: "SEA → BOS", time: "4/25 22:45 → 4/26 07:12+1" },
+      ],
+    },
+    timeline: [
+      { time: "07:12", activity: bi("抵達 Logan Airport，AS536 班機降落", "Arrive at Logan Airport, AS536") },
+      { time: "08:30-09:30", activity: bi("領取行李，Uber 至 The Revolution Hotel", "Collect baggage, Uber to The Revolution Hotel") },
+      { time: "09:30-11:00", activity: bi("飯店寄放行李，於附近 Tatte 享用早午餐", "Drop bags at hotel; brunch at nearby Tatte") },
+      { time: "11:00-14:00", activity: bi("Public Garden 緩步散步，時間不超過一小時；其餘時間於飯店大廳休息", "Light stroll through the Public Garden, no more than an hour; rest in hotel lobby otherwise") },
+      { time: "15:00", activity: bi("辦理入住，立即補眠兩至三小時", "Check in and nap two to three hours") },
+      { time: "18:30-19:30", activity: bi("Chipotle Park Plaza 輕鬆晚餐", "Casual dinner at Chipotle Park Plaza") },
+      { time: "20:00", activity: bi("回飯店早睡", "Back to hotel for an early night") },
+    ],
+    avoid: [
+      bi("Newbury Street 購物", "Shopping on Newbury Street"),
+      bi("Trader Joe's 採買", "Trader Joe's grocery run"),
+      bi("Freedom Trail 任何一段", "Any portion of the Freedom Trail"),
+      bi("Harvard 與博物館", "Harvard or museums"),
+    ],
+    notes: [
+      bi("連續紅眼飛行超過 24 小時，跨 12 小時時差，當天硬走會拖累整週體力。", "After 24 hours of red-eye flights and a 12-hour time-zone shift, pushing through today undermines the entire week."),
+      bi("若飯店可提早辦理入住就立即進房；不能就在大廳休息。", "Take the room as soon as it is ready; otherwise rest in the lobby."),
+    ],
+    locations: [
+      { name: bi("Logan International Airport", "Logan International Airport"), addr: "1 Harborside Dr, Boston, MA 02128" },
+      { name: bi("The Revolution Hotel", "The Revolution Hotel"), addr: "40 Berkeley St, Boston, MA 02116" },
+      { name: bi("Tatte Bakery & Café（南端店）", "Tatte Bakery & Café (South End)"), addr: "70 Charles St, Boston, MA 02114" },
+      { name: bi("Public Garden", "Public Garden"), addr: "4 Charles St, Boston, MA 02116" },
+      { name: bi("Chipotle Park Plaza", "Chipotle Park Plaza"), addr: "8 Park Plz, Boston, MA 02116" },
+    ],
+  },
+  {
+    id: "0427",
+    date: "4/27",
+    weekday: { zh: "週一", en: "Mon" },
+    cityKey: "boston",
+    city: bi("波士頓", "Boston"),
+    title: bi("自由之路精簡版加 North End", "Freedom Trail edited & North End"),
+    subtitle: bi("歷史核心一條線，海鮮收尾", "Historic core in a single line, finishing with seafood"),
+    icon: Flag,
+    intensity: "mid",
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("Tatte 早餐，接著 Boston Common、State House 外觀、Granary Burying Ground、Beacon Hill", "Tatte breakfast, then Boston Common, State House facade, Granary Burying Ground, Beacon Hill") },
+      { time: bi("中午", "Midday"), activity: bi("Faneuil Hall 與 Quincy Market 用餐", "Lunch at Faneuil Hall / Quincy Market") },
+      { time: bi("下午", "Afternoon"), activity: bi("Old State House、Paul Revere House 外觀，進入 North End", "Old State House, Paul Revere House facade, enter North End") },
+      { time: "17:30", activity: bi("提早抵達 The Daily Catch 避開排隊高峰", "Arrive at The Daily Catch early to skip the queue") },
+      { time: bi("晚上", "Evening"), activity: bi("Mike's Pastry 帶甜點離開", "Pick up dessert at Mike's Pastry") },
+    ],
+    warnings: [
+      { title: bi("The Daily Catch 只收現金", "The Daily Catch is cash only"), body: bi("地址 323 Hanover Street，店面狹小，不訂位、不接受信用卡。", "323 Hanover Street, small dining room, no reservations, no credit cards.") },
+      { title: bi("USS Constitution 週一閉館", "USS Constitution is closed Mondays"), body: bi("本日不可加入軍艦參觀，留到 5/1。", "Skip the ship today; revisit on May 1.") },
+    ],
+    notes: [
+      bi("Charlestown 與 USS Constitution 都不放這天，行程在 North End 結束即可。", "Do not push on to Charlestown or USS Constitution today. End the route at North End."),
+    ],
+    locations: [
+      { name: bi("Boston Common", "Boston Common"), addr: "139 Tremont St, Boston, MA 02111" },
+      { name: bi("Massachusetts State House", "Massachusetts State House"), addr: "24 Beacon St, Boston, MA 02133" },
+      { name: bi("Granary Burying Ground", "Granary Burying Ground"), addr: "Tremont St, Boston, MA 02108" },
+      { name: bi("Faneuil Hall 與 Quincy Market", "Faneuil Hall / Quincy Market"), addr: "4 S Market St, Boston, MA 02109" },
+      { name: bi("Old State House", "Old State House"), addr: "206 Washington St, Boston, MA 02109" },
+      { name: bi("Paul Revere House", "Paul Revere House"), addr: "19 N Square, Boston, MA 02113" },
+      { name: bi("The Daily Catch（North End 店）", "The Daily Catch (North End)"), addr: "323 Hanover St, Boston, MA 02113" },
+      { name: bi("Mike's Pastry", "Mike's Pastry"), addr: "300 Hanover St, Boston, MA 02113" },
+    ],
+  },
+  {
+    id: "0428",
+    date: "4/28",
+    weekday: { zh: "週二", en: "Tue" },
+    cityKey: "boston",
+    city: bi("劍橋", "Cambridge"),
+    title: bi("Harvard 校園與一座博物館", "Harvard campus & one museum"),
+    subtitle: bi("劍橋整區獨立成日，不與市中心混搭", "All Cambridge in a single day; no mixing with downtown"),
+    icon: GraduationCap,
+    intensity: "mid",
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("搭 Uber 或 MBTA Red Line 至 Harvard Square", "Uber or MBTA Red Line to Harvard Square") },
+      { time: bi("上午至中午", "Morning to noon"), activity: bi("Harvard Yard、John Harvard 雕像、Widener Library 外觀", "Harvard Yard, John Harvard statue, Widener Library facade") },
+      { time: bi("中午", "Midday"), activity: bi("Harvard Square 用餐（Tasty Burger 或 Russell House Tavern）", "Lunch at Harvard Square (Tasty Burger or Russell House Tavern)") },
+      { time: bi("下午", "Afternoon"), activity: bi("Harvard Art Museums 或 Harvard Museum of Natural History 二選一", "Choose either Harvard Art Museums or Harvard Museum of Natural History") },
+      { time: bi("傍晚", "Evening"), activity: bi("Charles River Cambridge 側 Weeks Footbridge 短走", "Short walk along the Cambridge side of the Charles River by Weeks Footbridge") },
+      { time: bi("晚上", "Night"), activity: bi("回波士頓飯店附近輕鬆晚餐", "Return to the hotel area for a casual dinner") },
+    ],
+    decision: {
+      title: bi("博物館選擇", "Choose your museum"),
+      items: [
+        { text: bi("偏好藝術，請選 Harvard Art Museums，週二至週日 10:00 至 17:00 開放", "For art, pick Harvard Art Museums, open Tuesday through Sunday, 10 AM to 5 PM") },
+        { text: bi("偏好自然史標本與 Glass Flowers，請選 Harvard Museum of Natural History，每日 09:00 至 17:00 開放", "For natural history specimens and Glass Flowers, pick Harvard Museum of Natural History, daily 9 AM to 5 PM") },
+      ],
+      caution: bi("兩館不要同日參觀，會超過步數上限。", "Do not attempt both museums in one day; the step count will exceed the limit."),
+    },
+    locations: [
+      { name: bi("Harvard Square", "Harvard Square"), addr: "1400 Massachusetts Ave, Cambridge, MA 02138" },
+      { name: bi("Harvard Yard", "Harvard Yard"), addr: "Harvard Yard, Cambridge, MA 02138" },
+      { name: bi("Widener Library", "Widener Library"), addr: "Harvard Yard, Cambridge, MA 02138" },
+      { name: bi("Harvard Art Museums", "Harvard Art Museums"), addr: "32 Quincy St, Cambridge, MA 02138" },
+      { name: bi("Harvard Museum of Natural History", "Harvard Museum of Natural History"), addr: "26 Oxford St, Cambridge, MA 02138" },
+      { name: bi("Weeks Footbridge", "Weeks Footbridge"), addr: "Cambridge, MA 02138" },
+    ],
+  },
+  {
+    id: "0429",
+    date: "4/29",
+    weekday: { zh: "週三", en: "Wed" },
+    cityKey: "boston",
+    city: bi("波士頓", "Boston"),
+    title: bi("Graduate Commencement，Fenway Park", "Graduate Commencement at Fenway Park"),
+    subtitle: bi("畢業典禮，全天無觀光", "Ceremony day; no sightseeing"),
+    icon: GraduationCap,
+    intensity: "high",
+    isCeremony: true,
+    ceremonyType: "fenway",
+    ceremony: {
+      venue: "Fenway Park",
+      address: "4 Jersey St, Boston, MA 02215",
+      time: bi("上午 10:00", "10:00 AM"),
+      gradReportTime: bi("上午 8:00，Gate B（Van Ness Street）", "8:00 AM, Gate B (Van Ness Street)"),
+      guestDoors: bi("上午 8:00，Gates A、D、E", "8:00 AM, Gates A, D, E"),
+      processionStart: bi("約上午 8:45", "Approx. 8:45 AM"),
+      ceremonyStart: bi("上午 10:00", "10:00 AM"),
+      note: bi("僅限持有效票券者入場", "Valid ticket required for entry"),
+    },
+    timeline: [
+      { time: "06:30", activity: bi("起床、早餐，最後一次確認票券、cap、gown、hood、alumni pin", "Wake up, breakfast, final check on tickets, cap, gown, hood, alumni pin") },
+      { time: "07:10", activity: bi("Uber 從 The Revolution Hotel 出發，預估 15 分鐘", "Uber from The Revolution Hotel; about 15 minutes") },
+      { time: "07:30", activity: bi("畢業生於 Gate B（Van Ness Street）報到", "Graduate reports at Gate B on Van Ness Street") },
+      { time: "07:30", activity: bi("家屬於 Gates A、D、E 排隊", "Family lines up at Gates A, D, or E") },
+      { time: "08:00", activity: bi("雙方依序入場", "Both parties enter") },
+      { time: "08:45", activity: bi("Procession 開始", "Procession begins") },
+      { time: "10:00", activity: bi("典禮正式開始", "Ceremony begins") },
+      { time: "12:00-13:00", activity: bi("典禮結束，於 Fenway 附近用餐（Tasty Burger Fenway 或 Citizen Public House）", "Ceremony ends; lunch near Fenway (Tasty Burger Fenway or Citizen Public House)") },
+      { time: bi("下午", "Afternoon"), activity: bi("回飯店休息", "Rest at the hotel") },
+      { time: bi("晚上", "Evening"), activity: bi("Back Bay 或南端正式一點晚餐慶祝", "Celebratory dinner in Back Bay or South End") },
+    ],
+    dressCode: ["cap", "gown", "hood", "alumni pin"],
+    rules: [
+      bi("家屬票券由畢業生透過 Tassel 系統轉發", "Family tickets are forwarded by the graduate through Tassel"),
+      bi("票券可列印或於手機顯示", "Tickets may be printed or shown on a phone"),
+      bi("持票入場，no re-entry", "Ticketed entry only, no re-entry"),
+      bi("所有人皆須接受安檢", "All attendees subject to security screening"),
+    ],
+    locations: [
+      { name: bi("Fenway Park", "Fenway Park"), addr: "4 Jersey St, Boston, MA 02215" },
+      { name: bi("Gate B（畢業生入口）", "Gate B (Graduate Entry)"), addr: "Van Ness Street, Boston, MA 02215" },
+      { name: bi("Tasty Burger Fenway", "Tasty Burger Fenway"), addr: "1301 Boylston St, Boston, MA 02215" },
+    ],
+  },
+  {
+    id: "0430",
+    date: "4/30",
+    weekday: { zh: "週四", en: "Thu" },
+    cityKey: "boston",
+    city: bi("波士頓", "Boston"),
+    title: bi("Northeastern 校園、D'Amore-McKim 慶祝會", "Northeastern campus & D'Amore-McKim Celebration"),
+    subtitle: bi("白天緩，傍晚 Leader Bank Pavilion", "Slow morning, ceremony at Leader Bank Pavilion in the evening"),
+    icon: Sparkles,
+    intensity: "high",
+    isCeremony: true,
+    ceremonyType: "leaderbank",
+    ceremony: {
+      venue: "Leader Bank Pavilion",
+      address: "290 Northern Ave, Boston, MA 02210",
+      venueType: bi("戶外帳棚場地，請依天氣穿著", "Outdoor tented venue; dress for the weather"),
+      time: bi("下午 6:00", "6:00 PM"),
+      ceremonyLength: bi("約 2 小時", "About 2 hours"),
+      gradArrival: bi("下午 4:30，提前 90 分鐘", "4:30 PM, 90 minutes early"),
+      gradEntrance: bi("Harborwalk 畢業生入口（位於主入口最左側）", "Harborwalk graduate entrance (far left of Main Entrance)"),
+      guestArrival: bi("下午 5:00，提前 60 分鐘", "5:00 PM, 60 minutes early"),
+      guestEntrance: bi("主入口", "Main Entrance"),
+      bagLimit: "12\" × 12\" × 6\"",
+      important: bi("Leader Bank Pavilion 並非附近的 Leader Bank Seaport 分行，GPS 請務必輸入 290 Northern Ave。", "Leader Bank Pavilion is not the nearby Leader Bank Seaport branch. Use 290 Northern Ave in your GPS."),
+    },
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("Northeastern 校園拍照（ISEC、Snell Library、Centennial Common）", "Photos on Northeastern campus (ISEC, Snell Library, Centennial Common)") },
+      { time: bi("中午", "Midday"), activity: bi("校園附近或 Symphony 一帶用餐", "Lunch on campus or in the Symphony area") },
+      { time: "14:00-15:30", activity: bi("回飯店休息、整理服裝", "Return to hotel; rest and dress") },
+      { time: "16:00", activity: bi("搭 Uber 出發 Seaport（避開 Silver Line 高峰擁擠）", "Uber to Seaport (avoid Silver Line congestion)") },
+      { time: "16:30", activity: bi("畢業生於 Harborwalk 入口報到", "Graduate reports at Harborwalk entrance") },
+      { time: "17:00", activity: bi("家屬於主入口入場", "Family enters via Main Entrance") },
+      { time: "18:00", activity: bi("典禮開始（戶外帳棚場地）", "Ceremony begins under the open tent") },
+      { time: bi("20:00 後", "After 8 PM"), activity: bi("依體力於 Seaport 簡單晚餐或直接回飯店", "Light dinner in Seaport or return to hotel based on energy") },
+    ],
+    transportation: [
+      bi("Boston Seaport 區域交通繁忙，務必預留充足時間", "Seaport traffic can be heavy; allow extra travel time"),
+      bi("MBTA Silver Line：World Trade Center 站，下車後步行約 0.3 英里", "MBTA Silver Line: World Trade Center station, then a 0.3-mile walk"),
+      bi("現場無停車位", "No on-site parking"),
+      bi("附近停車：Ora Garage、302 Northern Ave Lot、Seaport Hotel Garage、South Boston Waterfront Transportation Center", "Nearby garages: Ora Garage, 302 Northern Ave Lot, Seaport Hotel Garage, South Boston Waterfront Transportation Center"),
+      bi("可考慮以 SpotHero、ParkWhiz、ParkMobile 預約車位", "Consider reserving via SpotHero, ParkWhiz, or ParkMobile"),
+    ],
+    bagPolicy: {
+      limit: "12\" × 12\" × 6\"",
+      notes: [
+        bi("超過尺寸限制之包包不得入場", "Oversized bags cannot enter"),
+        bi("現場 Bag Check 寄放每件 5 美元", "Bag Check available on site at $5 per item"),
+        bi("畢業生強烈建議不要攜帶個人物品", "Graduates are strongly encouraged not to carry personal items"),
+        bi("可攜帶一瓶未開封 16 盎司飲用水", "One sealed 16 oz water bottle is permitted"),
+        bi("其餘外食與飲料不得入內", "All other outside food and beverages are prohibited"),
+      ],
+    },
+    prohibitedItems: [
+      bi("大型包包、背包、超尺寸或不透明包包", "Large, oversized, or non-clear bags and backpacks"),
+      bi("外食與飲料（除一瓶未開封 16 盎司水）", "Outside food and drinks (except one sealed 16 oz water)"),
+      bi("無法收合的雨傘、包裝禮品", "Non-collapsible umbrellas, wrapped gifts"),
+      bi("酒精、毒品、違禁品", "Alcohol, drugs, illegal substances"),
+      bi("武器、刀具、工具", "Weapons, knives, tools"),
+      bi("氣球、布條、標語、非校方核發旗幟", "Balloons, banners, signs, non-Northeastern flags"),
+      bi("噪音器具、無人機、雷射筆、自拍棒、專業影音設備", "Noisemakers, drones, laser pointers, selfie sticks, professional A/V equipment"),
+      bi("硬式冰桶、玻璃或金屬容器、水袋背包", "Hard-sided coolers, glass or metal containers, hydration packs"),
+      bi("煙火或易燃裝置", "Fireworks or incendiary devices"),
+      bi("面具、戲服或任何被視為危險、干擾、仇恨或冒犯的物品", "Costumes, masks, or items deemed unsafe, disruptive, hateful, or offensive"),
+    ],
+    warnings: [
+      { title: bi("攜帶外套", "Bring a jacket"), body: bi("Leader Bank Pavilion 為戶外帳棚，4 月底 Seaport 晚上會有海風。", "Leader Bank Pavilion is an open tent venue. Seaport gets breezy on April evenings.") },
+      { title: bi("不可再入場（no re-entry）", "No re-entry"), body: bi("家屬進場後不可再外出，請事先處理洗手間與飲水。", "Once inside, family cannot exit and re-enter. Use the restroom and drink water beforehand.") },
+    ],
+    locations: [
+      { name: bi("Leader Bank Pavilion", "Leader Bank Pavilion"), addr: "290 Northern Ave, Boston, MA 02210" },
+      { name: bi("Northeastern 主校園", "Northeastern Main Campus"), addr: "360 Huntington Ave, Boston, MA 02115" },
+      { name: bi("ISEC 跨領域科學工程中心", "ISEC (Interdisciplinary Science & Engineering Complex)"), addr: "805 Columbus Ave, Boston, MA 02120" },
+      { name: bi("Snell Library", "Snell Library"), addr: "360 Huntington Ave, Boston, MA 02115" },
+    ],
+  },
+  {
+    id: "0501",
+    date: "5/1",
+    weekday: { zh: "週五", en: "Fri" },
+    cityKey: "boston",
+    city: bi("波士頓", "Boston"),
+    title: bi("水濱、James Hook、USS Constitution", "Waterfront, James Hook, USS Constitution"),
+    subtitle: bi("典禮過後，把海邊路線一次走完", "Post-ceremony day; finish the waterfront in one route"),
+    icon: Anchor,
+    intensity: "mid",
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("Tatte 早餐，再從 Beacon Hill 側下到 Charles River Esplanade 短走", "Tatte breakfast, then descend from Beacon Hill to a short walk on the Charles River Esplanade") },
+      { time: bi("中午", "Midday"), activity: bi("James Hook & Co 用餐（440 Atlantic Ave，週五營業至 17:00）", "Lunch at James Hook & Co (440 Atlantic Ave, Friday hours until 5 PM)") },
+      { time: bi("下午", "Afternoon"), activity: bi("從 Long Wharf 搭 MBTA Ferry 至 Charlestown Navy Yard", "Take the MBTA Ferry from Long Wharf to Charlestown Navy Yard") },
+      { time: bi("下午", "Afternoon"), activity: bi("USS Constitution Museum 與軍艦本身（週三至週日 10:00 至 16:00）", "USS Constitution Museum and ship visit (Wed–Sun, 10 AM to 4 PM)") },
+      { time: bi("傍晚", "Evening"), activity: bi("搭 Ferry 回 Long Wharf，步行至 North End", "Ferry back to Long Wharf; walk to North End") },
+      { time: bi("晚上", "Night"), activity: bi("若 4/27 未去 Mike's Pastry，今晚補；否則改至 Trader Joe's 採買回程禮物", "If Mike's Pastry was missed on April 27, go tonight; otherwise stop by Trader Joe's for return gifts") },
+    ],
+    notes: [
+      bi("這天是波士頓段最完整的精華日，典禮已過可以慢慢享受。", "This is the most relaxed day in Boston; the ceremonies are done and the pace can ease."),
+      bi("USS Constitution 必須在週三至週日才能參觀，5/1 是這趟行程最後一次機會。", "USS Constitution opens only Wednesday through Sunday. May 1 is the last opportunity on this trip."),
+      bi("Mike's Pastry 與 Trader Joe's 二選一，不要硬塞兩個。", "Pick one: Mike's Pastry or Trader Joe's. Do not try to fit both."),
+    ],
+    locations: [
+      { name: bi("Charles River Esplanade", "Charles River Esplanade"), addr: "Storrow Dr, Boston, MA 02114" },
+      { name: bi("James Hook & Co", "James Hook & Co"), addr: "440 Atlantic Ave, Boston, MA 02210" },
+      { name: bi("Long Wharf MBTA Ferry", "Long Wharf MBTA Ferry"), addr: "1 Long Wharf, Boston, MA 02110" },
+      { name: bi("USS Constitution Museum", "USS Constitution Museum"), addr: "Bldg 22, Charlestown Navy Yard, Boston, MA 02129" },
+      { name: bi("Trader Joe's Back Bay", "Trader Joe's Back Bay"), addr: "899 Boylston St, Boston, MA 02115" },
+    ],
+  },
+  {
+    id: "0502",
+    date: "5/2",
+    weekday: { zh: "週六", en: "Sat" },
+    cityKey: "transit",
+    city: bi("波士頓 → 費城", "Boston → Philadelphia"),
+    title: bi("American Dream 與跨州移動", "American Dream stop & interstate drive"),
+    subtitle: bi("整日由您主開，紐澤西免稅服飾採買", "Solo driver day; tax-free clothing stop in New Jersey"),
+    icon: Car,
+    intensity: "high",
+    timeline: [
+      { time: "06:30", activity: bi("退房，行李集中於飯店大廳", "Check out; gather luggage in the lobby") },
+      { time: "06:45", activity: bi("Uber 從 The Revolution Hotel 至 100 Clarendon St，約 3 分鐘", "Uber from The Revolution Hotel to 100 Clarendon St, about 3 minutes") },
+      { time: "07:00", activity: bi("Avis Boston Back Bay Station Garage（BO4）取車", "Pick up at Avis Boston Back Bay Station Garage (BO4)") },
+      { time: "07:30", activity: bi("出發，從 Back Bay 直接上 I-90 W（Mass Pike）西行", "Depart, enter I-90 West (Mass Pike) directly from Back Bay") },
+      { time: "11:30", activity: bi("抵達 American Dream，車程約 4 小時", "Arrive at American Dream after about 4 hours of driving") },
+      { time: "12:00-13:00", activity: bi("商場內用餐（Yard House 或 Shake Shack）", "Lunch in the mall (Yard House or Shake Shack)") },
+      { time: "13:00-15:15", activity: bi("購物時段，免稅服飾類最划算", "Shopping; clothing flagships are the best value") },
+      { time: "15:30", activity: bi("離開 American Dream，走 NJ Turnpike S 往費城", "Depart American Dream; NJ Turnpike South toward Philadelphia") },
+      { time: "17:30-18:00", activity: bi("抵達 4211 Suites（4211 Chestnut St），辦理入住與停車", "Arrive at 4211 Suites (4211 Chestnut St); check in and park") },
+      { time: "19:00", activity: bi("University City 附近輕鬆晚餐", "Casual dinner in University City") },
+    ],
+    route: {
+      title: bi("駕駛路線", "Driving route"),
+      steps: [
+        "I-90 W (Mass Pike) → I-84 W",
+        "→ I-684 S → I-287 S",
+        bi("→ Tappan Zee／Mario Cuomo Bridge", "→ Tappan Zee / Mario Cuomo Bridge"),
+        "→ I-287 S → NJ Turnpike S",
+        bi("→ Exit 16W（American Dream）", "→ Exit 16W (American Dream)"),
+        bi("→ NJ Turnpike S → Exit 4（Philadelphia）", "→ NJ Turnpike S → Exit 4 (Philadelphia)"),
+      ],
+    },
+    rules: [
+      bi("American Dream 停留上限 3.5 小時（含吃飯）", "Cap American Dream stay at 3.5 hours including lunch"),
+      bi("不玩水上樂園、室內滑雪、主題樂園", "Skip the water park, indoor ski slope, and theme park"),
+      bi("停車費 6 美元（前 15 分鐘免費）", "Parking $6 (first 15 minutes free)"),
+      bi("免稅僅限服飾與鞋類；毛皮、配件、運動裝備仍課 6.625% 稅", "Tax exemption applies to clothing and footwear only; fur, accessories, and sports equipment remain taxed at 6.625%"),
+      bi("取消 Texas Roadhouse（與 American Dream 衝突）", "Drop Texas Roadhouse plan; it conflicts with American Dream"),
+    ],
+    warnings: [
+      { title: bi("行李安全", "Luggage security"), body: bi("American Dream 停車後請勿在停車場開後車廂整理；護照、錢包、電腦隨身帶；停車後拍照記錄樓層與入口。", "Do not open the trunk in the lot at American Dream. Keep passports, wallets, and laptops on you. Photograph the level and entrance after parking.") },
+    ],
+    locations: [
+      { name: bi("Avis Boston Back Bay Station Garage（BO4）", "Avis Boston Back Bay Station Garage (BO4)"), addr: "100 Clarendon St, Boston, MA 02116" },
+      { name: bi("American Dream", "American Dream"), addr: "1 American Dream Way, East Rutherford, NJ 07073" },
+      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104" },
+    ],
+  },
+  {
+    id: "0503",
+    date: "5/3",
+    weekday: { zh: "週日", en: "Sun" },
+    cityKey: "philly",
+    city: bi("費城", "Philadelphia"),
+    title: bi("UPenn 校園與費城精華", "UPenn & Philadelphia highlights"),
+    subtitle: bi("晚啟動，自 University City 由西往東", "Late start, west-to-east route from University City"),
+    icon: GraduationCap,
+    intensity: "mid",
+    timeline: [
+      { time: "09:00-10:00", activity: bi("飯店悠閒早餐，恢復體力", "Slow breakfast at the hotel to recover") },
+      { time: "10:30", activity: bi("出發 UPenn 校園，從 4211 Chestnut 步行可達", "Walk to UPenn from 4211 Chestnut") },
+      { time: bi("上午", "Morning"), activity: bi("Locust Walk、College Hall 外觀、Fisher Fine Arts Library 外觀", "Locust Walk, College Hall facade, Fisher Fine Arts Library facade") },
+      { time: "12:30", activity: bi("University City 用餐", "Lunch in University City") },
+      { time: "14:00-17:00", activity: bi("Philadelphia Museum of Art 外觀、Rocky Steps、Schuylkill River", "Philadelphia Museum of Art facade, Rocky Steps, Schuylkill River") },
+      { time: bi("傍晚", "Evening"), activity: bi("Rittenhouse Square 散步，於 Reading Terminal Market 採買晚餐", "Stroll Rittenhouse Square; pick up dinner at Reading Terminal Market") },
+      { time: "20:00", activity: bi("回 4211 Suites，準備隔天 DC", "Return to 4211 Suites and prep for DC") },
+    ],
+    notes: [
+      bi("5/2 American Dream 拉長至晚上才入住，5/3 必須晚啟動。", "Because the American Dream stop pushes May 2 check-in late, May 3 must start later."),
+      bi("若特別想看自由鐘，可從 Reading Terminal Market 步行 10 分鐘到 Liberty Bell 外觀（不入內）。", "For Liberty Bell fans, the bell is a 10-minute walk from Reading Terminal Market; view the exterior only."),
+      bi("Independence Hall、Liberty Bell、Old City 不建議同日加排，體力會被透支。", "Adding Independence Hall, Liberty Bell, and Old City the same day will exhaust the group."),
+    ],
+    locations: [
+      { name: bi("UPenn Locust Walk", "UPenn Locust Walk"), addr: "Locust Walk, Philadelphia, PA 19104" },
+      { name: bi("College Hall", "College Hall"), addr: "3451 Walnut St, Philadelphia, PA 19104" },
+      { name: bi("Fisher Fine Arts Library", "Fisher Fine Arts Library"), addr: "220 S 34th St, Philadelphia, PA 19104" },
+      { name: bi("Philadelphia Museum of Art", "Philadelphia Museum of Art"), addr: "2600 Benjamin Franklin Pkwy, Philadelphia, PA 19130" },
+      { name: bi("Rittenhouse Square", "Rittenhouse Square"), addr: "1800 Walnut St, Philadelphia, PA 19103" },
+      { name: bi("Reading Terminal Market", "Reading Terminal Market"), addr: "1136 Arch St, Philadelphia, PA 19107" },
+      { name: bi("Liberty Bell Center", "Liberty Bell Center"), addr: "526 Market St, Philadelphia, PA 19106" },
+    ],
+  },
+  {
+    id: "0504",
+    date: "5/4",
+    weekday: { zh: "週一", en: "Mon" },
+    cityKey: "dc",
+    city: bi("DC 一日往返", "DC Day Trip"),
+    title: bi("華盛頓特區一日遊", "Washington, DC day trip"),
+    subtitle: bi("全程最高體力日，您必須主開", "Highest-intensity day; you must drive"),
+    icon: Landmark,
+    intensity: "peak",
+    timeline: [
+      { time: "06:30", activity: bi("起床、早餐", "Wake up, breakfast") },
+      { time: "07:00", activity: bi("從費城出發", "Depart Philadelphia") },
+      { time: "10:00-10:30", activity: bi("抵達 DC，停 L'Enfant Plaza 或 Reagan Building 停車庫，每日約 25 至 30 美元", "Arrive in DC; park at L'Enfant Plaza or Reagan Building garage, $25–30 per day") },
+      { time: "10:30-12:00", activity: bi("U.S. Capitol 外觀、National Mall 東段步行", "U.S. Capitol facade, walk eastern National Mall") },
+      { time: "12:00-13:00", activity: bi("Smithsonian 區域用餐（Mitsitam Native Foods Cafe 或 Pavilion Cafe）", "Lunch in Smithsonian area (Mitsitam Native Foods Cafe or Pavilion Cafe)") },
+      { time: "13:00-15:30", activity: bi("Washington Monument 外觀、WWII Memorial、Lincoln Memorial（沿 Reflecting Pool 步行）", "Washington Monument facade, WWII Memorial, Lincoln Memorial along the Reflecting Pool") },
+      { time: "15:30-16:30", activity: bi("依體力進 Air & Space Museum 或 American History Museum，待 1 小時，或於咖啡店休息", "Energy permitting, visit Air & Space Museum or American History Museum for an hour, or rest at a cafe") },
+      { time: "17:00", activity: bi("回停車庫取車", "Return to parking garage") },
+      { time: "20:00-21:00", activity: bi("回到費城，4211 Suites 附近輕鬆晚餐", "Back in Philadelphia; casual dinner near 4211 Suites") },
     ],
     rules: [
-      { zh: "大型包、後背包、超過 12 × 12 × 6 英寸的包不得入場。", en: "Large bags, backpacks, and bags over 12 × 12 × 6 inches are prohibited." },
-      { zh: "可攜帶 1 瓶未開封 16 oz 清水。", en: "One sealed 16 oz water bottle is permitted." },
-      { zh: "所有人需接受安檢。", en: "All attendees are subject to security screening." },
-      { zh: "此日不安排觀光，典禮、拍照、午餐、休息即可。", en: "No sightseeing should be added this day. Ceremony, photos, lunch, and rest are enough." },
+      bi("只停一次車", "Park only once"),
+      bi("不去 Georgetown", "Skip Georgetown"),
+      bi("不去 Arlington Cemetery", "Skip Arlington Cemetery"),
+      bi("不排白宮（要繞路且只能遠看）", "Skip the White House (detour required, distant view only)"),
+      bi("Smithsonian 只挑一館，待 1 小時", "Choose one Smithsonian museum, one hour maximum"),
+      bi("步數壓在 8,500 至 9,500，不能用滿 12,000 上限", "Hold step count to 8,500 to 9,500; do not push to the 12,000 ceiling"),
     ],
-    maps: [
-      { label: { zh: "Fenway Park", en: "Fenway Park" }, url: mapSearch(addresses.fenway) },
-      { label: { zh: "Gate B 與 Van Ness Street", en: "Gate B and Van Ness Street" }, url: mapSearch("Fenway Park Gate B Van Ness Street Boston MA") },
-      { label: { zh: "飯店至 Fenway", en: "Hotel to Fenway" }, url: mapDirections(addresses.bostonHotel, addresses.fenway) },
+    costAnalysis: {
+      title: bi("自駕對比 Amtrak 真實成本", "Driving vs Amtrak: actual cost"),
+      items: [
+        { label: bi("自駕：停車費、油錢、過路費合計", "Driving: parking, fuel, tolls"), value: bi("約 90 美元", "About $90") },
+        { label: bi("Amtrak：兩人來回 Northeast Regional", "Amtrak: two round-trip Northeast Regional tickets"), value: bi("約 200 美元", "About $200") },
+        { label: bi("加上駕駛疲勞與時間", "Add driver fatigue and time"), value: bi("差距並不大", "Difference is modest") },
+      ],
+    },
+    warnings: [
+      { title: bi("National Mall 路邊停車多有 3 小時時限", "Mall street parking is capped at 3 hours"), body: bi("不能依賴路邊停整天，請直接停固定停車庫。", "Street parking will not last all day; use a paid garage from the start.") },
+      { title: bi("I-95 過路費密集", "I-95 has heavy tolls"), body: bi("Delaware Memorial Bridge、Maryland JFK Highway、其他 I-95 段，建議啟用 Avis E-Toll Unlimited。", "Delaware Memorial Bridge, Maryland JFK Highway, and other I-95 segments. Activate Avis E-Toll Unlimited.") },
+    ],
+    locations: [
+      { name: bi("U.S. Capitol", "U.S. Capitol"), addr: "First St SE, Washington, DC 20004" },
+      { name: bi("L'Enfant Plaza Parking", "L'Enfant Plaza Parking"), addr: "470 L'Enfant Plaza SW, Washington, DC 20024" },
+      { name: bi("Washington Monument", "Washington Monument"), addr: "2 15th St NW, Washington, DC 20024" },
+      { name: bi("WWII Memorial", "WWII Memorial"), addr: "1750 Independence Ave SW, Washington, DC 20024" },
+      { name: bi("Lincoln Memorial", "Lincoln Memorial"), addr: "2 Lincoln Memorial Cir NW, Washington, DC 20002" },
+      { name: bi("National Air and Space Museum", "National Air and Space Museum"), addr: "600 Independence Ave SW, Washington, DC 20560" },
+      { name: bi("National Museum of American History", "National Museum of American History"), addr: "1300 Constitution Ave NW, Washington, DC 20560" },
     ],
   },
   {
-    key: "dmsb",
-    logo: "DMSB",
-    tone: "plum",
-    title: { zh: "第二場：D’Amore-McKim Graduate Celebration", en: "Ceremony 2: D’Amore-McKim Graduate Celebration" },
-    date: { zh: "2026 年 4 月 30 日，星期四", en: "Thursday, April 30, 2026" },
-    time: { zh: "晚上 6:00 開始", en: "6:00 PM start" },
-    venue: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" },
-    address: addresses.leader,
-    duration: { zh: "約 2 小時，視學院規模可能接近 3 小時", en: "About 2 hours, but some college celebrations may approach 3 hours depending on size" },
-    weather: { zh: "戶外帳棚場地，Seaport 晚上有風，需帶外套。", en: "Outdoor tented venue. Bring a jacket for Seaport evening wind." },
-    graduate: [
-      { zh: "畢業生應在典禮前 90 分鐘抵達，也就是下午 4:30。", en: "Graduates should arrive 90 minutes early, at 4:30 PM." },
-      { zh: "畢業生入口在 Harborwalk，Main Entrance 左側遠端。", en: "Graduate lineup is on Harborwalk, far left of the Main Entrance." },
-      { zh: "必須穿著 regalia。若同時參加大典，需保留完整畢業服。", en: "Regalia is required. Keep full regalia if also attending university commencement." },
-      { zh: "畢業生強烈建議不要攜帶個人物品。", en: "Graduates are strongly encouraged not to bring personal items." },
+    id: "0505",
+    date: "5/5",
+    weekday: { zh: "週二", en: "Tue" },
+    cityKey: "transit",
+    city: bi("費城 → 紐約", "Philadelphia → New York"),
+    title: bi("還車、鐵路進城、您回波士頓", "Drop-off, train to NYC, your return to Boston"),
+    subtitle: bi("交接日，最重要的一天", "Handover day; the most important transition"),
+    icon: Train,
+    intensity: "mid",
+    timeline: [
+      { time: "09:00", activity: bi("4211 Suites 退房，全家上車", "Check out of 4211 Suites; everyone in the car") },
+      { time: "09:15", activity: bi("抵達 30th Street Station，卸下家屬與行李", "Arrive at 30th Street Station; drop off family and luggage") },
+      { time: "09:15-09:30", activity: bi("家屬於大廳候車區（有座位、冷氣、洗手間）", "Family waits in the main hall (seating, air conditioning, restrooms)") },
+      { time: "09:30-09:45", activity: bi("您單獨開車至 J5D（1324 Arch St），1.2 英里、7 分鐘", "Drive solo to J5D (1324 Arch St), 1.2 miles, 7 minutes") },
+      { time: "09:45-10:15", activity: bi("J5D 還車手續：油表、里程、損傷確認", "J5D drop-off: fuel level, mileage, damage check") },
+      { time: "10:15-10:30", activity: bi("Uber 從 J5D 回 30th Street Station，約 12 至 18 美元", "Uber from J5D back to 30th Street Station, $12 to $18") },
+      { time: "11:00-12:00", activity: bi("全員搭 Amtrak Northeast Regional 至 New York Penn Station", "Whole party boards Amtrak Northeast Regional to New York Penn Station") },
+      { time: bi("下午", "Afternoon"), activity: bi("陪家屬到紐約飯店辦理入住", "Accompany family to the New York hotel for check-in") },
+      { time: bi("傍晚", "Evening"), activity: bi("您搭 Amtrak 回波士頓", "You take Amtrak back to Boston") },
+      { time: bi("晚上", "Night"), activity: bi("家屬於飯店附近輕鬆晚餐，不排遠景點", "Family has dinner near the hotel; no further sightseeing") },
     ],
-    guests: [
-      { zh: "來賓應在典禮前 60 分鐘抵達，也就是下午 5:00。", en: "Guests should arrive 60 minutes early, at 5:00 PM." },
-      { zh: "每位畢業生可領最多 4 張 college celebration 來賓票。", en: "Each graduate may claim up to 4 college celebration guest tickets." },
-      { zh: "票券為 general admission，座位先到先坐。", en: "Seating is ticketed general admission and first come, first served." },
-      { zh: "Bag Check 位於主入口外，每件 5 美元。", en: "Bag Check is outside the main gates for $5 per item." },
+    criticalActions: [
+      bi("確認家屬手機網路可用（漫遊或 eSIM）", "Confirm family phones have working data (roaming or eSIM)"),
+      bi("拍候車區照片給家屬，告知具體位置", "Photograph the waiting area and show family the exact spot"),
+      bi("約定固定碰面點，建議 Amtrak 出發看板下方", "Agree on a fixed meeting point, ideally beneath the Amtrak departure board"),
+      bi("車站手推車可租用，避免家屬搬重物", "Station luggage carts are available; do not let family carry heavy bags"),
+      bi("備份紐約飯店地址、Penn Station 至飯店 Uber 路線、5/11 機場備忘", "Have a backup of the NYC hotel address, Uber route from Penn Station, and a May 11 airport reminder"),
+      bi("緊急聯絡卡：您的手機、波士頓飯店、Northeastern 緊急聯絡", "Emergency card: your mobile, Boston hotel, and Northeastern emergency line"),
     ],
-    rules: [
-      { zh: "Leader Bank Pavilion 地址是 290 Northern Avenue，不是附近的 Leader Bank Seaport branch。", en: "Use 290 Northern Avenue. It is not the nearby Leader Bank Seaport branch." },
-      { zh: "包包尺寸上限為 12 × 12 × 6 英寸。大於 6 × 9 英寸的非透明包亦可能不被接受。", en: "Bag size limit is 12 × 12 × 6 inches. Non-clear bags larger than 6 × 9 inches may also be restricted." },
-      { zh: "場館沒有現場停車。建議 Uber 或預留大量交通時間。", en: "There is no on-site parking. Use rideshare or build a large traffic buffer." },
-      { zh: "不准攜帶外食飲料，例外為 1 瓶未開封 16 oz 清水。", en: "Outside food and beverages are prohibited except one sealed 16 oz water bottle." },
+    warnings: [
+      { title: bi("LIRR 名稱誤解", "LIRR confusion"), body: bi("Long Island Rail Road 不開到費城。費城至紐約是 Amtrak Northeast Regional，到 Penn Station 或 Moynihan Train Hall。", "LIRR does not run to Philadelphia. The Philadelphia to New York leg is Amtrak Northeast Regional, terminating at Penn Station / Moynihan Train Hall.") },
+      { title: bi("J5D 不提供 after-hours returns", "J5D has no after-hours return"), body: bi("5/5 星期二營業時間 07:00 至 19:00，請務必在這區間內還車。", "Tuesday May 5 hours are 7 AM to 7 PM. Return within this window.") },
     ],
-    maps: [
-      { label: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" }, url: mapSearch(addresses.leader) },
-      { label: { zh: "東北大學至 Leader Bank Pavilion", en: "Northeastern to Leader Bank Pavilion" }, url: mapDirections(addresses.northeastern, addresses.leader) },
-      { label: { zh: "飯店至 Leader Bank Pavilion", en: "Hotel to Leader Bank Pavilion" }, url: mapDirections(addresses.bostonHotel, addresses.leader) },
+    locations: [
+      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104" },
+      { name: bi("30th Street Station（Amtrak）", "30th Street Station (Amtrak)"), addr: "2955 Market St, Philadelphia, PA 19104" },
+      { name: bi("Avis Convention Center Parking（J5D）", "Avis Convention Center Parking (J5D)"), addr: "1324 Arch St, Philadelphia, PA 19107" },
+      { name: bi("New York Penn Station／Moynihan Train Hall", "New York Penn Station / Moynihan Train Hall"), addr: "Moynihan Train Hall, 421 8th Ave, New York, NY 10001" },
     ],
+  },
+  {
+    id: "0506",
+    date: "5/6",
+    weekday: { zh: "週三", en: "Wed" },
+    cityKey: "ny",
+    city: bi("紐約", "New York"),
+    title: bi("中城經典", "Midtown Classics"),
+    subtitle: bi("待住宿確認後排序，原則為單區域單日", "Sequence pending hotel address; one borough per day"),
+    icon: Building2,
+    intensity: "mid",
+    pendingInfo: true,
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("Times Square、Bryant Park", "Times Square, Bryant Park") },
+      { time: bi("中午", "Midday"), activity: bi("中城用餐", "Midtown lunch") },
+      { time: bi("下午", "Afternoon"), activity: bi("New York Public Library、Grand Central Terminal", "New York Public Library, Grand Central Terminal") },
+      { time: bi("傍晚", "Evening"), activity: bi("Rockefeller Center、St. Patrick's Cathedral、Fifth Avenue", "Rockefeller Center, St. Patrick's Cathedral, Fifth Avenue") },
+      { time: bi("晚上", "Night"), activity: bi("Top of the Rock 或 Summit One Vanderbilt 二選一", "Top of the Rock or Summit One Vanderbilt") },
+    ],
+    notes: [bi("每天只做一個大區域。地鐵轉乘判斷比景點本身更耗精神。", "One major area per day. Subway navigation is more draining than the sights themselves.")],
+    locations: [
+      { name: bi("Times Square", "Times Square"), addr: "Manhattan, NY 10036" },
+      { name: bi("Bryant Park", "Bryant Park"), addr: "Manhattan, NY 10018" },
+      { name: bi("New York Public Library", "New York Public Library"), addr: "476 5th Ave, New York, NY 10018" },
+      { name: bi("Grand Central Terminal", "Grand Central Terminal"), addr: "89 E 42nd St, New York, NY 10017" },
+      { name: bi("Rockefeller Center", "Rockefeller Center"), addr: "45 Rockefeller Plaza, New York, NY 10111" },
+    ],
+  },
+  {
+    id: "0507",
+    date: "5/7",
+    weekday: { zh: "週四", en: "Thu" },
+    cityKey: "ny",
+    city: bi("紐約", "New York"),
+    title: bi("下曼哈頓", "Lower Manhattan"),
+    subtitle: bi("步數較高的一天，安排在中段", "Higher step day; place mid-trip"),
+    icon: Building2,
+    intensity: "high",
+    pendingInfo: true,
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("Wall Street、9/11 Memorial、Oculus", "Wall Street, 9/11 Memorial, Oculus") },
+      { time: bi("中午", "Midday"), activity: bi("金融區用餐", "Financial District lunch") },
+      { time: bi("下午", "Afternoon"), activity: bi("Battery Park、搭免費 Staten Island Ferry 遠望自由女神", "Battery Park; take the free Staten Island Ferry for distant Statue of Liberty views") },
+      { time: bi("傍晚", "Evening"), activity: bi("依體力進 Chinatown 或 SoHo", "Chinatown or SoHo, energy permitting") },
+    ],
+    notes: [bi("這是步數較高的一天，建議放在中段，不要 Day 1 也不要最後一天。", "This is a high-step day. Place it mid-trip, not Day 1 or the final day.")],
+    locations: [
+      { name: bi("9/11 Memorial 與 Museum", "9/11 Memorial & Museum"), addr: "180 Greenwich St, New York, NY 10007" },
+      { name: bi("Oculus（WTC 交通樞紐）", "Oculus (WTC Transportation Hub)"), addr: "33-34 Vesey St, New York, NY 10006" },
+      { name: bi("Wall Street 與 NYSE", "Wall Street / NYSE"), addr: "11 Wall St, New York, NY 10005" },
+      { name: bi("Battery Park", "Battery Park"), addr: "Battery Pl, New York, NY 10004" },
+      { name: bi("Staten Island Ferry Whitehall Terminal", "Staten Island Ferry Whitehall Terminal"), addr: "4 Whitehall St, New York, NY 10004" },
+    ],
+  },
+  {
+    id: "0508",
+    date: "5/8",
+    weekday: { zh: "週五", en: "Fri" },
+    cityKey: "ny",
+    city: bi("紐約", "New York"),
+    title: bi("中央公園與博物館", "Central Park & Museums"),
+    subtitle: bi("Met 與 AMNH 二選一", "Choose between The Met and AMNH"),
+    icon: Trees,
+    intensity: "mid",
+    pendingInfo: true,
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("Central Park 南段（Bethesda Terrace、Bow Bridge、Strawberry Fields）", "Central Park south (Bethesda Terrace, Bow Bridge, Strawberry Fields)") },
+      { time: bi("中午", "Midday"), activity: bi("Upper East Side 用餐", "Upper East Side lunch") },
+      { time: bi("下午", "Afternoon"), activity: bi("The Met 或 American Museum of Natural History 二選一", "The Met or American Museum of Natural History") },
+      { time: bi("傍晚", "Evening"), activity: bi("Lincoln Center 與 Columbus Circle", "Lincoln Center and Columbus Circle") },
+    ],
+    notes: [bi("The Met 與 AMNH 都是大館，二選一，不要硬塞兩個。", "Both museums are massive. Pick one; do not attempt both.")],
+    locations: [
+      { name: bi("Central Park（南入口）", "Central Park (south entrance)"), addr: "Central Park S, New York, NY 10019" },
+      { name: bi("The Metropolitan Museum of Art", "The Metropolitan Museum of Art"), addr: "1000 5th Ave, New York, NY 10028" },
+      { name: bi("American Museum of Natural History", "American Museum of Natural History"), addr: "200 Central Park West, New York, NY 10024" },
+      { name: bi("Lincoln Center", "Lincoln Center"), addr: "10 Lincoln Center Plaza, New York, NY 10023" },
+    ],
+  },
+  {
+    id: "0509",
+    date: "5/9",
+    weekday: { zh: "週六", en: "Sat" },
+    cityKey: "ny",
+    city: bi("紐約", "New York"),
+    title: bi("布魯克林", "Brooklyn"),
+    subtitle: bi("DUMBO 與布魯克林大橋", "DUMBO and Brooklyn Bridge"),
+    icon: Building,
+    intensity: "high",
+    pendingInfo: true,
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("搭地鐵至 DUMBO", "Subway to DUMBO") },
+      { time: bi("中午", "Midday"), activity: bi("布魯克林用餐", "Brooklyn lunch") },
+      { time: bi("下午", "Afternoon"), activity: bi("Brooklyn Bridge Park、走 Brooklyn Bridge 回曼哈頓", "Brooklyn Bridge Park; walk Brooklyn Bridge back to Manhattan") },
+      { time: bi("傍晚", "Evening"), activity: bi("回飯店休息", "Return to hotel") },
+    ],
+    notes: [bi("Brooklyn Bridge 步行較長且陽光直曬，建議備帽子與水。", "The Brooklyn Bridge walk is long and sunny; bring a hat and water.")],
+    locations: [
+      { name: "DUMBO", addr: "DUMBO, Brooklyn, NY 11201" },
+      { name: bi("Brooklyn Bridge Park", "Brooklyn Bridge Park"), addr: "334 Furman St, Brooklyn, NY 11201" },
+      { name: bi("Brooklyn Bridge（布魯克林側）", "Brooklyn Bridge (Brooklyn Side)"), addr: "Brooklyn Bridge, New York, NY 10038" },
+    ],
+  },
+  {
+    id: "0510",
+    date: "5/10",
+    weekday: { zh: "週日", en: "Sun" },
+    cityKey: "ny",
+    city: bi("紐約", "New York"),
+    title: bi("SoHo、Chelsea 與緩衝", "SoHo, Chelsea & Buffer"),
+    subtitle: bi("最後緩衝日，不排太多", "Final buffer day; keep it light"),
+    icon: ShoppingBag,
+    intensity: "low",
+    pendingInfo: true,
+    timeline: [
+      { time: bi("上午", "Morning"), activity: bi("SoHo 精品街", "SoHo boutiques") },
+      { time: bi("中午", "Midday"), activity: bi("Chelsea Market 用餐", "Lunch at Chelsea Market") },
+      { time: bi("下午", "Afternoon"), activity: bi("High Line 散步", "Walk the High Line") },
+      { time: bi("傍晚", "Evening"), activity: bi("整理行李，最後晚餐", "Pack and have a final dinner") },
+    ],
+    notes: [bi("最後緩衝日，不要排太多景點，預留時間整理行李。", "Final buffer day. Do not overschedule; leave time to pack.")],
+    locations: [
+      { name: "SoHo", addr: "SoHo, New York, NY 10012" },
+      { name: bi("Chelsea Market", "Chelsea Market"), addr: "75 9th Ave, New York, NY 10011" },
+      { name: bi("The High Line", "The High Line"), addr: "The High Line, New York, NY 10011" },
+    ],
+  },
+  {
+    id: "0511",
+    date: "5/11",
+    weekday: { zh: "週一", en: "Mon" },
+    cityKey: "ny",
+    city: bi("紐約 → 香港", "New York → Hong Kong"),
+    title: bi("離境日", "Departure"),
+    subtitle: bi("依航班時間，待確認", "Pending flight details"),
+    icon: Plane,
+    intensity: "mid",
+    pendingInfo: true,
+    notes: [
+      bi("依機場（JFK／EWR／LGA）與航班時間決定起床時間。", "Wake-up time depends on the airport (JFK / EWR / LGA) and flight."),
+      bi("國際線建議起飛前 3 小時抵達機場。", "International flights: arrive 3 hours before departure."),
+      bi("曼哈頓至 JFK：Uber 60 至 90 分鐘，AirTrain 加 LIRR 約 60 分鐘。", "Manhattan to JFK: Uber 60 to 90 minutes, or AirTrain plus LIRR about 60 minutes."),
+      bi("曼哈頓至 EWR：Uber 45 至 75 分鐘，NJ Transit 約 45 分鐘。", "Manhattan to EWR: Uber 45 to 75 minutes, or NJ Transit about 45 minutes."),
+      bi("曼哈頓至 LGA：Uber 30 至 60 分鐘。", "Manhattan to LGA: Uber 30 to 60 minutes."),
+    ],
+    locations: [],
   },
 ];
 
-const dailyPlans = [
+// =============================================================================
+// HOTELS, AVIS, DINING
+// =============================================================================
+
+const hotels = [
   {
-    id: "d0426",
-    filter: "boston",
-    date: { zh: "4/26 星期日", en: "Sun Apr 26" },
-    city: { zh: "波士頓", en: "Boston" },
-    title: { zh: "抵達與恢復日", en: "Arrival and recovery day" },
-    intensity: { zh: "低", en: "Low" },
-    status: { zh: "不安排正式觀光", en: "No formal sightseeing" },
-    theme: {
-      zh: "媽媽與妹妹經香港、臺北、西雅圖抵達波士頓，疲勞與時差是主風險。這天只能做最低限度活動。",
-      en: "Mother and sister arrive after a long HKG, Taipei, Seattle, Boston routing. Fatigue and jet lag are the main risks. Keep the day minimal.",
-    },
-    steps: [
-      { time: "07:12", icon: "plane", zh: "預計抵達 Boston Logan Airport。", en: "Expected arrival at Boston Logan Airport." },
-      { time: "08:30 至 09:30", icon: "car", zh: "出關、領行李後 Uber 至 The Revolution Hotel。", en: "Immigration, baggage claim, then Uber to The Revolution Hotel." },
-      { time: "09:30 至 11:00", icon: "coffee", zh: "飯店寄放行李，附近 Tatte 或同級早餐、早午餐。", en: "Leave luggage at the hotel. Breakfast or brunch at Tatte or similar." },
-      { time: "11:00 至 14:00", icon: "map", zh: "若精神尚可，只在 Boston Common 或 Public Garden 坐著休息與短走，不超過 1 小時主動步行。", en: "If energy allows, sit and take a very short walk at Boston Common or Public Garden. Keep active walking under 1 hour." },
-      { time: "15:00", icon: "hotel", zh: "標準入住後休息 2 至 3 小時。", en: "Check in and rest for 2 to 3 hours." },
-      { time: "18:30 至 19:30", icon: "food", zh: "Chipotle 或飯店附近簡餐。這是體驗型快速餐，不是正式晚餐。", en: "Chipotle or a simple meal near the hotel. This is a casual experience, not a formal dinner." },
-      { time: "20:00 後", icon: "clock", zh: "回飯店早睡。", en: "Return to hotel and sleep early." },
-    ],
-    avoid: [
-      { zh: "不要排 Freedom Trail。", en: "Do not schedule Freedom Trail." },
-      { zh: "不要排 Harvard 或博物館。", en: "Do not schedule Harvard or museums." },
-      { zh: "不要用 Newbury Street 或 Trader Joe's 消耗體力。", en: "Do not spend energy on Newbury Street or Trader Joe's." },
-    ],
-    maps: [
-      { label: { zh: "The Revolution Hotel", en: "The Revolution Hotel" }, url: mapSearch(addresses.bostonHotel) },
-      { label: { zh: "Tatte Tremont 附近", en: "Tatte near Tremont" }, url: mapSearch("Tatte Bakery Cafe Tremont Boston MA") },
-      { label: { zh: "Boston Public Garden", en: "Boston Public Garden" }, url: mapSearch("Boston Public Garden Boston MA") },
-      { label: { zh: "Chipotle Park Plaza", en: "Chipotle Park Plaza" }, url: mapSearch("Chipotle 8 Park Plaza Boston MA") },
-    ],
+    name: "The Revolution Hotel",
+    nameZh: bi("The Revolution Hotel", "The Revolution Hotel"),
+    nights: bi("4/26 至 5/2，六晚", "April 26 to May 2, 6 nights"),
+    addr: "40 Berkeley St, Boston, MA 02116",
+    note: bi("位於 Back Bay 與南端交界，距離 Avis BO4 取車點 0.4 英里。", "On the Back Bay / South End border, 0.4 miles from Avis BO4 pickup."),
   },
   {
-    id: "d0427",
-    filter: "boston",
-    date: { zh: "4/27 星期一", en: "Mon Apr 27" },
-    city: { zh: "波士頓", en: "Boston" },
-    title: { zh: "自由之路精簡段與 North End", en: "Concise Freedom Trail and North End" },
-    intensity: { zh: "中", en: "Medium" },
-    status: { zh: "歷史核心日", en: "Historic Boston day" },
-    theme: {
-      zh: "從住宿區往北推進，串連 Boston Common、Beacon Hill、Downtown、North End，不硬走到 Charlestown。",
-      en: "Move north from the hotel area through Boston Common, Beacon Hill, Downtown, and North End without forcing the full Charlestown extension.",
-    },
-    steps: [
-      { time: "上午", icon: "landmark", zh: "Tatte 早餐後，Boston Common、Massachusetts State House 外觀、Beacon Hill、Granary Burying Ground。", en: "After Tatte breakfast, visit Boston Common, Massachusetts State House exterior, Beacon Hill, and Granary Burying Ground." },
-      { time: "中午", icon: "food", zh: "Faneuil Hall 或 Quincy Market 午餐與休息。", en: "Lunch and rest at Faneuil Hall or Quincy Market." },
-      { time: "下午", icon: "map", zh: "Old State House、Paul Revere House 外觀，慢慢進 North End。", en: "Old State House, Paul Revere House exterior, then slow walk into North End." },
-      { time: "17:30 目標", icon: "food", zh: "The Daily Catch North End。North End 店為 first come, first serve，且 Gift Cards 與 Cash Only。", en: "The Daily Catch North End. The North End location is first come, first serve, and accepts gift cards and cash only." },
-      { time: "晚餐後", icon: "bag", zh: "Mike's Pastry 外帶，不單獨為甜點跨區。", en: "Mike's Pastry takeaway. Do not make a separate cross-town dessert trip." },
-    ],
-    avoid: [
-      { zh: "不要把 USS Constitution 放在星期一。", en: "Do not put USS Constitution on Monday." },
-      { zh: "若時差仍明顯，不走完整 Freedom Trail。", en: "Do not complete the full Freedom Trail if jet lag remains strong." },
-    ],
-    maps: [
-      { label: { zh: "Boston Common", en: "Boston Common" }, url: mapSearch("Boston Common Boston MA") },
-      { label: { zh: "Massachusetts State House", en: "Massachusetts State House" }, url: mapSearch("Massachusetts State House Boston MA") },
-      { label: { zh: "Faneuil Hall", en: "Faneuil Hall" }, url: mapSearch("Faneuil Hall Boston MA") },
-      { label: { zh: "Paul Revere House", en: "Paul Revere House" }, url: mapSearch("Paul Revere House Boston MA") },
-      { label: { zh: "The Daily Catch North End", en: "The Daily Catch North End" }, url: mapSearch("The Daily Catch North End 323 Hanover St Boston MA") },
-      { label: { zh: "Mike's Pastry", en: "Mike's Pastry" }, url: mapSearch("Mike's Pastry 300 Hanover St Boston MA") },
-    ],
+    name: "4211 Suites",
+    nameZh: bi("4211 套房", "4211 Suites"),
+    nights: bi("5/2 至 5/5，三晚", "May 2 to May 5, 3 nights"),
+    addr: "4211 Chestnut St, Philadelphia, PA 19104",
+    rating: "8.2/10",
+    note: bi("位於 University City，距 UPenn 約 1.3 公里；務必確認停車費與是否需事先預約。", "In University City, 1.3 km from UPenn. Confirm parking fees and whether reservation is required."),
   },
   {
-    id: "d0428",
-    filter: "boston",
-    date: { zh: "4/28 星期二", en: "Tue Apr 28" },
-    city: { zh: "Cambridge", en: "Cambridge" },
-    title: { zh: "Harvard 校園與一間博物館", en: "Harvard campus and one museum" },
-    intensity: { zh: "中", en: "Medium" },
-    status: { zh: "Cambridge 獨立成日", en: "Cambridge as one cluster" },
-    theme: {
-      zh: "Harvard 區域獨立完成，不與波士頓市中心或 North End 混排。博物館只選一條主線。",
-      en: "Treat Harvard as its own day. Do not mix it with Downtown Boston or North End. Choose one museum track only.",
-    },
-    steps: [
-      { time: "上午", icon: "train", zh: "搭 Uber 或 MBTA Red Line 至 Harvard Square。", en: "Take Uber or MBTA Red Line to Harvard Square." },
-      { time: "上午", icon: "graduation", zh: "Harvard Yard、John Harvard Statue、Widener Library 外觀與校園拍照。", en: "Harvard Yard, John Harvard Statue, Widener Library exterior, and campus photos." },
-      { time: "中午", icon: "food", zh: "Harvard Square 午餐，選可坐下休息的店。", en: "Lunch in Harvard Square, preferably a seated option." },
-      { time: "下午", icon: "museum", zh: "二選一：Harvard Art Museums，或 Harvard Museum of Natural History 搭配 Peabody Museum 輕量參觀。", en: "Choose one: Harvard Art Museums, or Harvard Museum of Natural History with a light Peabody pairing." },
-      { time: "傍晚", icon: "map", zh: "若體力足夠，可在 Weeks Footbridge 或 Charles River Cambridge 側短走。", en: "If energy remains, take a short walk near Weeks Footbridge or the Cambridge side of the Charles River." },
-      { time: "晚上", icon: "car", zh: "回波士頓飯店附近輕鬆吃。", en: "Return to Boston and eat near the hotel." },
-    ],
-    avoid: [
-      { zh: "不要同日完整逛兩條博物館主線。", en: "Do not fully complete both museum tracks on the same day." },
-      { zh: "不要加 MIT、North End 或 Back Bay 購物。", en: "Do not add MIT, North End, or Back Bay shopping." },
-    ],
-    maps: [
-      { label: { zh: "Harvard Square", en: "Harvard Square" }, url: mapSearch("Harvard Square Cambridge MA") },
-      { label: { zh: "Harvard Yard", en: "Harvard Yard" }, url: mapSearch("Harvard Yard Cambridge MA") },
-      { label: { zh: "Harvard Art Museums", en: "Harvard Art Museums" }, url: mapSearch("Harvard Art Museums 32 Quincy St Cambridge MA") },
-      { label: { zh: "Harvard Museum of Natural History", en: "Harvard Museum of Natural History" }, url: mapSearch("Harvard Museum of Natural History 26 Oxford St Cambridge MA") },
-      { label: { zh: "Weeks Footbridge", en: "Weeks Footbridge" }, url: mapSearch("Weeks Footbridge Cambridge MA") },
-    ],
-  },
-  {
-    id: "d0429",
-    filter: "ceremonies",
-    date: { zh: "4/29 星期三", en: "Wed Apr 29" },
-    city: { zh: "波士頓", en: "Boston" },
-    title: { zh: "第一場畢業典禮：Fenway Park", en: "Ceremony 1 at Fenway Park" },
-    intensity: { zh: "中高", en: "Medium high" },
-    status: { zh: "典禮優先", en: "Ceremony first" },
-    theme: {
-      zh: "這天只服務畢業典禮。等待、入場、安檢、隊伍、拍照與散場本身就會消耗體力。",
-      en: "This day serves the ceremony only. Waiting, entry, security, procession, photos, and exit will already consume energy.",
-    },
-    steps: [
-      { time: "06:30", icon: "shield", zh: "起床、早餐、確認票券、手機電量、cap、gown、hood、alumni pin。", en: "Wake up, breakfast, confirm tickets, phone battery, cap, gown, hood, and alumni pin." },
-      { time: "07:10", icon: "car", zh: "Uber 從 The Revolution Hotel 前往 Fenway Park。", en: "Uber from The Revolution Hotel to Fenway Park." },
-      { time: "07:30 至 07:45", icon: "pin", zh: "抵達 Fenway 附近，畢業生與來賓分流。", en: "Arrive near Fenway and separate graduate and guest flows." },
-      { time: "08:00", icon: "ticket", zh: "畢業生 Gate B 報到，來賓 Gates A、D、E 入場。", en: "Graduate reports at Gate B. Guests enter through Gates A, D, and E." },
-      { time: "08:45", icon: "route", zh: "學生隊伍約開始進場。", en: "Student procession begins around this time." },
-      { time: "10:00", icon: "graduation", zh: "Graduate Commencement 開始。", en: "Graduate Commencement begins." },
-      { time: "中午後", icon: "food", zh: "Fenway 附近簡單午餐後回飯店休息。", en: "Simple lunch near Fenway, then return to hotel to rest." },
-      { time: "晚上", icon: "food", zh: "Back Bay 或 South End 慶祝晚餐，不跑太遠。", en: "Celebration dinner in Back Bay or South End. Keep it close." },
-    ],
-    avoid: [
-      { zh: "不要排 Freedom Trail。", en: "Do not schedule Freedom Trail." },
-      { zh: "不要排 Harvard。", en: "Do not schedule Harvard." },
-      { zh: "不要安排遠距離晚餐。", en: "Do not book a distant dinner." },
-    ],
-    maps: [
-      { label: { zh: "Fenway Park", en: "Fenway Park" }, url: mapSearch(addresses.fenway) },
-      { label: { zh: "飯店至 Fenway", en: "Hotel to Fenway" }, url: mapDirections(addresses.bostonHotel, addresses.fenway) },
-      { label: { zh: "Gate B 位置搜尋", en: "Gate B location search" }, url: mapSearch("Fenway Park Gate B Van Ness Street Boston MA") },
-    ],
-  },
-  {
-    id: "d0430",
-    filter: "ceremonies",
-    date: { zh: "4/30 星期四", en: "Thu Apr 30" },
-    city: { zh: "波士頓", en: "Boston" },
-    title: { zh: "Northeastern 校園與 D’Amore-McKim Celebration", en: "Northeastern campus and D’Amore-McKim Celebration" },
-    intensity: { zh: "中高", en: "Medium high" },
-    status: { zh: "校園拍照加晚間典禮", en: "Campus photos and evening ceremony" },
-    theme: {
-      zh: "上午拍校園照，下午完整休息，傍晚前往 Seaport。這天的風險是交通、海風、包包尺寸與錯誤 GPS。",
-      en: "Campus photos in the morning, full rest in the afternoon, then Seaport. The risks are traffic, sea wind, bag size, and wrong GPS destination.",
-    },
-    steps: [
-      { time: "上午", icon: "camera", zh: "Northeastern 校園拍照：ISEC、Snell Library、Centennial Common、D’Amore-McKim 相關區域。", en: "Northeastern campus photos: ISEC, Snell Library, Centennial Common, and D’Amore-McKim related areas." },
-      { time: "中午", icon: "food", zh: "校園、Symphony 或 Back Bay 附近午餐，不繞遠。", en: "Lunch near campus, Symphony, or Back Bay. Do not detour far." },
-      { time: "14:00 至 15:30", icon: "hotel", zh: "回飯店休息、整理服裝、票券與小包。", en: "Return to hotel to rest and organize clothing, tickets, and small bag." },
-      { time: "16:00", icon: "car", zh: "Uber 至 Leader Bank Pavilion。不要壓線使用大眾運輸。", en: "Uber to Leader Bank Pavilion. Do not rely on tight public transit timing." },
-      { time: "16:30", icon: "users", zh: "畢業生於 Harborwalk graduate entrance 報到。", en: "Graduate arrival at Harborwalk graduate entrance." },
-      { time: "17:00", icon: "users", zh: "來賓於 Main Entrance 入場。", en: "Guest arrival at Main Entrance." },
-      { time: "18:00", icon: "graduation", zh: "D’Amore-McKim Graduate Celebration 開始。", en: "D’Amore-McKim Graduate Celebration begins." },
-      { time: "20:00 後", icon: "clock", zh: "視體力決定直接回飯店，或在 Seaport 簡單吃。", en: "Depending on energy, return directly or eat a simple dinner in Seaport." },
-    ],
-    avoid: [
-      { zh: "不要帶大包。", en: "Do not bring a large bag." },
-      { zh: "不要把 GPS 設到 Leader Bank Seaport branch。", en: "Do not set GPS to the Leader Bank Seaport branch." },
-      { zh: "不要安排複雜餐廳訂位。", en: "Do not schedule a complicated dinner reservation." },
-    ],
-    maps: [
-      { label: { zh: "Northeastern University", en: "Northeastern University" }, url: mapSearch(addresses.northeastern) },
-      { label: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" }, url: mapSearch(addresses.leader) },
-      { label: { zh: "飯店至 Leader Bank Pavilion", en: "Hotel to Leader Bank Pavilion" }, url: mapDirections(addresses.bostonHotel, addresses.leader) },
-    ],
-  },
-  {
-    id: "d0501",
-    filter: "boston",
-    date: { zh: "5/1 星期五", en: "Fri May 1" },
-    city: { zh: "波士頓", en: "Boston" },
-    title: { zh: "Waterfront、James Hook 與 Charlestown", en: "Waterfront, James Hook, and Charlestown" },
-    intensity: { zh: "中", en: "Medium" },
-    status: { zh: "水岸線精華日", en: "Waterfront day" },
-    theme: {
-      zh: "畢業典禮已結束，這天串 Waterfront、James Hook、Long Wharf、Charlestown、USS Constitution。North End 視體力追加。",
-      en: "After the ceremonies, link Waterfront, James Hook, Long Wharf, Charlestown, and USS Constitution. Add North End only if energy remains.",
-    },
-    steps: [
-      { time: "上午", icon: "map", zh: "二選一短走：Charles River Esplanade 或 Public Garden。不要兩個都做滿。", en: "Choose one short walk: Charles River Esplanade or Public Garden. Do not fully do both." },
-      { time: "中午", icon: "food", zh: "James Hook & Co 午餐。", en: "Lunch at James Hook & Co." },
-      { time: "下午", icon: "ship", zh: "Long Wharf 至 Charlestown Navy Yard。若 ferry 時間不順，可直接 rideshare。", en: "Long Wharf to Charlestown Navy Yard. If ferry timing is poor, use rideshare." },
-      { time: "下午主段", icon: "museum", zh: "USS Constitution 與 USS Constitution Museum。船艦開放時間需出發前再確認。", en: "USS Constitution and USS Constitution Museum. Reconfirm ship hours before departure." },
-      { time: "傍晚", icon: "ship", zh: "返回 Long Wharf 或 North End。", en: "Return toward Long Wharf or North End." },
-      { time: "晚上", icon: "luggage", zh: "若 4/27 未補到 Mike's Pastry，可放這天。否則回飯店整理行李，準備隔天去費城。", en: "If Mike's Pastry was missed on Apr 27, add it here. Otherwise return to pack for Philadelphia." },
-    ],
-    avoid: [
-      { zh: "不要加 Harvard 或大型博物館。", en: "Do not add Harvard or another major museum." },
-      { zh: "不要把購物排成主行程。", en: "Do not turn shopping into the main plan." },
-    ],
-    maps: [
-      { label: { zh: "Charles River Esplanade", en: "Charles River Esplanade" }, url: mapSearch("Charles River Esplanade Boston MA") },
-      { label: { zh: "James Hook & Co", en: "James Hook & Co" }, url: mapSearch("James Hook & Co 440 Atlantic Ave Boston MA") },
-      { label: { zh: "Long Wharf", en: "Long Wharf" }, url: mapSearch("Long Wharf Boston MA") },
-      { label: { zh: "Charlestown Navy Yard", en: "Charlestown Navy Yard" }, url: mapSearch("Charlestown Navy Yard Boston MA") },
-      { label: { zh: "USS Constitution Museum", en: "USS Constitution Museum" }, url: mapSearch("USS Constitution Museum Charlestown MA") },
-    ],
-  },
-  {
-    id: "d0502",
-    filter: "transport",
-    date: { zh: "5/2 星期六", en: "Sat May 2" },
-    city: { zh: "波士頓至 New Jersey 至費城", en: "Boston to New Jersey to Philadelphia" },
-    title: { zh: "租車移動日與 American Dream 限時停靠", en: "Rental car travel day with limited American Dream stop" },
-    intensity: { zh: "高", en: "High" },
-    status: { zh: "移動加購物，不是完整景點日", en: "Travel plus shopping, not a full attraction day" },
-    theme: {
-      zh: "American Dream 可加入，但只能作為午餐與限時購物停靠點。若要這樣走，租車時間必須提早。",
-      en: "American Dream can be included only as a lunch and controlled shopping stop. This requires an early rental pickup.",
-    },
-    steps: [
-      { time: "優先試算", icon: "car", zh: "先試 Boston Back Bay Station Garage 或其他市中心 Avis。人在市中心，不應先預設跑去 BOS。", en: "First test Boston Back Bay Station Garage or another city Avis. Since the family is downtown, BOS should not be the default." },
-      { time: "需要修正", icon: "alert", zh: "目前截圖的 12:00 PM 取車太晚。若保留 American Dream，應改成早上 8:00 或 8:30 左右。", en: "The current 12:00 PM pickup in the screenshot is too late. If American Dream remains, change to around 8:00 or 8:30 AM." },
-      { time: "目標離開", icon: "route", zh: "盡量在上午離開波士頓。", en: "Leave Boston in the morning if possible." },
-      { time: "中午", icon: "bag", zh: "抵達 American Dream。午餐在 mall 內解決。", en: "Arrive at American Dream. Eat lunch inside the mall." },
-      { time: "最多 3 至 3.5 小時", icon: "clock", zh: "只購物，不玩水上樂園、室內滑雪、主題樂園或水族館。", en: "Shopping only. Do not visit the water park, indoor skiing, theme park, or aquarium." },
-      { time: "15:30 左右", icon: "car", zh: "離開 American Dream 前往費城。", en: "Leave American Dream for Philadelphia." },
-      { time: "18:00 至 18:30 目標", icon: "hotel", zh: "抵達 4211 Suites，停車、入住、簡單晚餐。", en: "Arrive at 4211 Suites, park, check in, and have a simple dinner." },
-    ],
-    avoid: [
-      { zh: "若加入 American Dream，就取消 Texas Roadhouse。", en: "If American Dream is included, cancel Texas Roadhouse." },
-      { zh: "不要在停車場打開行李箱整理行李。", en: "Do not open the trunk and reorganize luggage in the parking lot." },
-      { zh: "護照、錢包、電腦與貴重物品隨身帶。", en: "Keep passports, wallets, computers, and valuables with the family." },
-    ],
-    maps: [
-      { label: { zh: "Back Bay Avis", en: "Back Bay Avis" }, url: mapSearch(addresses.backBayAvis) },
-      { label: { zh: "BOS Avis 備案", en: "BOS Avis backup" }, url: mapSearch(addresses.loganAvis) },
-      { label: { zh: "The Revolution Hotel 至 American Dream", en: "Hotel to American Dream" }, url: mapDirections(addresses.bostonHotel, addresses.americanDream) },
-      { label: { zh: "American Dream", en: "American Dream" }, url: mapSearch(addresses.americanDream) },
-      { label: { zh: "American Dream 至 4211 Suites", en: "American Dream to 4211 Suites" }, url: mapDirections(addresses.americanDream, addresses.phillyHotel) },
-    ],
-  },
-  {
-    id: "d0503",
-    filter: "philly",
-    date: { zh: "5/3 星期日", en: "Sun May 3" },
-    city: { zh: "費城", en: "Philadelphia" },
-    title: { zh: "UPenn 與費城西往東精華線", en: "UPenn and west to east Philadelphia highlights" },
-    intensity: { zh: "中，晚啟動", en: "Medium, late start" },
-    status: { zh: "UPenn 為主軸", en: "UPenn as anchor" },
-    theme: {
-      zh: "5/2 已是長途移動日，因此 5/3 不早起。從住宿附近的 UPenn 開始，逐步往東，不塞滿 Old City。",
-      en: "May 2 is already a long travel day, so May 3 should not start early. Begin with UPenn near the hotel and move east gradually without overloading Old City.",
-    },
-    steps: [
-      { time: "09:00 至 10:00", icon: "coffee", zh: "悠閒早餐與恢復。", en: "Slow breakfast and recovery." },
-      { time: "10:30", icon: "graduation", zh: "從 4211 Chestnut 區域出發逛 UPenn。", en: "Start the UPenn walk from the 4211 Chestnut area." },
-      { time: "上午", icon: "building", zh: "Locust Walk、College Hall 外觀、Fisher Fine Arts Library 外觀。", en: "Locust Walk, College Hall exterior, and Fisher Fine Arts Library exterior." },
-      { time: "中午", icon: "food", zh: "University City 午餐。", en: "Lunch in University City." },
-      { time: "下午", icon: "museum", zh: "Philadelphia Museum of Art 外觀、Rocky Steps、Schuylkill River。", en: "Philadelphia Museum of Art exterior, Rocky Steps, and Schuylkill River." },
-      { time: "傍晚", icon: "map", zh: "Rittenhouse Square 或 Reading Terminal Market 二選一，視體力決定。", en: "Choose either Rittenhouse Square or Reading Terminal Market depending on energy." },
-      { time: "晚上", icon: "hotel", zh: "早回 4211 Suites，準備隔天 DC。", en: "Return early to 4211 Suites and prepare for DC." },
-    ],
-    avoid: [
-      { zh: "不要同日硬塞 Independence Hall、Liberty Bell、Old City，除非刪掉 Art Museum 或 Rittenhouse。", en: "Do not force Independence Hall, Liberty Bell, or Old City unless Art Museum or Rittenhouse is removed." },
-      { zh: "不要晚睡。隔天是全程最高強度日。", en: "Do not sleep late. The next day is the highest intensity day." },
-    ],
-    maps: [
-      { label: { zh: "4211 Suites", en: "4211 Suites" }, url: mapSearch(addresses.phillyHotel) },
-      { label: { zh: "UPenn Locust Walk", en: "UPenn Locust Walk" }, url: mapSearch("Locust Walk University of Pennsylvania Philadelphia PA") },
-      { label: { zh: "College Hall", en: "College Hall" }, url: mapSearch("College Hall University of Pennsylvania Philadelphia PA") },
-      { label: { zh: "Philadelphia Museum of Art", en: "Philadelphia Museum of Art" }, url: mapSearch("Philadelphia Museum of Art Philadelphia PA") },
-      { label: { zh: "Rittenhouse Square", en: "Rittenhouse Square" }, url: mapSearch("Rittenhouse Square Philadelphia PA") },
-      { label: { zh: "Reading Terminal Market", en: "Reading Terminal Market" }, url: mapSearch("Reading Terminal Market Philadelphia PA") },
-    ],
-  },
-  {
-    id: "d0504",
-    filter: "dc",
-    date: { zh: "5/4 星期一", en: "Mon May 4" },
-    city: { zh: "費城至華盛頓特區往返", en: "Philadelphia to Washington, DC round trip" },
-    title: { zh: "DC 開車一日遊保守版", en: "Conservative DC driving day" },
-    intensity: { zh: "全程最高", en: "Highest" },
-    status: { zh: "只做核心線", en: "Core route only" },
-    theme: {
-      zh: "尊重開車想法，但這天真正累的是開車、停車、步行與回程高速疊加。DC 內只停一次車，只走 National Mall 核心線。",
-      en: "Respect the driving preference, but the real burden is the combination of driving, parking, walking, and the return drive. Park once and cover only the National Mall core route.",
-    },
-    steps: [
-      { time: "06:30", icon: "coffee", zh: "起床與簡單早餐。", en: "Wake up and simple breakfast." },
-      { time: "07:00", icon: "car", zh: "從費城出發。", en: "Depart Philadelphia." },
-      { time: "10:00 至 10:30", icon: "parking", zh: "抵達 DC，停在 National Mall、L'Enfant Plaza 或 Reagan Building 附近固定車庫。", en: "Arrive in DC and use one fixed garage near National Mall, L'Enfant Plaza, or Reagan Building." },
-      { time: "10:30 至 12:00", icon: "landmark", zh: "U.S. Capitol 外觀與 National Mall 東段。", en: "U.S. Capitol exterior and National Mall east side." },
-      { time: "12:00 至 13:00", icon: "food", zh: "午餐與休息。", en: "Lunch and rest." },
-      { time: "13:00 至 15:30", icon: "route", zh: "Washington Monument 外觀、WWII Memorial、Reflecting Pool、Lincoln Memorial。", en: "Washington Monument exterior, WWII Memorial, Reflecting Pool, and Lincoln Memorial." },
-      { time: "15:30 至 16:30", icon: "coffee", zh: "咖啡休息或短暫 Smithsonian。博物館不是主目標。", en: "Coffee rest or a brief Smithsonian stop. The museum is not the main objective." },
-      { time: "17:00", icon: "car", zh: "離開 DC。", en: "Leave DC." },
-      { time: "20:00 至 21:00", icon: "hotel", zh: "回費城，住宿附近簡單晚餐。", en: "Return to Philadelphia and eat near lodging." },
-    ],
-    avoid: [
-      { zh: "不去 Georgetown。", en: "Do not go to Georgetown." },
-      { zh: "不去 Arlington Cemetery。", en: "Do not go to Arlington Cemetery." },
-      { zh: "不繞白宮。", en: "Do not detour to the White House." },
-      { zh: "不換多個停車點。", en: "Do not use multiple parking locations." },
-      { zh: "不把 12,000 步上限用滿。", en: "Do not use the full 12,000-step limit." },
-    ],
-    maps: [
-      { label: { zh: "4211 Suites 至 National Mall", en: "4211 Suites to National Mall" }, url: mapDirections(addresses.phillyHotel, addresses.nationalMall) },
-      { label: { zh: "National Mall", en: "National Mall" }, url: mapSearch(addresses.nationalMall) },
-      { label: { zh: "L'Enfant Plaza 停車搜尋", en: "L'Enfant Plaza parking search" }, url: mapSearch("parking near L'Enfant Plaza Washington DC") },
-      { label: { zh: "Ronald Reagan Building 停車", en: "Ronald Reagan Building parking" }, url: mapSearch("Ronald Reagan Building parking Washington DC") },
-      { label: { zh: "Lincoln Memorial", en: "Lincoln Memorial" }, url: mapSearch("Lincoln Memorial Washington DC") },
-    ],
-  },
-  {
-    id: "d0505",
-    filter: "transport",
-    date: { zh: "5/5 星期二", en: "Tue May 5" },
-    city: { zh: "費城至紐約，Eugene 另回波士頓", en: "Philadelphia to New York, Eugene separately returns to Boston" },
-    title: { zh: "還車、Amtrak 與紐約交接日", en: "Car return, Amtrak, and New York handoff" },
-    intensity: { zh: "中", en: "Medium" },
-    status: { zh: "操作安全優先", en: "Operational safety first" },
-    theme: {
-      zh: "這天的目標不是觀光，而是行李、還車、車站等候、上車、紐約入住與 Eugene 回波士頓的安全交接。",
-      en: "The objective is not sightseeing. It is luggage handling, car return, station waiting, boarding, New York check-in, and Eugene's safe return to Boston.",
-    },
-    steps: [
-      { time: "09:00", icon: "luggage", zh: "4211 Suites 退房，全員與行李上車。", en: "Check out from 4211 Suites. Everyone and all luggage get in the car." },
-      { time: "09:15", icon: "train", zh: "先到 30th Street Station，放下媽媽、妹妹與大件行李。", en: "First go to 30th Street Station and drop mother, sister, and large luggage." },
-      { time: "09:15 至 09:30", icon: "pin", zh: "約定固定等候點，例如 Amtrak 出發看板下方。確認手機網路可用。", en: "Set a fixed waiting point, such as under the Amtrak departure board. Confirm phone data works." },
-      { time: "09:30", icon: "car", zh: "Eugene 單獨開車至 Avis J5D Convention Center Parking。", en: "Eugene drives alone to Avis J5D Convention Center Parking." },
-      { time: "09:45 至 10:15", icon: "shield", zh: "還車，確認油量、里程、損傷紀錄、e-Toll 與收據。", en: "Return the car. Confirm fuel, mileage, damage record, e-Toll, and receipt." },
-      { time: "10:15 至 10:35", icon: "car", zh: "Uber 回 30th Street Station。", en: "Uber back to 30th Street Station." },
-      { time: "11:15 之後", icon: "train", zh: "搭 Amtrak 至 New York Penn Station 或 Moynihan Train Hall。不要買太早班次。", en: "Take Amtrak to New York Penn Station or Moynihan Train Hall. Do not buy a too-early train." },
-      { time: "下午", icon: "users", zh: "Eugene 應陪她們抵達紐約住宿並完成入住，再自己回波士頓。", en: "Eugene should help them reach and check into the New York lodging before returning to Boston." },
-      { time: "晚上", icon: "food", zh: "她們只在飯店附近吃簡單晚餐，不排遠景點。", en: "They should eat near the hotel only. No distant sightseeing." },
-    ],
-    avoid: [
-      { zh: "不要從費城找 LIRR。", en: "Do not look for LIRR from Philadelphia." },
-      { zh: "不要全家拖行李去 J5D。", en: "Do not drag all luggage to J5D." },
-      { zh: "不要讓她們在沒有網路與地址備份下單獨留在紐約。", en: "Do not leave them in New York without phone data and address backups." },
-    ],
-    maps: [
-      { label: { zh: "4211 Suites 至 30th Street Station", en: "4211 Suites to 30th Street Station" }, url: mapDirections(addresses.phillyHotel, addresses.station30) },
-      { label: { zh: "30th Street Station", en: "30th Street Station" }, url: mapSearch(addresses.station30) },
-      { label: { zh: "Avis J5D", en: "Avis J5D" }, url: mapSearch(addresses.avisJ5D) },
-      { label: { zh: "30th Street Station 至 Avis J5D", en: "30th Street Station to Avis J5D" }, url: mapDirections(addresses.station30, addresses.avisJ5D) },
-      { label: { zh: "New York Penn Station", en: "New York Penn Station" }, url: mapSearch(addresses.nyPenn) },
-    ],
-  },
-  {
-    id: "d0505ny",
-    filter: "nyc",
-    date: { zh: "5/5 至 5/11", en: "May 5 to May 11" },
-    city: { zh: "紐約", en: "New York" },
-    title: { zh: "紐約模組化行程", en: "Modular New York plan" },
-    intensity: { zh: "視住宿而定", en: "Depends on lodging" },
-    status: { zh: "等待住宿與航班資訊", en: "Hotel and flight pending" },
-    theme: {
-      zh: "目前缺紐約住宿地址與 5/11 航班資訊，因此不能做精準逐時版。先用地理模組，等地址確認後再排序。",
-      en: "The New York hotel address and May 11 flight details are still missing, so an exact hourly plan is not safe. Use geographic modules first and sort after lodging is confirmed.",
-    },
-    steps: [
-      { time: "模組 A", icon: "building", zh: "Midtown：Times Square、Bryant Park、New York Public Library、Grand Central、Fifth Avenue、Rockefeller Center、Top of the Rock。", en: "Midtown: Times Square, Bryant Park, New York Public Library, Grand Central, Fifth Avenue, Rockefeller Center, Top of the Rock." },
-      { time: "模組 B", icon: "landmark", zh: "Lower Manhattan：Wall Street、9/11 Memorial、Oculus、Battery Park、Staten Island Ferry 遠看自由女神。", en: "Lower Manhattan: Wall Street, 9/11 Memorial, Oculus, Battery Park, Staten Island Ferry for distant Statue of Liberty view." },
-      { time: "模組 C", icon: "museum", zh: "Central Park 與一間博物館：The Met 或 American Museum of Natural History 二選一。", en: "Central Park and one museum: The Met or American Museum of Natural History." },
-      { time: "模組 D", icon: "route", zh: "Brooklyn：DUMBO、Brooklyn Bridge Park、可選 Brooklyn Bridge 步行，步數較高。", en: "Brooklyn: DUMBO, Brooklyn Bridge Park, optional Brooklyn Bridge walk. Higher walking load." },
-      { time: "模組 E", icon: "bag", zh: "SoHo 與 Chelsea：SoHo、Chelsea Market、High Line。", en: "SoHo and Chelsea: SoHo, Chelsea Market, High Line." },
-      { time: "模組 F", icon: "luggage", zh: "緩衝日：購物、伴手禮、洗衣、整理行李、天氣備案。", en: "Buffer day: shopping, souvenirs, laundry, packing, and weather backup." },
-      { time: "5/11", icon: "plane", zh: "離境日需依機場與航班時間重排。國際線應保守抓提早抵達機場。", en: "Departure day must be rebuilt after airport and flight time are known. For international flights, use conservative airport timing." },
-    ],
-    avoid: [
-      { zh: "不要一天混排 Brooklyn、Lower Manhattan 與 Midtown。", en: "Do not mix Brooklyn, Lower Manhattan, and Midtown in one day." },
-      { zh: "不要假設每個地鐵站都有電梯。", en: "Do not assume every subway station has elevators." },
-      { zh: "不要在 5/11 早上才決定機場交通。", en: "Do not decide airport transportation on the morning of May 11." },
-    ],
-    maps: [
-      { label: { zh: "New York Penn Station", en: "New York Penn Station" }, url: mapSearch(addresses.nyPenn) },
-      { label: { zh: "Times Square", en: "Times Square" }, url: mapSearch("Times Square New York NY") },
-      { label: { zh: "New York Public Library", en: "New York Public Library" }, url: mapSearch("New York Public Library Bryant Park") },
-      { label: { zh: "Grand Central Terminal", en: "Grand Central Terminal" }, url: mapSearch("Grand Central Terminal New York NY") },
-      { label: { zh: "The Met", en: "The Met" }, url: mapSearch("Metropolitan Museum of Art New York NY") },
-      { label: { zh: "DUMBO", en: "DUMBO" }, url: mapSearch("DUMBO Brooklyn NY") },
-      { label: { zh: "Chelsea Market", en: "Chelsea Market" }, url: mapSearch("Chelsea Market New York NY") },
-    ],
+    name: "New York Hotel",
+    nameZh: bi("紐約飯店", "New York Hotel"),
+    nights: bi("5/5 至 5/11，六晚", "May 5 to May 11, 6 nights"),
+    addr: bi("待提供", "To be confirmed"),
+    pending: true,
+    note: bi("確認後再決定每天景點順序與交通工具。", "Sequence of New York days will follow once the hotel is confirmed."),
   },
 ];
 
-const transportCards = [
-  {
-    icon: "car",
-    title: { zh: "Boston 取車優先順序", en: "Boston pickup priority" },
-    status: { zh: "先市中心，後 BOS", en: "City first, BOS second" },
-    body: {
-      zh: "人在 The Revolution Hotel，應先試 Back Bay Station Garage 或其他市中心 Avis 至 J5D。只有市中心點無法異地還車、價格明顯高、車型不足、營業時間不合，才退回 BOS Logan。",
-      en: "Since the family is at The Revolution Hotel, first test Back Bay Station Garage or another city Avis to J5D. Use BOS Logan only if city pickup fails on one-way return, price, vehicle class, or opening time.",
-    },
+const avisStrategy = {
+  pickup: {
+    code: "BO4",
+    name: bi("Boston Back Bay Station Garage", "Boston Back Bay Station Garage"),
+    addr: "100 Clarendon St (Parking Garage), Boston, MA 02116",
+    phone: "(617) 534-1404",
+    hours: bi("週一至週日 24 小時", "Open 24 hours, all days"),
+    distFromHotel: bi("距 The Revolution Hotel 0.4 英里，步行 8 分鐘，Uber 約 3 分鐘 8 至 10 美元", "0.4 miles from The Revolution Hotel; 8-minute walk or 3-minute Uber at $8–10"),
+    advantage: bi("與 Logan Airport 同樣 24 小時營業，但省去 Uber 至機場的時間與車資（25 至 35 美元），且 Mass Pike 入口僅 3 分鐘車程。", "Same 24-hour access as Logan Airport, but saves the $25–35 Uber to the airport and reaches the Mass Pike on-ramp in 3 minutes."),
+    pickupTime: bi("5/2 上午 7:00", "May 2, 7:00 AM"),
   },
-  {
-    icon: "alert",
-    title: { zh: "目前截圖報價問題", en: "Issue with current screenshot quote" },
-    status: { zh: "12:00 取車太晚", en: "12:00 pickup too late" },
-    body: {
-      zh: "截圖顯示 5/2 中午 12:00 在 Back Bay 取車、5/5 中午 12:00 在 J5D 還車，車輛本體約 247.07 美元，但加購項目約 265.41 美元，總額約 572.63 美元。時間不適合 American Dream 版，且加購項目需重看。",
-      en: "The screenshot shows May 2 12:00 PM pickup at Back Bay and May 5 12:00 PM return at J5D. Vehicle rate is about $247.07, add-ons about $265.41, total about $572.63. The timing does not work for the American Dream plan, and add-ons need review.",
-    },
+  dropoff: {
+    code: "J5D",
+    name: bi("PHL Convention Center Parking", "PHL Convention Center Parking"),
+    addr: "1324 Arch Street, Philadelphia, PA 19107",
+    hours: bi("週一至週五 07:00 至 19:00；週六、日 08:00 至 13:00", "Mon–Fri 7 AM to 7 PM; Sat–Sun 8 AM to 1 PM"),
+    note: bi("不提供 after-hours returns，必須於營業時間內歸還。", "No after-hours returns. Must return during business hours."),
+    dropoffTime: bi("5/5 上午 10:00", "May 5, 10:00 AM"),
+    flow: bi("先送家屬到 30th Street Station 卸下行李，您單獨開車至 J5D 還車（1.2 英里），再 Uber 回車站（12 至 18 美元）。", "Drop family and luggage at 30th Street Station first. Drive solo to J5D (1.2 miles) to return the car, then Uber back to the station ($12–18)."),
   },
-  {
-    icon: "parking",
-    title: { zh: "費城還車點", en: "Philadelphia return point" },
-    status: { zh: "J5D 優先", en: "J5D preferred" },
-    body: {
-      zh: "Avis PH4 30th Street Station 已關閉，不可用。J5D 位於 Convention Center Parking，車輛現場停放，同點歸還，且不提供 after-hours return。",
-      en: "Avis PH4 at 30th Street Station is closed and unusable. J5D is inside Convention Center Parking, vehicles are on site, returns are same as pickup, and after-hours return is not available.",
-    },
+  closed: {
+    code: "PH4",
+    name: bi("30th Street Station Avis", "30th Street Station Avis"),
+    status: bi("已於 2025 年 2 月 1 日關閉", "Closed February 1, 2025"),
+    note: bi("雖位於同一棟建築，但已停業，預訂系統會直接拒絕。", "Same building but no longer operating. The booking system will reject this location."),
   },
-  {
-    icon: "credit",
-    title: { zh: "保險與加購", en: "Insurance and add-ons" },
-    status: { zh: "不能盲刪", en: "Do not delete blindly" },
-    body: {
-      zh: "信用卡租車保障通常偏向車損，不一定涵蓋第三方責任。LDW 可否刪除取決於信用卡條款。ALI 若沒有其他責任險來源，需謹慎保留。Additional Driver 若只有 Eugene 開可刪。PAI、PEP、RSN 視既有保險與安心需求調整。",
-      en: "Credit card rental coverage often focuses on vehicle damage and may not cover third-party liability. LDW depends on credit card terms. ALI should be considered carefully if there is no other liability coverage. Remove Additional Driver if only Eugene drives. PAI, PEP, and RSN depend on existing insurance and comfort level.",
-    },
+  insurance: {
+    keep: [
+      { name: "E-Toll Unlimited", price: bi("每日 14.99 美元", "$14.99 per day"), reason: bi("Boston 至 DC 過路費密集，被動 toll-by-plate 每筆手續費 9.95 美元，數學上 Unlimited 較便宜。", "Tolls between Boston and DC are heavy. Passive toll-by-plate adds $9.95 per occurrence; Unlimited wins on the math.") },
+      { name: bi("Additional Driver", "Additional Driver"), price: bi("整租期 33.15 美元", "$33.15 per rental"), reason: bi("若家屬可能接手駕駛則加；若全程您主開可省。", "Add this if family may take the wheel. Skip if you drive the entire trip.") },
+    ],
+    skip: [
+      { name: "Cover The Car (LDW)", price: bi("79.02 美元", "$79.02"), reason: bi("若信用卡 Primary CDW 涵蓋，這項與其重複。Chase Sapphire Preferred／Reserve、Capital One Venture X、Amex Premium Car Rental 多為 primary。", "Most likely duplicates a Primary CDW from cards like Chase Sapphire Preferred/Reserve, Capital One Venture X, or Amex Premium Car Rental.") },
+      { name: "Cover My Liability (ALI)", price: bi("55.50 美元", "$55.50"), reason: bi("美國強制 liability 已含；若有 umbrella policy 多餘。", "Statutory US liability is already included. Redundant if you carry an umbrella policy.") },
+      { name: "Cover Myself (PAI)", price: bi("21.00 美元", "$21.00"), reason: bi("個人意外險，與旅遊險或醫療險重複。", "Personal accident coverage; overlaps with travel or medical insurance.") },
+      { name: "Cover My Belongings (PEP)", price: bi("8.85 美元", "$8.85"), reason: bi("家中租屋或房屋保險通常已涵蓋 off-premise 物品。", "Renter's or homeowner's insurance typically covers off-premise belongings.") },
+      { name: "Extended Roadside Assistance", price: bi("22.92 美元", "$22.92"), reason: bi("基本租約已含基本拖車。", "Basic roadside is already included in the rental.") },
+    ],
+    potentialSavings: bi("約 187 美元", "About $187"),
   },
-  {
-    icon: "dollar",
-    title: { zh: "Toll pass", en: "Toll pass" },
-    status: { zh: "櫃檯確認", en: "Confirm at counter" },
-    body: {
-      zh: "5/2 與 5/4 會經過多個電子收費區。需在 Avis 櫃檯確認 standard e-Toll 與 e-Toll Unlimited 的實際價格。若主要只有兩天產生 toll，standard e-Toll 可能較合理，但以現場條款為準。",
-      en: "May 2 and May 4 cross multiple electronic toll zones. Confirm standard e-Toll versus e-Toll Unlimited at the Avis counter. If tolls mainly occur on two days, standard e-Toll may be more reasonable, but use the actual counter terms.",
-    },
-  },
-  {
-    icon: "train",
-    title: { zh: "費城至紐約鐵路", en: "Philadelphia to New York rail" },
-    status: { zh: "Amtrak 或 NJ Transit", en: "Amtrak or NJ Transit" },
-    body: {
-      zh: "LIRR 是紐約市與長島方向的鐵路，不從費城出發。可以跟媽媽說：鐵路方向是對的，但那段不是 LIRR，而是 Amtrak 或 NJ Transit 到 Penn Station。",
-      en: "LIRR serves New York City and Long Island, not Philadelphia. The family-facing explanation: the rail idea is correct, but the Philadelphia to New York segment is Amtrak or NJ Transit to Penn Station, not LIRR.",
-    },
-  },
+};
+
+const dining = [
+  { name: "Tatte Bakery & Café", typeZh: "早餐／早午餐", typeEn: "Breakfast / brunch", addr: "70 Charles St, Boston, MA 02114", suggestedZh: "4/26、4/29、4/30、5/1 早餐", suggestedEn: "Breakfast on Apr 26, 29, 30, May 1", icon: Coffee },
+  { name: "Chipotle Park Plaza", typeZh: "美式快餐（家屬未體驗過）", typeEn: "American fast casual (new to the family)", addr: "8 Park Plz, Boston, MA 02116", suggestedZh: "4/26 晚餐輕食", suggestedEn: "Light dinner on Apr 26", icon: Utensils },
+  { name: "The Daily Catch (North End)", typeZh: "義式海鮮（現金）", typeEn: "Italian seafood (cash only)", addr: "323 Hanover St, Boston, MA 02113", suggestedZh: "4/27 晚餐", suggestedEn: "Dinner on Apr 27", icon: Anchor, warningZh: "現金 only，不接受訂位", warningEn: "Cash only; no reservations" },
+  { name: "Mike's Pastry", typeZh: "甜點", typeEn: "Pastries", addr: "300 Hanover St, Boston, MA 02113", suggestedZh: "4/27 或 5/1 晚上", suggestedEn: "Evening of Apr 27 or May 1", icon: Coffee },
+  { name: "James Hook & Co", typeZh: "海鮮、龍蝦堡", typeEn: "Seafood, lobster rolls", addr: "440 Atlantic Ave, Boston, MA 02210", suggestedZh: "5/1 午餐", suggestedEn: "Lunch on May 1", icon: Anchor, warningZh: "週五營業至 17:00", warningEn: "Friday hours until 5 PM" },
+  { name: "Trader Joe's Back Bay", typeZh: "雜貨採買", typeEn: "Grocery", addr: "899 Boylston St, Boston, MA 02115", suggestedZh: "5/1 採買回程禮物", suggestedEn: "Souvenir snacks on May 1", icon: ShoppingBag },
+  { name: "Texas Roadhouse", typeZh: "已取消（與 American Dream 衝突）", typeEn: "Cancelled (conflicts with American Dream)", addr: "(N/A)", suggestedZh: "已取消", suggestedEn: "Cancelled", icon: XCircle, removed: true },
+  { name: "Reading Terminal Market", typeZh: "費城市集", typeEn: "Philadelphia market", addr: "1136 Arch St, Philadelphia, PA 19107", suggestedZh: "5/3 晚餐或 5/4 早餐", suggestedEn: "Dinner May 3 or breakfast May 4", icon: Utensils },
 ];
 
-const riskGroups = [
+// =============================================================================
+// PRE-TRIP CHECKLIST (reframed as user-facing)
+// =============================================================================
+
+const preTripChecklist = [
   {
-    icon: "hotel",
-    title: { zh: "4211 Suites 停車", en: "4211 Suites parking" },
+    title: bi("行前一個月", "One month out"),
     items: [
-      { zh: "確認 5/2 至 5/5 是否可連續停車。", en: "Confirm parking availability from May 2 to May 5." },
-      { zh: "確認每日費用與是否需預約。", en: "Confirm nightly rate and whether reservation is required." },
-      { zh: "確認 5/4 車開去 DC 當天是否仍計停車費。", en: "Confirm whether May 4 still counts as a parking day when the car leaves for DC." },
+      bi("Avis 預訂 BO4 取車、J5D 還車，5/2 上午 7:00 至 5/5 上午 10:00", "Reserve Avis BO4 pickup and J5D drop-off, May 2 at 7 AM through May 5 at 10 AM"),
+      bi("Avis 訂單僅保留 E-Toll Unlimited（與必要時 Additional Driver），其餘保險加購建議取消", "On the Avis booking, keep only E-Toll Unlimited (and Additional Driver if needed); decline the rest"),
+      bi("查詢主要付款信用卡的租車保險是 primary 或 secondary", "Check whether your main credit card's rental coverage is primary or secondary"),
+      bi("致電 4211 Suites 確認連續四晚停車費，以及 5/4 整日車輛離場是否仍計費", "Call 4211 Suites to confirm 4-night parking fees and whether May 4 (car offsite) still bills"),
+      bi("確認紐約飯店地址與 5/11 航班時間、機場代碼", "Confirm the NYC hotel address and the May 11 flight time and airport code"),
     ],
   },
   {
-    icon: "bag",
-    title: { zh: "American Dream", en: "American Dream" },
+    title: bi("行前兩週", "Two weeks out"),
     items: [
-      { zh: "只作午餐與限時購物，不作完整景點。", en: "Use only for lunch and controlled shopping, not as a full attraction." },
-      { zh: "停車不是完全免費，需預留停車費。", en: "Parking is not fully free, so budget parking cost." },
-      { zh: "New Jersey 多數服飾與鞋類免銷售稅，但毛皮、配件、運動或保護裝備等例外。", en: "Most New Jersey clothing and footwear are sales tax exempt, but fur, accessories, sports equipment, and protective equipment are exceptions." },
-      { zh: "精品配件、珠寶、手錶、包款不應假設免稅。", en: "Do not assume luxury accessories, jewelry, watches, or bags are tax exempt." },
+      bi("購買並啟用美國 eSIM（Airalo、Holafly 或 Nomad）", "Purchase and activate a US eSIM (Airalo, Holafly, or Nomad)"),
+      bi("確認萬國轉接器（Type G 轉 Type A／B）", "Confirm a Type G to Type A/B universal adapter"),
+      bi("檢查家中所有電器是否雙電壓", "Check that all personal electronics are dual voltage"),
+      bi("Tassel 系統內預先轉發畢業典禮票券給家屬", "Forward graduation tickets to family through Tassel"),
+      bi("下載 Uber、Google Maps、Amtrak、OpenTable App", "Install Uber, Google Maps, Amtrak, and OpenTable apps"),
     ],
   },
   {
-    icon: "shield",
-    title: { zh: "畢業典禮安檢", en: "Ceremony security" },
+    title: bi("出發前三日", "Three days out"),
     items: [
-      { zh: "Leader Bank Pavilion 與 Fenway 均需注意 12 × 12 × 6 英寸包包限制。", en: "Both Leader Bank Pavilion and Fenway require attention to the 12 × 12 × 6 inch bag limit." },
-      { zh: "可攜 1 瓶未開封 16 oz 清水。", en: "One sealed 16 oz water bottle is allowed." },
-      { zh: "所有人需接受安檢，違規可能被拒入場或要求離場。", en: "All attendees are subject to security screening. Noncompliance may lead to denial of entry or removal." },
-      { zh: "包包過大時需寄放、退回車上，或直接無法入場。", en: "Oversized bags may need checking, return to vehicle, or may block entry." },
+      bi("Apple Pay／Google Pay 加入信用卡，便於 MBTA 與 OMNY 直接感應", "Add credit cards to Apple Pay or Google Pay for MBTA and OMNY tap-to-pay"),
+      bi("換取至少 100 美元現金供 The Daily Catch 與小費使用", "Withdraw at least $100 in cash for The Daily Catch and tips"),
+      bi("準備一張隨身緊急聯絡卡，含飯店、Northeastern 校警、駐紐約經貿辦", "Print a small emergency card listing hotels, Northeastern Public Safety, and HKETO New York"),
+      bi("檢查護照、I-94 紀錄、ESTA／簽證有效性", "Verify passport, I-94 record, and ESTA / visa validity"),
     ],
   },
   {
-    icon: "users",
-    title: { zh: "紐約交接", en: "New York handoff" },
+    title: bi("出發當日", "Departure day"),
     items: [
-      { zh: "紐約住宿地址仍缺，無法做精準日程排序。", en: "New York lodging address is still missing, so exact sequencing is not possible." },
-      { zh: "5/11 機場與航班時間仍缺。", en: "May 11 airport and flight time are still missing." },
-      { zh: "Eugene 離開前，需確認 eSIM、飯店地址、Uber 路線、緊急聯絡與離境交通。", en: "Before Eugene leaves, confirm eSIM, hotel address, Uber route, emergency contacts, and departure transportation." },
-      { zh: "紐約第一晚不安排遠距離景點。", en: "Do not schedule distant sightseeing on the first New York evening." },
+      bi("檢查行李件數，準備 12 小時長途飛行的水、藥品、舒適用品", "Verify bag count; prepare water, medication, and comfort items for the 12-hour flight"),
+      bi("飯店與 Uber 預約 4/26 早晨抵達後的接駁", "Reserve Uber for hotel transfer after April 26 arrival"),
+      bi("入境美國時 I-94 自動入境，大多無需紙本", "Entry to the US uses electronic I-94; paper form usually not needed"),
     ],
   },
 ];
 
-const mapDirectory = [
-  { group: { zh: "住宿", en: "Lodging" }, links: [
-    { label: { zh: "The Revolution Hotel", en: "The Revolution Hotel" }, url: mapSearch(addresses.bostonHotel), note: { zh: "波士頓住宿核心", en: "Boston base" } },
-    { label: { zh: "4211 Suites", en: "4211 Suites" }, url: mapSearch(addresses.phillyHotel), note: { zh: "費城住宿與停車待確認", en: "Philadelphia lodging and parking pending" } },
-    { label: { zh: "紐約飯店", en: "New York hotel" }, url: mapSearch("New York Penn Station hotels"), note: { zh: "尚未提供，暫以 Penn Station 為參考", en: "Not provided, Penn Station used as placeholder" } },
-  ]},
-  { group: { zh: "畢業典禮", en: "Commencement" }, links: [
-    { label: { zh: "Fenway Park", en: "Fenway Park" }, url: mapSearch(addresses.fenway), note: { zh: "4/29 大典", en: "Apr 29 commencement" } },
-    { label: { zh: "Gate B / Van Ness Street", en: "Gate B / Van Ness Street" }, url: mapSearch("Fenway Park Gate B Van Ness Street Boston MA"), note: { zh: "畢業生報到", en: "Graduate arrival" } },
-    { label: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" }, url: mapSearch(addresses.leader), note: { zh: "4/30 DMSB 典禮", en: "Apr 30 DMSB celebration" } },
-  ]},
-  { group: { zh: "餐廳與補給", en: "Food and supplies" }, links: [
-    { label: { zh: "Tatte Tremont 附近", en: "Tatte near Tremont" }, url: mapSearch("Tatte Bakery Cafe Tremont Boston MA"), note: { zh: "早餐或輕食", en: "Breakfast or light meal" } },
-    { label: { zh: "Chipotle Park Plaza", en: "Chipotle Park Plaza" }, url: mapSearch("Chipotle 8 Park Plaza Boston MA"), note: { zh: "抵達日晚餐候選", en: "Arrival day dinner option" } },
-    { label: { zh: "The Daily Catch North End", en: "The Daily Catch North End" }, url: mapSearch("The Daily Catch North End 323 Hanover St Boston MA"), note: { zh: "現金與先到先坐", en: "Cash and first come, first serve" } },
-    { label: { zh: "Mike's Pastry", en: "Mike's Pastry" }, url: mapSearch("Mike's Pastry 300 Hanover St Boston MA"), note: { zh: "North End 搭配", en: "Pair with North End" } },
-    { label: { zh: "James Hook & Co", en: "James Hook & Co" }, url: mapSearch("James Hook & Co 440 Atlantic Ave Boston MA"), note: { zh: "水岸午餐", en: "Waterfront lunch" } },
-    { label: { zh: "Trader Joe's Back Bay", en: "Trader Joe's Back Bay" }, url: mapSearch("Trader Joe's 500 Boylston St Boston MA"), note: { zh: "有體力再去", en: "Only if energy remains" } },
-  ]},
-  { group: { zh: "租車、車站與城市移動", en: "Rental, rail, and intercity" }, links: [
-    { label: { zh: "Avis Back Bay", en: "Avis Back Bay" }, url: mapSearch(addresses.backBayAvis), note: { zh: "優先試算", en: "First pricing test" } },
-    { label: { zh: "Avis BOS Logan 備案", en: "Avis BOS Logan backup" }, url: mapSearch(addresses.loganAvis), note: { zh: "車型或價格不佳時才用", en: "Use if city pickup fails" } },
-    { label: { zh: "American Dream", en: "American Dream" }, url: mapSearch(addresses.americanDream), note: { zh: "5/2 限時停靠", en: "May 2 controlled stop" } },
-    { label: { zh: "Avis J5D", en: "Avis J5D" }, url: mapSearch(addresses.avisJ5D), note: { zh: "費城還車", en: "Philadelphia return" } },
-    { label: { zh: "30th Street Station", en: "30th Street Station" }, url: mapSearch(addresses.station30), note: { zh: "Amtrak 至紐約", en: "Amtrak to New York" } },
-    { label: { zh: "New York Penn Station", en: "New York Penn Station" }, url: mapSearch(addresses.nyPenn), note: { zh: "紐約抵達點", en: "New York arrival point" } },
-  ]},
-];
+// =============================================================================
+// SUB-COMPONENTS
+// =============================================================================
 
-const sourceCards = [
-  {
-    label: { zh: "Northeastern Graduate Commencement", en: "Northeastern Graduate Commencement" },
-    kind: { zh: "官方典禮資料", en: "Official ceremony information" },
-    url: "https://commencement.northeastern.edu/events/graduate-ceremony-at-fenway/",
-    summary: { zh: "確認 4/29、Fenway Park、10:00 AM、8:00 入場、Gate B、Gates A/D/E、8:45 procession、90 至 120 分鐘、最多 6 張來賓票。", en: "Confirms Apr 29, Fenway Park, 10:00 AM, 8:00 arrival, Gate B, Gates A/D/E, 8:45 procession, 90 to 120 minutes, and up to 6 guest tickets." },
-  },
-  {
-    label: { zh: "Northeastern College Celebrations", en: "Northeastern College Celebrations" },
-    kind: { zh: "官方學院典禮資料", en: "Official college celebration information" },
-    url: "https://commencement.northeastern.edu/events/college-celebrations/",
-    summary: { zh: "確認 D’Amore-McKim Graduate Celebration 為 4/30 6:00 PM，Leader Bank Pavilion。畢業生提前 90 分鐘，來賓提前 60 分鐘。", en: "Confirms D'Amore-McKim Graduate Celebration on Apr 30 at 6:00 PM at Leader Bank Pavilion. Graduates arrive 90 minutes early, guests 60 minutes early." },
-  },
-  {
-    label: { zh: "Northeastern Venues and Travel", en: "Northeastern Venues and Travel" },
-    kind: { zh: "場館與安檢", en: "Venue and security" },
-    url: "https://commencement.northeastern.edu/venues-and-travel-information/",
-    summary: { zh: "確認 Leader Bank Pavilion 地址、非 Leader Bank Seaport branch、無現場停車、Silver Line 距離、包包尺寸、Bag Check 與禁止攜帶物。", en: "Confirms Leader Bank Pavilion address, not Leader Bank Seaport branch, no on-site parking, Silver Line distance, bag size, Bag Check, and prohibited items." },
-  },
-  {
-    label: { zh: "Avis J5D", en: "Avis J5D" },
-    kind: { zh: "租車還車點", en: "Rental return point" },
-    url: "https://www.avis.com/en/locations/nam/us/pa/philadelphia/j5d",
-    summary: { zh: "確認 J5D 櫃檯位於 Convention Center Parking，車輛現場，同點歸還，且沒有 after-hours return。", en: "Confirms J5D counter is inside Convention Center Parking, vehicles are on site, returns are same as pickup, and after-hours return is unavailable." },
-  },
-  {
-    label: { zh: "Avis Boston Back Bay", en: "Avis Boston Back Bay" },
-    kind: { zh: "市中心取車點", en: "City pickup point" },
-    url: "https://www.avis.com/en/locations/nam/us/ma/boston/bo4",
-    summary: { zh: "確認 Back Bay 取車點位於 Back Bay Train Station 上方停車場。是否適合仍取決於實際日期、時間、車型、異地還車費。", en: "Confirms the Back Bay location is inside the garage over Back Bay Train Station. Suitability still depends on actual date, time, vehicle class, and one-way fee." },
-  },
-  {
-    label: { zh: "Avis BOS Logan", en: "Avis BOS Logan" },
-    kind: { zh: "機場備案", en: "Airport backup" },
-    url: "https://www.avis.com/en/locations/nam/us/ma/boston/bos",
-    summary: { zh: "確認 BOS Avis 位於 15 Transportation Way，24 小時營業。若市中心點不理想，可作備案。", en: "Confirms BOS Avis is at 15 Transportation Way and open 24 hours. Use as backup if city pickup is not viable." },
-  },
-  {
-    label: { zh: "American Dream Parking", en: "American Dream Parking" },
-    kind: { zh: "停車資訊", en: "Parking information" },
-    url: "https://www.americandream.com/parking",
-    summary: { zh: "確認 American Dream 停車不是完全免費，需把停車費納入預算。", en: "Confirms American Dream parking is not fully free, so budget for parking." },
-  },
-  {
-    label: { zh: "New Jersey Sales Tax Guide", en: "New Jersey Sales Tax Guide" },
-    kind: { zh: "服飾鞋類稅務", en: "Clothing and footwear tax" },
-    url: "https://www.nj.gov/treasury/taxation/pdf/pubs/sales/su4.pdf",
-    summary: { zh: "確認服飾與鞋類通常免 New Jersey Sales Tax，但毛皮、配件、運動或保護裝備等例外。", en: "Confirms clothing and footwear are generally exempt from New Jersey Sales Tax, with exceptions such as fur clothing, accessories, sports equipment, and protective equipment." },
-  },
-  {
-    label: { zh: "Harvard Art Museums", en: "Harvard Art Museums" },
-    kind: { zh: "博物館時間", en: "Museum hours" },
-    url: "https://harvardartmuseums.org/policies/hours-closings",
-    summary: { zh: "確認 Harvard Art Museums 週二至週日 10:00 AM 至 5:00 PM 開放。", en: "Confirms Harvard Art Museums are open Tuesday through Sunday, 10:00 AM to 5:00 PM." },
-  },
-  {
-    label: { zh: "Harvard Museum of Natural History", en: "Harvard Museum of Natural History" },
-    kind: { zh: "博物館時間", en: "Museum hours" },
-    url: "https://www.hmnh.harvard.edu/plan-your-visit",
-    summary: { zh: "確認 Harvard Museum of Natural History 每日 9:00 AM 至 5:00 PM 開放。", en: "Confirms Harvard Museum of Natural History is open daily from 9:00 AM to 5:00 PM." },
-  },
-  {
-    label: { zh: "USS Constitution", en: "USS Constitution" },
-    kind: { zh: "船艦參觀時間", en: "Ship visiting hours" },
-    url: "https://www.navy.mil/USS-Constitution/Hours-Visitor-Info/",
-    summary: { zh: "確認 USS Constitution 一般為週三至週日開放，需出發前再看當日異動。", en: "Confirms USS Constitution is generally open Wednesday through Sunday, but same-day changes should be checked before departure." },
-  },
-  {
-    label: { zh: "The Daily Catch North End", en: "The Daily Catch North End" },
-    kind: { zh: "餐廳資訊", en: "Restaurant information" },
-    url: "https://thedailycatch.com/location/north-end/",
-    summary: { zh: "確認 North End 店為 first come, first serve，付款為 Gift Cards 與 Cash Only。", en: "Confirms the North End location is first come, first serve, with payment by gift cards and cash only." },
-  },
-];
-
-const sections = [
-  { key: "all", icon: Menu },
-  { key: "boston", icon: MapPin },
-  { key: "ceremonies", icon: GraduationCap },
-  { key: "transport", icon: Car },
-  { key: "philly", icon: Landmark },
-  { key: "dc", icon: Flag },
-  { key: "nyc", icon: Train },
-  { key: "risks", icon: ShieldCheck },
-  { key: "maps", icon: Map },
-  { key: "sources", icon: Info },
-];
-
-function cn(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-function tx(value, lang) {
-  if (!value) return "";
-  if (typeof value === "string") return value;
-  return value[lang] || value.zh || value.en || "";
-}
-
-function iconOf(name, className = "h-4 w-4") {
-  const Icon = ICONS[name] || Info;
-  return <Icon className={className} />;
-}
-
-function toneClass(tone) {
-  const map = {
-    red: "border-red-200 bg-red-50 text-red-900",
-    amber: "border-amber-200 bg-amber-50 text-amber-900",
-    blue: "border-[#c7d7df] bg-[#edf5f7] text-[#214a57]",
-    plum: "border-[#e3c7d7] bg-[#fbedf4] text-[#622954]",
-    slate: "border-slate-200 bg-slate-50 text-slate-800",
-    green: "border-emerald-200 bg-emerald-50 text-emerald-900",
-  };
-  return map[tone] || map.slate;
-}
-
-function intensityClass(value) {
-  const text = String(value).toLowerCase();
-  if (text.includes("最高") || text.includes("highest")) return "border-red-200 bg-red-50 text-red-900";
-  if (text.includes("高") || text.includes("high")) return "border-orange-200 bg-orange-50 text-orange-900";
-  if (text.includes("中") || text.includes("medium")) return "border-amber-200 bg-amber-50 text-amber-900";
-  return "border-emerald-200 bg-emerald-50 text-emerald-900";
-}
-
-function BrandMark({ label, tone = "blue" }) {
-  const color = tone === "plum" ? "bg-[#622954]" : tone === "gold" ? "bg-[#8a6d2f]" : "bg-[#2E5C6E]";
+function MapButton({ addr, label, lang }) {
   return (
-    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-[11px] font-black tracking-tight text-white shadow-sm", color)}>
-      {label}
-    </div>
+    <a
+      href={mapLink(addr)}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex items-center gap-1 text-[11px] sm:text-xs text-stone-700 hover:text-amber-700 hover:underline transition-colors group"
+    >
+      <MapPin className="h-3 w-3 group-hover:text-amber-700" />
+      <span>{label || (lang === "zh" ? "地圖" : "Map")}</span>
+      <ExternalLink className="h-2.5 w-2.5 opacity-60" />
+    </a>
   );
 }
 
-function MapButton({ href, children, variant = "outline" }) {
+function LocationRow({ name, addr, lang }) {
   return (
-    <Button asChild variant={variant} size="sm" className="h-8 max-w-full rounded-xl px-3 text-xs">
-      <a href={href} target="_blank" rel="noreferrer" className="min-w-0 truncate">
-        <span className="inline-flex min-w-0 items-center gap-1.5">
-          <span className="truncate">{children}</span>
-          <ExternalLink className="h-3.5 w-3.5 shrink-0" />
-        </span>
-      </a>
-    </Button>
-  );
-}
-
-function SectionTitle({ eyebrow, title, children }) {
-  return (
-    <div className="mb-4 min-w-0 md:mb-5">
-      {eyebrow ? <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8a6d2f]">{eyebrow}</p> : null}
-      <h2 className="mt-1 text-2xl font-semibold tracking-tight text-[#1f2933] md:text-3xl">{title}</h2>
-      {children ? <p className="mt-2 max-w-5xl text-sm leading-6 text-slate-700 md:text-[15px]">{children}</p> : null}
-    </div>
-  );
-}
-
-function RouteDiagram({ lang }) {
-  const t = uiText[lang];
-  return (
-    <Card className="overflow-hidden border-[#d9ccb4] bg-white/85 shadow-sm">
-      <CardHeader className="border-b border-[#eadfcb] bg-[#fffaf0] pb-4">
-        <CardTitle className="flex items-center gap-2 text-lg text-[#1f2933] md:text-xl">
-          <Route className="h-5 w-5 text-[#2E5C6E]" /> {t.routeMap}
-        </CardTitle>
-        <p className="text-sm leading-6 text-slate-600">{t.routeMapNote}</p>
-      </CardHeader>
-      <CardContent className="p-4 md:p-5">
-        <div className="grid gap-3 md:grid-cols-5 md:items-stretch">
-          {routeNodes.map((node, index) => (
-            <React.Fragment key={node.id}>
-              <div className="relative min-w-0 rounded-2xl border border-[#d9ccb4] bg-[#fcfaf2] p-4 shadow-sm">
-                <div className="mb-3 flex items-center justify-between gap-2">
-                  <div className="flex min-w-0 items-center gap-2">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2E5C6E] text-white">
-                      {iconOf(node.icon, "h-4 w-4")}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-[#1f2933]">{tx(node.label, lang)}</p>
-                      <p className="text-xs text-[#8a6d2f]">{node.date}</p>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-xs leading-5 text-slate-600 md:text-[13px]">{tx(node.note, lang)}</p>
-              </div>
-              {index < routeNodes.length - 1 ? (
-                <div className="hidden items-center justify-center md:flex">
-                  <ArrowRight className="h-5 w-5 text-[#8a6d2f]" />
-                </div>
-              ) : null}
-            </React.Fragment>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function StickySummary({ lang }) {
-  const t = uiText[lang];
-  return (
-    <div className="sticky top-0 z-30 border-b border-[#d9ccb4] bg-[#fcfaf2]/95 backdrop-blur supports-[backdrop-filter]:bg-[#fcfaf2]/85">
-      <div className="mx-auto max-w-7xl px-3 py-2 md:px-6">
-        <div className="flex gap-2 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
-          {stickyItems.map((item, index) => (
-            <div key={index} className={cn("min-w-[280px] rounded-2xl border px-3 py-2 text-xs leading-5 md:min-w-0", toneClass(item.tone))}>
-              <div className="mb-1 flex items-center gap-1.5 font-semibold">
-                {iconOf(item.icon, "h-3.5 w-3.5 shrink-0")}
-                <span>{t.stickyTitle}</span>
-              </div>
-              <p>{tx(item, lang)}</p>
-            </div>
-          ))}
-        </div>
+    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 py-2.5 border-b border-stone-100 last:border-0">
+      <div className="flex-1 min-w-0">
+        <div className="font-medium text-stone-900 text-[13px] sm:text-sm leading-snug">{t(name, lang)}</div>
+        <div className="text-[11px] sm:text-xs text-stone-500 mt-0.5 break-words">{addr}</div>
+      </div>
+      <div className="sm:flex-shrink-0 sm:pt-0.5">
+        <MapButton addr={addr} lang={lang} />
       </div>
     </div>
   );
 }
 
-function CeremonyCard({ event, lang }) {
-  const t = uiText[lang];
+function SectionHeading({ eyebrow, title, subtitle, lang }) {
   return (
-    <Card className="overflow-hidden border-[#d9ccb4] bg-white/90 shadow-sm">
-      <CardHeader className="border-b border-[#eadfcb] bg-[#fffaf0] p-4 md:p-5">
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-          <div className="flex min-w-0 gap-3">
-            <BrandMark label={event.logo} tone={event.tone} />
-            <div className="min-w-0">
-              <Badge className="mb-2 rounded-full bg-[#2E5C6E] text-white hover:bg-[#2E5C6E]">{t.ceremonyDetails}</Badge>
-              <CardTitle className="break-words text-xl leading-tight text-[#1f2933] md:text-2xl">{tx(event.title, lang)}</CardTitle>
-              <p className="mt-2 text-sm leading-6 text-slate-700">{tx(event.date, lang)} · {tx(event.time, lang)}</p>
-              <p className="text-sm leading-6 text-slate-700">{tx(event.venue, lang)} · {event.address}</p>
-            </div>
-          </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            {event.maps.map((m) => <MapButton key={tx(m.label, lang)} href={m.url}>{tx(m.label, lang)}</MapButton>)}
-          </div>
+    <div className="mb-6 sm:mb-8">
+      {eyebrow && (
+        <div className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-amber-700 font-medium mb-2">
+          {t(eyebrow, lang)}
         </div>
-      </CardHeader>
-      <CardContent className="p-4 md:p-5">
-        <div className="grid gap-4 lg:grid-cols-[1.2fr_1.2fr_1.1fr]">
-          <InfoList title={lang === "zh" ? "畢業生" : "Graduate"} icon="graduation" items={event.graduate} lang={lang} />
-          <InfoList title={lang === "zh" ? "來賓" : "Guests"} icon="users" items={event.guests} lang={lang} />
-          <InfoList title={lang === "zh" ? "規則與提醒" : "Rules and reminders"} icon="shield" items={event.rules} lang={lang} warning />
-        </div>
-        <div className="mt-4 grid gap-3 rounded-2xl border border-[#eadfcb] bg-[#fcfaf2] p-3 text-sm leading-6 text-slate-700 md:grid-cols-2">
-          <div className="flex gap-2"><Clock className="mt-1 h-4 w-4 shrink-0 text-[#8a6d2f]" /><span>{tx(event.duration, lang)}</span></div>
-          <div className="flex gap-2"><Umbrella className="mt-1 h-4 w-4 shrink-0 text-[#8a6d2f]" /><span>{tx(event.weather, lang)}</span></div>
-        </div>
-      </CardContent>
-    </Card>
+      )}
+      <h2
+        className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-stone-900 leading-tight tracking-tight"
+        style={{ fontFamily: '"PingFang TC", Georgia, "Times New Roman", serif' }}
+      >
+        {t(title, lang)}
+      </h2>
+      {subtitle && (
+        <p className="text-stone-600 mt-2 text-sm sm:text-base leading-relaxed max-w-2xl">
+          {t(subtitle, lang)}
+        </p>
+      )}
+    </div>
   );
 }
 
-function InfoList({ title, icon, items, lang, warning = false }) {
+function IntensityDot({ level }) {
+  const colors = {
+    low: "bg-emerald-500",
+    mid: "bg-amber-500",
+    high: "bg-orange-500",
+    peak: "bg-red-500",
+  };
   return (
-    <div className="min-w-0 rounded-2xl border border-[#eadfcb] bg-white p-4">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#1f2933]">
-        {iconOf(icon, "h-4 w-4 text-[#2E5C6E]")}
-        {title}
-      </h3>
-      <ul className="space-y-2 text-sm leading-6 text-slate-700">
-        {items.map((item, index) => (
-          <li key={index} className="flex min-w-0 gap-2">
-            {warning ? <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-amber-700" /> : <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-700" />}
-            <span className="min-w-0 break-words">{tx(item, lang)}</span>
-          </li>
-        ))}
-      </ul>
+    <span
+      className={`inline-block w-1.5 h-1.5 rounded-full ${colors[level]}`}
+      aria-hidden="true"
+    />
+  );
+}
+
+function IntensityBadge({ level, lang }) {
+  const labels = {
+    low: bi("輕鬆", "Easy"),
+    mid: bi("適中", "Moderate"),
+    high: bi("吃重", "Heavy"),
+    peak: bi("最高", "Peak"),
+  };
+  const styles = {
+    low: "bg-emerald-50 text-emerald-800 border-emerald-200",
+    mid: "bg-amber-50 text-amber-800 border-amber-200",
+    high: "bg-orange-50 text-orange-800 border-orange-200",
+    peak: "bg-red-50 text-red-800 border-red-200",
+  };
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] sm:text-xs font-medium ${styles[level]}`}>
+      <IntensityDot level={level} />
+      {t(labels[level], lang)}
+    </span>
+  );
+}
+
+function TipCard({ tip, lang }) {
+  const Icon = tip.icon;
+  const severityStyles = {
+    key: { card: "bg-stone-900 text-amber-50 border-stone-900", iconWrap: "bg-amber-500/20 text-amber-300", title: "text-amber-100", body: "text-amber-50/85" },
+    important: { card: "bg-amber-50 border-amber-300 text-stone-900", iconWrap: "bg-amber-200 text-amber-900", title: "text-stone-900", body: "text-stone-700" },
+    note: { card: "bg-stone-50 border-stone-300 text-stone-900", iconWrap: "bg-stone-200 text-stone-700", title: "text-stone-900", body: "text-stone-600" },
+  };
+  const s = severityStyles[tip.severity] || severityStyles.note;
+  return (
+    <div className={`rounded-xl border p-4 sm:p-5 ${s.card} flex gap-3 sm:gap-4`}>
+      <div className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center ${s.iconWrap}`}>
+        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className={`font-semibold text-sm sm:text-[15px] leading-snug mb-1.5 ${s.title}`}>{t(tip.title, lang)}</div>
+        <div className={`text-xs sm:text-[13px] leading-relaxed ${s.body}`}>{t(tip.body, lang)}</div>
+      </div>
     </div>
   );
 }
 
 function DayCard({ day, lang }) {
-  const t = uiText[lang];
-  const [openMaps, setOpenMaps] = useState(false);
+  const Icon = day.icon;
+  const isCeremony = day.isCeremony;
+
   return (
-    <Card className="overflow-hidden border-[#d9ccb4] bg-white/90 shadow-sm">
-      <CardHeader className="border-b border-[#eadfcb] bg-white p-4 md:p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div className="min-w-0">
-            <div className="mb-2 flex flex-wrap items-center gap-2">
-              <Badge className="rounded-full bg-[#1f2933] text-white hover:bg-[#1f2933]">{tx(day.date, lang)}</Badge>
-              <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-[#fcfaf2] text-[#8a6d2f]">{tx(day.city, lang)}</Badge>
-              <span className={cn("rounded-full border px-2.5 py-0.5 text-xs font-semibold", intensityClass(tx(day.intensity, lang)))}>{t.intensity}: {tx(day.intensity, lang)}</span>
-              <span className="rounded-full border border-[#c7d7df] bg-[#edf5f7] px-2.5 py-0.5 text-xs font-semibold text-[#214a57]">{tx(day.status, lang)}</span>
-            </div>
-            <CardTitle className="break-words text-xl leading-tight text-[#1f2933] md:text-2xl">{tx(day.title, lang)}</CardTitle>
-            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-700 md:text-[15px]"><strong>{t.theme}: </strong>{tx(day.theme, lang)}</p>
+    <Card className={`overflow-hidden border-stone-200 bg-white shadow-sm hover:shadow-md transition-shadow ${isCeremony ? "ring-2 ring-amber-300 ring-offset-2 ring-offset-stone-50" : ""}`}>
+      <CardHeader className={`pb-4 ${isCeremony ? "bg-gradient-to-br from-stone-900 to-stone-800 text-amber-50" : "bg-gradient-to-br from-stone-50 to-white"}`}>
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className={`flex-shrink-0 rounded-full p-2.5 sm:p-3 ${isCeremony ? "bg-amber-500/20 text-amber-200" : "bg-stone-900 text-amber-100"}`}>
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            {day.maps.slice(0, 2).map((m) => <MapButton key={tx(m.label, lang)} href={m.url}>{tx(m.label, lang)}</MapButton>)}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className={`font-semibold text-xl sm:text-2xl tracking-tight ${isCeremony ? "text-amber-100" : "text-stone-900"}`} style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                {day.date}
+              </span>
+              <span className={`text-xs sm:text-sm ${isCeremony ? "text-amber-200/80" : "text-stone-500"}`}>
+                {t(day.weekday, lang)}
+              </span>
+              <IntensityBadge level={day.intensity} lang={lang} />
+              {day.pendingInfo && (
+                <Badge variant="outline" className={`text-[10px] sm:text-xs ${isCeremony ? "bg-stone-800 text-amber-200 border-amber-500/40" : "bg-stone-100 text-stone-600"}`}>
+                  {lang === "zh" ? "待確認" : "TBC"}
+                </Badge>
+              )}
+              {isCeremony && (
+                <Badge className="bg-amber-500 text-stone-900 hover:bg-amber-500 text-[10px] sm:text-xs font-semibold">
+                  {lang === "zh" ? "畢業典禮" : "Commencement"}
+                </Badge>
+              )}
+            </div>
+            <CardTitle className={`text-base sm:text-lg lg:text-xl mt-1.5 leading-snug ${isCeremony ? "text-amber-50" : "text-stone-900"}`} style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+              {t(day.title, lang)}
+            </CardTitle>
+            <CardDescription className={`mt-1 text-xs sm:text-sm leading-relaxed ${isCeremony ? "text-amber-100/80" : "text-stone-600"}`}>
+              <span className="font-medium">{t(day.city, lang)}</span>
+              <span className="mx-1.5 opacity-50">·</span>
+              {t(day.subtitle, lang)}
+            </CardDescription>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="divide-y divide-[#f0e7d7]">
-          {day.steps.map((step, index) => (
-            <div key={index} className="grid gap-2 px-4 py-3 md:grid-cols-[150px_1fr] md:gap-4 md:px-5">
-              <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-[#8a6d2f]">
-                {iconOf(step.icon, "h-4 w-4 shrink-0")}
-                <span className="break-words">{step.time}</span>
-              </div>
-              <p className="min-w-0 break-words text-sm leading-6 text-slate-800 md:text-[15px]">{tx(step, lang)}</p>
+
+      <CardContent className="space-y-4 pt-5 sm:pt-6">
+        {day.flightInfo && (
+          <div className="rounded-lg bg-sky-50 border border-sky-200 p-3 sm:p-4">
+            <div className="flex items-center gap-2 text-sky-900 font-semibold text-xs sm:text-sm mb-2.5">
+              <Plane className="h-4 w-4" />
+              {lang === "zh" ? "航班資訊" : "Flight Information"}
             </div>
-          ))}
-        </div>
-        <div className="grid gap-0 border-t border-[#eadfcb] md:grid-cols-[1fr_1fr]">
-          <div className="border-b border-[#eadfcb] bg-[#fff7ed] p-4 md:border-b-0 md:border-r">
-            <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-900"><AlertTriangle className="h-4 w-4" />{t.avoid}</h4>
-            <ul className="space-y-1.5 text-sm leading-6 text-amber-950">
-              {day.avoid.map((item, index) => (
-                <li key={index} className="flex gap-2"><XCircle className="mt-1 h-3.5 w-3.5 shrink-0" /><span className="break-words">{tx(item, lang)}</span></li>
+            <div className="space-y-1.5 text-xs">
+              {day.flightInfo.legs.map((leg, i) => (
+                <div key={i} className="grid grid-cols-[68px_1fr] sm:grid-cols-[80px_120px_1fr] gap-2 sm:gap-3 items-center">
+                  <Badge variant="outline" className="bg-white border-sky-300 text-sky-900 font-mono text-[10px] sm:text-xs justify-center">{leg.code}</Badge>
+                  <span className="text-stone-700 text-[11px] sm:text-xs">{leg.route}</span>
+                  <span className="text-stone-500 text-[10px] sm:text-xs col-span-2 sm:col-span-1">{leg.time}</span>
+                </div>
               ))}
-            </ul>
-          </div>
-          <div className="bg-[#f8fbfc] p-4">
-            <button type="button" onClick={() => setOpenMaps((v) => !v)} className="mb-2 flex w-full items-center justify-between gap-3 text-left text-sm font-semibold text-[#214a57]">
-              <span className="flex items-center gap-2"><MapPin className="h-4 w-4" />{t.mapLinks}</span>
-              {openMaps ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            </button>
-            <div className={cn("flex flex-wrap gap-2", !openMaps && "max-h-[78px] overflow-hidden")}> 
-              {day.maps.map((m) => <MapButton key={tx(m.label, lang)} href={m.url}>{tx(m.label, lang)}</MapButton>)}
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+        )}
 
-function TransportCard({ item, lang }) {
-  return (
-    <Card className="border-[#d9ccb4] bg-white/90 shadow-sm">
-      <CardContent className="p-4 md:p-5">
-        <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#edf5f7] text-[#2E5C6E]">
-            {iconOf(item.icon, "h-5 w-5")}
-          </div>
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <h3 className="break-words text-base font-semibold text-[#1f2933]">{tx(item.title, lang)}</h3>
-              <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-[#fcfaf2] text-[#8a6d2f]">{tx(item.status, lang)}</Badge>
-            </div>
-            <p className="mt-2 break-words text-sm leading-6 text-slate-700">{tx(item.body, lang)}</p>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-function RiskCard({ group, lang }) {
-  return (
-    <Card className="border-[#d9ccb4] bg-white/90 shadow-sm">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg text-[#1f2933]">
-          {iconOf(group.icon, "h-5 w-5 text-[#2E5C6E]")}
-          {tx(group.title, lang)}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="pt-0">
-        <ul className="space-y-2 text-sm leading-6 text-slate-700">
-          {group.items.map((item, index) => (
-            <li key={index} className="flex gap-2"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-700" /><span className="break-words">{tx(item, lang)}</span></li>
-          ))}
-        </ul>
-      </CardContent>
-    </Card>
-  );
-}
-
-function MapDirectory({ lang }) {
-  const t = uiText[lang];
-  return (
-    <div className="grid gap-5">
-      {mapDirectory.map((group) => (
-        <Card key={tx(group.group, lang)} className="border-[#d9ccb4] bg-white/90 shadow-sm">
-          <CardHeader className="border-b border-[#eadfcb] bg-[#fffaf0] py-4">
-            <CardTitle className="text-lg text-[#1f2933]">{tx(group.group, lang)}</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-3 p-4 md:grid-cols-2 lg:grid-cols-3">
-            {group.links.map((link) => (
-              <div key={tx(link.label, lang)} className="min-w-0 rounded-2xl border border-[#eadfcb] bg-white p-3">
-                <p className="truncate text-sm font-semibold text-[#1f2933]">{tx(link.label, lang)}</p>
-                <p className="mt-1 min-h-[40px] text-xs leading-5 text-slate-600">{tx(link.note, lang)}</p>
-                <div className="mt-3"><MapButton href={link.url}>{t.openMap}</MapButton></div>
+        {day.isCeremony && day.ceremony && (
+          <div className="rounded-xl border-2 border-stone-900 bg-gradient-to-br from-amber-50 to-stone-50 p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-3 mb-3 sm:mb-4">
+              <div className="flex items-center gap-2 min-w-0">
+                <GraduationCap className="h-5 w-5 text-stone-900 flex-shrink-0" />
+                <h4 className="font-semibold text-base sm:text-lg text-stone-900 truncate" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                  {lang === "zh" ? "典禮資訊" : "Ceremony Details"}
+                </h4>
               </div>
+              <div className="flex-shrink-0 text-stone-900">
+                {day.ceremonyType === "fenway" ? <FenwayBadge className="h-10 w-10 sm:h-12 sm:w-12" /> : <LeaderBankBadge className="h-10 w-10 sm:h-12 sm:w-12" />}
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider font-medium mb-0.5">{lang === "zh" ? "場館" : "Venue"}</div>
+                <div className="font-semibold text-stone-900 text-sm sm:text-base">{day.ceremony.venue}</div>
+                <div className="text-xs text-stone-600 mt-0.5">{day.ceremony.address}</div>
+                <div className="mt-1"><MapButton addr={day.ceremony.address} lang={lang} /></div>
+              </div>
+              {day.ceremony.venueType && (
+                <div className="text-[11px] sm:text-xs text-amber-900 bg-amber-100/70 border border-amber-300 rounded-md px-2.5 py-1.5">
+                  {t(day.ceremony.venueType, lang)}
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs sm:text-[13px] pt-1">
+                {day.ceremony.gradReportTime && <CeremonyRow label={lang === "zh" ? "畢業生報到" : "Graduate report"} value={t(day.ceremony.gradReportTime, lang)} />}
+                {day.ceremony.gradArrival && <CeremonyRow label={lang === "zh" ? "畢業生抵達" : "Graduate arrival"} value={t(day.ceremony.gradArrival, lang)} />}
+                {day.ceremony.gradEntrance && <CeremonyRow label={lang === "zh" ? "畢業生入口" : "Graduate entrance"} value={t(day.ceremony.gradEntrance, lang)} />}
+                {day.ceremony.guestDoors && <CeremonyRow label={lang === "zh" ? "來賓開門" : "Guest doors"} value={t(day.ceremony.guestDoors, lang)} />}
+                {day.ceremony.guestArrival && <CeremonyRow label={lang === "zh" ? "來賓抵達" : "Guest arrival"} value={t(day.ceremony.guestArrival, lang)} />}
+                {day.ceremony.guestEntrance && <CeremonyRow label={lang === "zh" ? "來賓入口" : "Guest entrance"} value={t(day.ceremony.guestEntrance, lang)} />}
+                {day.ceremony.processionStart && <CeremonyRow label="Procession" value={t(day.ceremony.processionStart, lang)} />}
+                {day.ceremony.ceremonyStart && <CeremonyRow label={lang === "zh" ? "典禮開始" : "Ceremony"} value={t(day.ceremony.ceremonyStart, lang)} />}
+                {day.ceremony.time && !day.ceremony.ceremonyStart && <CeremonyRow label={lang === "zh" ? "典禮時間" : "Time"} value={t(day.ceremony.time, lang)} />}
+                {day.ceremony.ceremonyLength && <CeremonyRow label={lang === "zh" ? "典禮時長" : "Length"} value={t(day.ceremony.ceremonyLength, lang)} />}
+                {day.ceremony.bagLimit && <CeremonyRow label={lang === "zh" ? "包包尺寸" : "Bag limit"} value={day.ceremony.bagLimit} mono />}
+              </div>
+              {day.ceremony.important && (
+                <Alert className="bg-stone-900 border-stone-900 text-amber-50 mt-2">
+                  <AlertTriangle className="h-4 w-4 text-amber-300" />
+                  <AlertDescription className="text-[11px] sm:text-xs text-amber-50/95 ml-1">
+                    {t(day.ceremony.important, lang)}
+                  </AlertDescription>
+                </Alert>
+              )}
+              {day.ceremony.note && (
+                <div className="text-[11px] sm:text-xs text-stone-500 italic border-t border-stone-200 pt-2">
+                  {t(day.ceremony.note, lang)}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <Accordion type="multiple" defaultValue={["timeline"]} className="space-y-1">
+          <DayAccordionItem id="timeline" icon={Clock} label={lang === "zh" ? "行程時刻表" : "Timeline"}>
+            <div className="space-y-0">
+              {day.timeline?.map((item, i) => (
+                <div key={i} className="grid grid-cols-[78px_1fr] sm:grid-cols-[100px_1fr] gap-2 sm:gap-3 py-2 border-b border-stone-100 last:border-0">
+                  <div className="font-mono text-[10px] sm:text-xs text-stone-500 pt-0.5 break-words">{t(item.time, lang)}</div>
+                  <div className="text-[13px] sm:text-sm text-stone-800 leading-relaxed">
+                    {t(item.activity, lang)}
+                    {item.note && <div className="text-[11px] sm:text-xs text-stone-500 mt-0.5">{t(item.note, lang)}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DayAccordionItem>
+
+          {day.decision && (
+            <DayAccordionItem id="decision" icon={Compass} label={t(day.decision.title, lang)}>
+              <ul className="space-y-2 text-[13px] sm:text-sm text-stone-800">
+                {day.decision.items.map((item, i) => (
+                  <li key={i} className="flex gap-2">
+                    <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-700" />
+                    <span className="leading-relaxed">{t(item.text, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+              {day.decision.caution && (
+                <div className="mt-3 text-[11px] sm:text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-1.5">
+                  {t(day.decision.caution, lang)}
+                </div>
+              )}
+            </DayAccordionItem>
+          )}
+
+          {day.route && (
+            <DayAccordionItem id="route" icon={Compass} label={t(day.route.title, lang)}>
+              <ol className="space-y-1.5 text-[13px] sm:text-sm text-stone-800">
+                {day.route.steps.map((step, i) => (
+                  <li key={i} className="flex gap-2.5">
+                    <span className="font-mono text-[11px] sm:text-xs text-amber-700 mt-0.5 font-semibold w-5 flex-shrink-0">{(i + 1).toString().padStart(2, "0")}</span>
+                    <span className="leading-relaxed">{t(step, lang)}</span>
+                  </li>
+                ))}
+              </ol>
+            </DayAccordionItem>
+          )}
+
+          {day.costAnalysis && (
+            <DayAccordionItem id="cost" icon={DollarSign} label={t(day.costAnalysis.title, lang)}>
+              <div className="space-y-2 text-[13px] sm:text-sm">
+                {day.costAnalysis.items.map((item, i) => (
+                  <div key={i} className="flex justify-between items-baseline gap-3 py-1.5 border-b border-stone-100 last:border-0">
+                    <span className="text-stone-700 leading-snug flex-1">{t(item.label, lang)}</span>
+                    <span className="font-medium text-stone-900 font-mono text-xs sm:text-sm flex-shrink-0">{t(item.value, lang)}</span>
+                  </div>
+                ))}
+              </div>
+            </DayAccordionItem>
+          )}
+
+          {day.transportation && (
+            <DayAccordionItem id="transportation" icon={Car} label={lang === "zh" ? "交通與停車" : "Transit & Parking"}>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-800">
+                {day.transportation.map((tx, i) => (
+                  <li key={i} className="flex gap-2">
+                    <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-stone-400" />
+                    <span className="leading-relaxed">{t(tx, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+
+          {day.bagPolicy && (
+            <DayAccordionItem id="bag" icon={Briefcase} label={lang === "zh" ? "攜帶物品限制" : "Bag Policy"}>
+              <div className="bg-stone-100 rounded-lg p-3 mb-3 text-center">
+                <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "尺寸上限" : "Size limit"}</div>
+                <div className="font-mono text-base sm:text-lg font-semibold text-stone-900 mt-0.5">{day.bagPolicy.limit}</div>
+              </div>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-800">
+                {day.bagPolicy.notes.map((n, i) => (
+                  <li key={i} className="flex gap-2">
+                    <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-700" />
+                    <span className="leading-relaxed">{t(n, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+
+          {day.prohibitedItems && (
+            <DayAccordionItem id="prohibited" icon={XCircle} label={lang === "zh" ? "禁止攜帶物品" : "Prohibited Items"}>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-700">
+                {day.prohibitedItems.map((p, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-red-500 mt-0.5 flex-shrink-0">✕</span>
+                    <span className="leading-relaxed">{t(p, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+
+          {day.dressCode && (
+            <DayAccordionItem id="dress" icon={GraduationCap} label={lang === "zh" ? "畢業生穿著" : "Regalia"}>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {day.dressCode.map((d, i) => (
+                  <Badge key={i} className="bg-stone-900 text-amber-100 hover:bg-stone-900 border-stone-900 text-xs px-2.5 py-1">{d}</Badge>
+                ))}
+              </div>
+              {day.rules && (
+                <ul className="mt-3 space-y-1.5 text-[13px] sm:text-sm text-stone-700">
+                  {day.rules.map((r, i) => (
+                    <li key={i} className="flex gap-2">
+                      <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
+                      <span className="leading-relaxed">{t(r, lang)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </DayAccordionItem>
+          )}
+
+          {day.rules && !day.dressCode && (
+            <DayAccordionItem id="rules" icon={Shield} label={lang === "zh" ? "本日原則" : "Day Rules"}>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-800">
+                {day.rules.map((r, i) => (
+                  <li key={i} className="flex gap-2">
+                    <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0 text-emerald-600" />
+                    <span className="leading-relaxed">{t(r, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+
+          {day.criticalActions && (
+            <DayAccordionItem id="critical" icon={CheckCheck} label={lang === "zh" ? "關鍵動作" : "Key Actions"}>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-800">
+                {day.criticalActions.map((c, i) => (
+                  <li key={i} className="flex gap-2">
+                    <CheckCheck className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-700" />
+                    <span className="leading-relaxed">{t(c, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+
+          {day.avoid && (
+            <DayAccordionItem id="avoid" icon={XCircle} label={lang === "zh" ? "本日不排" : "Skip Today"}>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-700">
+                {day.avoid.map((a, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-red-500 mt-0.5 flex-shrink-0">✕</span>
+                    <span className="leading-relaxed">{t(a, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+
+          {day.locations?.length > 0 && (
+            <DayAccordionItem id="locations" icon={MapPin} label={`${lang === "zh" ? "地點與地圖" : "Places & Maps"} (${day.locations.length})`}>
+              <div className="divide-y divide-stone-100">
+                {day.locations.map((loc, i) => (
+                  <LocationRow key={i} name={loc.name} addr={loc.addr} lang={lang} />
+                ))}
+              </div>
+            </DayAccordionItem>
+          )}
+
+          {day.notes && (
+            <DayAccordionItem id="notes" icon={Lightbulb} label={lang === "zh" ? "備註" : "Notes"}>
+              <ul className="space-y-1.5 text-[13px] sm:text-sm text-stone-700">
+                {day.notes.map((n, i) => (
+                  <li key={i} className="flex gap-2">
+                    <ChevronRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-stone-400" />
+                    <span className="leading-relaxed">{t(n, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </DayAccordionItem>
+          )}
+        </Accordion>
+
+        {day.warnings?.length > 0 && (
+          <div className="space-y-2">
+            {day.warnings.map((w, i) => (
+              <Alert key={i} className="bg-amber-50 border-amber-300">
+                <AlertTriangle className="h-4 w-4 text-amber-700" />
+                <AlertTitle className="text-[13px] sm:text-sm text-stone-900 leading-snug">{t(w.title, lang)}</AlertTitle>
+                <AlertDescription className="text-[11px] sm:text-xs text-stone-700 leading-relaxed">{t(w.body, lang)}</AlertDescription>
+              </Alert>
             ))}
-          </CardContent>
-        </Card>
-      ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function CeremonyRow({ label, value, mono }) {
+  return (
+    <div className="flex justify-between gap-2 items-baseline">
+      <span className="text-stone-500 text-[11px] sm:text-xs flex-shrink-0">{label}</span>
+      <span className={`font-medium text-stone-900 text-right text-[11px] sm:text-xs ${mono ? "font-mono" : ""} leading-snug`}>{value}</span>
     </div>
   );
 }
 
-function SourceDirectory({ lang }) {
-  const t = uiText[lang];
+function DayAccordionItem({ id, icon: Icon, label, children }) {
   return (
-    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-      {sourceCards.map((source) => (
-        <Card key={tx(source.label, lang)} className="border-[#d9ccb4] bg-white/90 shadow-sm">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <Badge variant="outline" className="mb-2 rounded-full border-[#d9ccb4] bg-[#fcfaf2] text-[#8a6d2f]">{tx(source.kind, lang)}</Badge>
-                <h3 className="break-words text-base font-semibold text-[#1f2933]">{tx(source.label, lang)}</h3>
-              </div>
-              <Info className="h-5 w-5 shrink-0 text-[#2E5C6E]" />
-            </div>
-            <p className="mt-3 text-sm leading-6 text-slate-700">{tx(source.summary, lang)}</p>
-            <div className="mt-4"><MapButton href={source.url}>{t.openSource}</MapButton></div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
-}
-
-function FilterBar({ lang, filter, setFilter, search, setSearch }) {
-  const t = uiText[lang];
-  return (
-    <div className="border-b border-[#d9ccb4] bg-[#fcfaf2]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-3 py-3 md:flex-row md:items-center md:justify-between md:px-6">
-        <div className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible md:pb-0">
-          {sections.map((section) => {
-            const Icon = section.icon;
-            return (
-              <button
-                type="button"
-                key={section.key}
-                onClick={() => setFilter(section.key)}
-                className={cn(
-                  "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-                  filter === section.key
-                    ? "border-[#2E5C6E] bg-[#2E5C6E] text-white"
-                    : "border-[#d9ccb4] bg-white text-[#1f2933] hover:bg-[#fffaf0]"
-                )}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {t[section.key]}
-              </button>
-            );
-          })}
+    <AccordionItem value={id} className="border-stone-200 border-b last:border-b-0">
+      <AccordionTrigger className="hover:no-underline py-2.5 sm:py-3 text-left">
+        <div className="flex items-center gap-2 text-[13px] sm:text-sm font-medium text-stone-800">
+          <Icon className="h-4 w-4 text-stone-500 flex-shrink-0" />
+          <span className="leading-snug">{label}</span>
         </div>
-        <div className="relative w-full md:max-w-sm">
-          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t.searchPlaceholder}
-            className="h-10 w-full rounded-2xl border border-[#d9ccb4] bg-white pl-9 pr-3 text-sm outline-none ring-[#2E5C6E]/15 placeholder:text-slate-400 focus:ring-4"
-          />
+      </AccordionTrigger>
+      <AccordionContent className="pb-3">{children}</AccordionContent>
+    </AccordionItem>
+  );
+}
+
+// =============================================================================
+// LANGUAGE TOGGLE (floating bottom-right)
+// =============================================================================
+
+function LanguageToggle({ lang, setLang }) {
+  const [expanded, setExpanded] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={containerRef} className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50">
+      {expanded ? (
+        <div className="bg-stone-900 text-amber-50 rounded-full shadow-2xl flex items-center gap-1 p-1 border border-stone-700/40 transition-all">
+          <button
+            onClick={() => { setLang("zh"); setExpanded(false); }}
+            className={`px-3 py-2 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${lang === "zh" ? "bg-amber-500 text-stone-900" : "text-amber-100/80 hover:text-amber-50"}`}
+            aria-label="Switch to Chinese"
+          >
+            繁中
+          </button>
+          <button
+            onClick={() => { setLang("en"); setExpanded(false); }}
+            className={`px-3 py-2 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-all ${lang === "en" ? "bg-amber-500 text-stone-900" : "text-amber-100/80 hover:text-amber-50"}`}
+            aria-label="Switch to English"
+          >
+            EN
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setExpanded(true)}
+          className="bg-stone-900/85 backdrop-blur-sm text-amber-100 rounded-full shadow-2xl hover:bg-stone-900 hover:scale-105 transition-all w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center group border border-stone-700/40"
+          aria-label="Toggle language"
+        >
+          <Languages className="h-5 w-5 sm:h-6 sm:w-6 group-hover:rotate-12 transition-transform" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+// =============================================================================
+// SEGMENT NAVIGATION CARD
+// =============================================================================
+
+function SegmentCard({ segment, idx, lang }) {
+  const Icon = segment.icon;
+  return (
+    <div className="bg-white rounded-xl border border-stone-200 p-5 sm:p-6 hover:shadow-md transition-shadow group">
+      <div className="flex items-start justify-between gap-3 mb-3 sm:mb-4">
+        <div className="text-stone-900 group-hover:text-amber-700 transition-colors">
+          <Icon className="h-7 w-7 sm:h-8 sm:w-8" />
+        </div>
+        <span className="text-[10px] sm:text-xs uppercase tracking-widest text-stone-400 font-mono mt-1">
+          0{idx + 1}
+        </span>
+      </div>
+      <div className="text-[10px] sm:text-xs uppercase tracking-widest text-amber-700 font-medium mb-1">
+        {lang === "zh" ? "段落" : "Segment"} {idx + 1}
+      </div>
+      <h3 className="font-semibold text-xl sm:text-2xl text-stone-900 leading-tight" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+        {lang === "zh" ? segment.cityZh : segment.city}
+      </h3>
+      <div className="mt-3 sm:mt-4 space-y-1.5 text-[13px] sm:text-sm text-stone-600">
+        <div className="flex items-center gap-2">
+          <Calendar className="h-3.5 w-3.5 text-stone-400" />
+          <span>{t(segment.dateRange, lang)}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Hotel className="h-3.5 w-3.5 text-stone-400" />
+          <span>{t(segment.nights, lang)}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-3.5 w-3.5 text-stone-400" />
+          <span>{t(segment.theme, lang)}</span>
         </div>
       </div>
     </div>
   );
 }
 
-function App() {
+// =============================================================================
+// MAIN APP
+// =============================================================================
+
+export default function App() {
   const [lang, setLang] = useState("zh");
-  const [filter, setFilter] = useState("all");
-  const [search, setSearch] = useState("");
-  const t = uiText[lang];
+  const [activeTab, setActiveTab] = useState("overview");
 
-  const visibleDays = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    return dailyPlans.filter((day) => {
-      const matchesFilter = filter === "all" || day.filter === filter || (filter === "boston" && day.filter === "ceremonies" ? false : false);
-      const text = [
-        tx(day.date, lang),
-        tx(day.city, lang),
-        tx(day.title, lang),
-        tx(day.status, lang),
-        tx(day.theme, lang),
-        ...day.steps.map((s) => `${s.time} ${tx(s, lang)}`),
-        ...day.avoid.map((a) => tx(a, lang)),
-      ].join(" ").toLowerCase();
-      return matchesFilter && (!q || text.includes(q));
-    });
-  }, [filter, search, lang]);
+  const bostonDays = days.filter((d) => d.cityKey === "boston");
+  const phillyDcDays = days.filter((d) => d.cityKey === "philly" || d.cityKey === "dc" || (d.cityKey === "transit" && (d.id === "0502" || d.id === "0505")));
+  const nyDays = days.filter((d) => d.cityKey === "ny");
 
-  const showDays = filter === "all" || ["boston", "ceremonies", "transport", "philly", "dc", "nyc"].includes(filter);
+  const navItems = [
+    { value: "overview", icon: Compass, label: bi("總覽", "Overview") },
+    { value: "boston", icon: BostonMark, label: bi("波士頓", "Boston") },
+    { value: "philly", icon: PhillyMark, label: bi("費城與 DC", "Philly + DC") },
+    { value: "ny", icon: NyMark, label: bi("紐約", "New York") },
+    { value: "logistics", icon: Car, label: bi("交通與住宿", "Logistics") },
+    { value: "dining", icon: Utensils, label: bi("餐飲", "Dining") },
+    { value: "practical", icon: Info, label: bi("實用資訊", "Practical") },
+    { value: "checklist", icon: CheckCheck, label: bi("行前準備", "Pre-Trip") },
+  ];
 
   return (
-    <main className={cn("min-h-screen bg-[#FCFAF2] text-slate-900", lang === "zh" ? "font-serif" : "font-serif")}>
-      <section className="overflow-hidden border-b border-[#d9ccb4] bg-[radial-gradient(circle_at_10%_10%,#fff5d6,transparent_36%),linear-gradient(180deg,#FCFAF2,#f7efdf)]">
-        <div className="mx-auto max-w-7xl px-3 py-7 md:px-6 md:py-10 lg:py-12">
-          <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+    <div
+      className="min-h-screen bg-stone-50 text-stone-900"
+      style={{ fontFamily: '"PingFang TC", "Noto Sans CJK TC", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif' }}
+      lang={lang === "zh" ? "zh-Hant" : "en"}
+    >
+      {/* HEADER / HERO */}
+      <header className="relative bg-stone-900 text-amber-50 overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.05]">
+          <TripRouteMap className="w-full h-full" />
+        </div>
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-20">
+          <div className="grid lg:grid-cols-[auto_1fr] gap-6 lg:gap-10 items-start">
+            <div className="flex-shrink-0 text-amber-200">
+              <HuskyMark className="h-16 w-16 sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
+            </div>
             <div className="min-w-0">
-              <div className="mb-4 flex flex-wrap gap-2">
-                <Badge className="rounded-full bg-[#2E5C6E] text-white hover:bg-[#2E5C6E]">{t.readerMode}</Badge>
-                <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-white/75 text-[#8a6d2f]">Boston · Philadelphia · DC · New York</Badge>
-                <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-white/75 text-[#8a6d2f]">4/26 至 5/11</Badge>
+              <div className="flex items-center gap-2 text-amber-300 text-[10px] sm:text-xs uppercase tracking-[0.25em] mb-3">
+                <span className="w-6 h-px bg-amber-500/60" />
+                <span>Northeastern · Class of 2026</span>
               </div>
-              <h1 className="max-w-5xl break-words text-4xl font-semibold leading-tight tracking-tight text-[#1f2933] md:text-5xl lg:text-6xl">{t.docTitle}</h1>
-              <p className="mt-4 max-w-4xl text-base leading-7 text-slate-700 md:text-lg">{t.subtitle}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{t.defaultNote}</p>
-              <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                {[
-                  { icon: "graduation", zh: "畢業典禮不可壓線", en: "Ceremonies cannot be rushed" },
-                  { icon: "car", zh: "取車需要提早", en: "Pickup must be earlier" },
-                  { icon: "parking", zh: "PH4 已關閉", en: "PH4 is closed" },
-                  { icon: "train", zh: "費城至紐約不是 LIRR", en: "Philadelphia to New York is not LIRR" },
-                ].map((item) => (
-                  <div key={item.en} className="flex items-center gap-2 rounded-2xl border border-[#d9ccb4] bg-white/75 px-3 py-2 text-sm text-[#1f2933] shadow-sm">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#edf5f7] text-[#2E5C6E]">
-                      {iconOf(item.icon, "h-4 w-4")}
-                    </div>
-                    <span className="min-w-0 break-words font-semibold">{tx(item, lang)}</span>
-                  </div>
-                ))}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-semibold leading-[1.1] tracking-tight" style={{ fontFamily: '"PingFang TC", Georgia, "Times New Roman", serif' }}>
+                {t(meta.title, lang)}
+              </h1>
+              <p className="text-amber-100/80 text-base sm:text-lg lg:text-xl font-light mt-3 leading-relaxed">
+                {t(meta.subtitle, lang)}
+              </p>
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-6 text-xs sm:text-sm text-amber-200/85">
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4 opacity-70" />
+                  <span>{meta.dates}</span>
+                </div>
+                <div className="hidden sm:block w-px h-4 bg-amber-600/40" />
+                <div className="flex items-center gap-1.5">
+                  <MapPin className="h-4 w-4 opacity-70" />
+                  <span>Boston · Philadelphia · DC · New York</span>
+                </div>
+                <div className="hidden sm:block w-px h-4 bg-amber-600/40" />
+                <div className="flex items-center gap-1.5">
+                  <Users className="h-4 w-4 opacity-70" />
+                  <span>{t(meta.travelers, lang)}</span>
+                </div>
               </div>
             </div>
-            <Card className="border-[#d9ccb4] bg-white/85 shadow-sm">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg text-[#1f2933]"><ShieldCheck className="h-5 w-5 text-[#2E5C6E]" />{t.completeCheck}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 text-sm leading-6 text-slate-700">
-                <p>{lang === "zh" ? "本版已納入畢業典禮、票券與入場時間、包包限制、住宿基準點、Boston 取車修正、Avis J5D 還車、American Dream、UPenn、DC 開車日與 New York 未定資訊。" : "This version includes ceremony logistics, ticket and arrival timing, bag restrictions, lodging bases, Boston pickup correction, Avis J5D return, American Dream, UPenn, DC driving day, and New York pending details."}</p>
-                <p>{lang === "zh" ? "仍缺的不是行程邏輯，而是紐約住宿地址、5/11 航班資訊、Avis 實際早取車報價、4211 Suites 停車費。" : "What remains missing is not itinerary logic. It is the New York hotel address, May 11 flight details, the actual early-pickup Avis quote, and the 4211 Suites parking fee."}</p>
-              </CardContent>
-            </Card>
+          </div>
+        </div>
+      </header>
+
+      {/* SUMMARY ROUTE MAP */}
+      <section className="bg-white border-b border-stone-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+          <div className="text-stone-700">
+            <TripRouteMap className="w-full h-auto max-h-44 sm:max-h-56" />
           </div>
         </div>
       </section>
 
-      <StickySummary lang={lang} />
-      <FilterBar lang={lang} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} />
+      {/* STICKY TAB NAVIGATION */}
+      <div className="sticky top-0 z-30 bg-stone-50/95 backdrop-blur-md border-b border-stone-200 shadow-sm">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 lg:px-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="w-full h-auto bg-transparent gap-0.5 sm:gap-1 py-2 flex flex-wrap justify-start sm:justify-center overflow-x-auto">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <TabsTrigger
+                    key={item.value}
+                    value={item.value}
+                    className="flex-shrink-0 text-[11px] sm:text-xs lg:text-sm px-2.5 py-1.5 sm:px-3 sm:py-2 data-[state=active]:bg-stone-900 data-[state=active]:text-amber-100 data-[state=active]:shadow-sm rounded-md flex items-center gap-1.5 whitespace-nowrap"
+                  >
+                    <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                    <span>{t(item.label, lang)}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
 
-      <div className="mx-auto max-w-7xl px-3 py-6 md:px-6 md:py-8">
-        {(filter === "all" || filter === "transport") && <div className="mb-8"><RouteDiagram lang={lang} /></div>}
+            {/* OVERVIEW TAB */}
+            <TabsContent value="overview" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-10 sm:space-y-14">
+                <div>
+                  <SectionHeading
+                    eyebrow={bi("行程結構", "Trip Structure")}
+                    title={bi("三段，三座城市", "Three Segments, Three Cities")}
+                    subtitle={bi("由波士頓畢業典禮主軸出發，向南至費城與華盛頓特區，再以紐約自由行收尾。", "Anchored by the Boston commencement, then south to Philadelphia and Washington, DC, and finishing with a self-guided segment in New York.")}
+                    lang={lang}
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+                    {meta.segments.map((seg, idx) => (
+                      <SegmentCard key={idx} segment={seg} idx={idx} lang={lang} />
+                    ))}
+                  </div>
+                </div>
 
-        {(filter === "all" || filter === "ceremonies") && (
-          <section className="mb-9">
-            <SectionTitle eyebrow={lang === "zh" ? "固定不可動日程" : "Fixed schedule"} title={t.ceremonyDetails}>
-              {lang === "zh" ? "兩場典禮是全程優先級最高的安排。任何觀光、餐廳與交通都不能壓縮入場時間。" : "The two ceremonies are the highest-priority fixed commitments. Sightseeing, dining, and transportation must not compress arrival time."}
-            </SectionTitle>
-            <div className="grid gap-5">
-              {ceremonies.map((event) => <CeremonyCard key={event.key} event={event} lang={lang} />)}
-            </div>
-          </section>
-        )}
+                <div>
+                  <SectionHeading
+                    eyebrow={bi("出發前必讀", "Read Before Departure")}
+                    title={bi("關鍵旅行提醒", "Key Travel Notes")}
+                    subtitle={bi("七個會直接影響行程的具體細節。", "Seven specifics that materially affect the trip.")}
+                    lang={lang}
+                  />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+                    {travelTips.map((tip) => (
+                      <TipCard key={tip.id} tip={tip} lang={lang} />
+                    ))}
+                  </div>
+                </div>
 
-        {showDays && (
-          <section className="mb-9">
-            <SectionTitle eyebrow={lang === "zh" ? "逐日執行版" : "Daily execution plan"} title={t.dayPlan}>
-              {lang === "zh" ? "每一天只保留一個主要地理群，避免跨區亂跑。長途飛行、畢業典禮、長途駕駛後都刻意降低強度。" : "Each day keeps one primary geographic cluster. Intensity is deliberately reduced after long flights, ceremonies, and long driving days."}
-            </SectionTitle>
-            <div className="grid gap-5">
-              {visibleDays.map((day) => <DayCard key={day.id} day={day} lang={lang} />)}
-              {visibleDays.length === 0 ? <Card className="border-[#d9ccb4] bg-white p-5 text-sm text-slate-700">{lang === "zh" ? "沒有符合搜尋條件的行程。" : "No matching itinerary item found."}</Card> : null}
-            </div>
-          </section>
-        )}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                  <Card className="border-stone-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                        <Hotel className="h-5 w-5 text-amber-700" />
+                        {lang === "zh" ? "住宿" : "Accommodations"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {hotels.map((h, i) => (
+                        <div key={i} className="border-l-2 border-amber-500 pl-3 sm:pl-4 py-1">
+                          <div className="font-semibold text-stone-900 text-[15px] sm:text-base flex items-center gap-2 flex-wrap">
+                            {h.name}
+                            {h.pending && (
+                              <Badge variant="outline" className="bg-stone-100 text-stone-600 text-[10px]">
+                                {lang === "zh" ? "待提供" : "TBC"}
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="text-[11px] sm:text-xs text-stone-500 mt-0.5">{t(h.nights, lang)}</div>
+                          <div className="text-[12px] sm:text-sm text-stone-700 mt-1.5 break-words">{t(h.addr, lang)}</div>
+                          {!h.pending && <div className="mt-1"><MapButton addr={h.addr} lang={lang} /></div>}
+                          <div className="text-[11px] sm:text-xs text-stone-500 italic mt-1.5 leading-relaxed">{t(h.note, lang)}</div>
+                        </div>
+                      ))}
+                    </CardContent>
+                  </Card>
 
-        {(filter === "all" || filter === "transport") && (
-          <section className="mb-9">
-            <SectionTitle eyebrow={lang === "zh" ? "操作邏輯" : "Operating logic"} title={t.transportLogic}>
-              {lang === "zh" ? "這些決策比多排一個景點更重要。大部分風險來自取車時間、還車點、保險、toll、行李與車站交接。" : "These decisions matter more than adding another attraction. Most risk comes from pickup time, return location, insurance, tolls, luggage, and station handoff."}
-            </SectionTitle>
-            <div className="grid gap-4 md:grid-cols-2">
-              {transportCards.map((item) => <TransportCard key={tx(item.title, lang)} item={item} lang={lang} />)}
-            </div>
-          </section>
-        )}
+                  <Card className="border-stone-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                        <Compass className="h-5 w-5 text-amber-700" />
+                        {lang === "zh" ? "交通策略" : "Transit Strategy"}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-[13px] sm:text-sm divide-y divide-stone-100">
+                        {[
+                          [bi("波士頓市內", "Within Boston"), bi("Uber 與 MBTA", "Uber + MBTA")],
+                          [bi("波士頓 → 費城", "Boston → Philly"), bi("Avis 自駕", "Avis self-drive")],
+                          [bi("費城市內", "Within Philly"), bi("步行加 Uber", "Walking + Uber")],
+                          [bi("費城 ↔ DC", "Philly ↔ DC"), bi("自駕往返", "Self-drive round trip")],
+                          [bi("費城 → 紐約", "Philly → NYC"), bi("Amtrak NER", "Amtrak NER")],
+                          [bi("紐約市內", "Within NYC"), bi("Subway 加 Uber", "Subway + Uber")],
+                        ].map(([k, v], i) => (
+                          <div key={i} className="flex justify-between gap-3 py-2.5">
+                            <span className="text-stone-700">{t(k, lang)}</span>
+                            <span className="font-medium text-stone-900">{t(v, lang)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </TabsContent>
 
-        {(filter === "all" || filter === "risks") && (
-          <section className="mb-9">
-            <SectionTitle eyebrow={lang === "zh" ? "除錯與風險" : "Debug and risk control"} title={t.riskBoard}>
-              {lang === "zh" ? "此區保留尚未定案與容易出錯的事項。讀者端版本不假裝所有資訊已完成。" : "This section preserves pending and failure-prone items. The reader-facing version does not pretend everything is final."}
-            </SectionTitle>
-            <div className="grid gap-4 md:grid-cols-2">
-              {riskGroups.map((group) => <RiskCard key={tx(group.title, lang)} group={group} lang={lang} />)}
-            </div>
-          </section>
-        )}
+            {/* BOSTON TAB */}
+            <TabsContent value="boston" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-6">
+                <SectionHeading
+                  eyebrow={bi("第一段", "Segment One")}
+                  title={bi("波士頓 · 4/26 至 5/2", "Boston · April 26 to May 2")}
+                  subtitle={bi("含 4/29 Fenway Park Graduate Commencement 與 4/30 D'Amore-McKim Celebration at Leader Bank Pavilion。", "Includes the Graduate Commencement at Fenway Park on April 29 and the D'Amore-McKim Celebration at Leader Bank Pavilion on April 30.")}
+                  lang={lang}
+                />
+                <div className="space-y-5 sm:space-y-6">
+                  {bostonDays.map((d) => <DayCard key={d.id} day={d} lang={lang} />)}
+                  {days.filter((d) => d.id === "0502").map((d) => <DayCard key={d.id} day={d} lang={lang} />)}
+                </div>
+              </div>
+            </TabsContent>
 
-        {(filter === "all" || filter === "maps") && (
-          <section className="mb-9">
-            <SectionTitle eyebrow={lang === "zh" ? "地點索引" : "Location index"} title={t.mapDirectory}>
-              {lang === "zh" ? "所有重要地點集中於此，避免臨時搜尋造成錯誤導航。" : "All important locations are centralized here to reduce last-minute navigation errors."}
-            </SectionTitle>
-            <MapDirectory lang={lang} />
-          </section>
-        )}
+            {/* PHILLY + DC TAB */}
+            <TabsContent value="philly" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-6">
+                <SectionHeading
+                  eyebrow={bi("第二段", "Segment Two")}
+                  title={bi("費城與華盛頓特區 · 5/2 至 5/5", "Philadelphia & Washington, DC · May 2 to May 5")}
+                  subtitle={bi("含 5/4 自駕往返 DC 一日遊與 5/5 還車後鐵路進紐約。", "Includes the May 4 self-drive day trip to DC and the May 5 train transfer to New York after car return.")}
+                  lang={lang}
+                />
+                <div className="space-y-5 sm:space-y-6">
+                  {phillyDcDays.filter((d) => d.id !== "0502").map((d) => <DayCard key={d.id} day={d} lang={lang} />)}
+                </div>
+              </div>
+            </TabsContent>
 
-        {(filter === "all" || filter === "sources") && (
-          <section className="mb-9">
-            <SectionTitle eyebrow={lang === "zh" ? "資訊依據" : "Information basis"} title={t.sourceDirectory}>
-              {lang === "zh" ? "此頁將可查證來源集中列出。仍會隨官方頁面更新而變動，出發前應再查一次。" : "This page centralizes verifiable sources. Details can still change, so check official pages again before departure."}
-            </SectionTitle>
-            <SourceDirectory lang={lang} />
-          </section>
-        )}
+            {/* NEW YORK TAB */}
+            <TabsContent value="ny" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-6">
+                <SectionHeading
+                  eyebrow={bi("第三段", "Segment Three")}
+                  title={bi("紐約 · 5/5 至 5/11", "New York · May 5 to May 11")}
+                  subtitle={bi("家屬自由行段。每日只做一個區域，待住宿地點確認後排序。", "Self-guided family segment. One area per day. Sequence finalizes after the hotel is confirmed.")}
+                  lang={lang}
+                />
+                <Alert className="bg-stone-50 border-stone-300">
+                  <Info className="h-4 w-4" />
+                  <AlertDescription className="text-[13px] sm:text-sm leading-relaxed">
+                    {lang === "zh"
+                      ? "以下為五個分區模組（中城、下曼哈頓、中央公園、布魯克林、SoHo），確認紐約飯店地址後即可決定每天順序與最佳交通方式。"
+                      : "The five area modules below (Midtown, Lower Manhattan, Central Park, Brooklyn, SoHo) will be sequenced once the New York hotel address is confirmed."}
+                  </AlertDescription>
+                </Alert>
+                <div className="space-y-5 sm:space-y-6">
+                  {nyDays.map((d) => <DayCard key={d.id} day={d} lang={lang} />)}
+                </div>
+              </div>
+            </TabsContent>
 
-        <section className="rounded-3xl border border-[#d9ccb4] bg-[#1f2933] p-5 text-white shadow-sm md:p-7">
-          <div className="grid gap-5 md:grid-cols-[1fr_1fr] md:items-start">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#d9c28c]">{lang === "zh" ? "最終原則" : "Final principle"}</p>
-              <h2 className="mt-2 text-2xl font-semibold leading-tight md:text-3xl">
-                {lang === "zh" ? "先保護畢業典禮，再保護家人的城市交接。" : "Protect the ceremonies first, then protect the family handoff."}
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-slate-200">
-                {lang === "zh" ? "波士頓是品質最高的主段，因為 Eugene 同行且畢業典禮固定。費城與 DC 要務實，紐約需等待住宿與航班資訊後再精排。" : "Boston is the highest-value segment because Eugene is present and the ceremonies are fixed. Philadelphia and DC should remain practical. New York should be sequenced after hotel and flight details are known."}
-              </p>
-            </div>
-            <div className="grid gap-2 text-sm leading-6 text-slate-100">
-              {[
-                { zh: "5/2 若保留 American Dream，不用中午取車。", en: "If American Dream stays on May 2, do not use a noon pickup." },
-                { zh: "費城還車不用 PH4，改用已驗證的 J5D 或其他可用分點。", en: "Do not use PH4 for Philadelphia return. Use verified J5D or another active location." },
-                { zh: "費城至紐約不用 LIRR，使用 Amtrak 或 NJ Transit。", en: "Philadelphia to New York is not LIRR. Use Amtrak or NJ Transit." },
-                { zh: "DC 只做核心線，不能把城市當完整深度旅遊日。", en: "DC should be a core route only, not a full deep-travel day." },
-              ].map((item) => (
-                <div key={tx(item, lang)} className="flex gap-2"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-300" /><span>{tx(item, lang)}</span></div>
-              ))}
-            </div>
-          </div>
-        </section>
+            {/* LOGISTICS TAB */}
+            <TabsContent value="logistics" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-10 sm:space-y-14">
+                <div>
+                  <SectionHeading
+                    eyebrow={bi("租車", "Car Rental")}
+                    title={bi("Avis 取車與還車", "Avis Pickup & Drop-off")}
+                    subtitle={bi("Boston Back Bay 取車，Philadelphia Convention Center 還車。", "Pickup at Boston Back Bay, drop-off at Philadelphia Convention Center.")}
+                    lang={lang}
+                  />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                    <Card className="border-emerald-300 overflow-hidden">
+                      <CardHeader className="bg-emerald-50 pb-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                            <CheckCircle2 className="h-5 w-5 text-emerald-700" />
+                            {lang === "zh" ? "取車地點" : "Pickup"}
+                          </CardTitle>
+                          <Badge className="bg-emerald-700 hover:bg-emerald-700 text-white font-mono">{avisStrategy.pickup.code}</Badge>
+                        </div>
+                        <CardDescription className="text-stone-700 mt-1">{t(avisStrategy.pickup.name, lang)}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-4 space-y-3 text-[13px] sm:text-sm">
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "地址" : "Address"}</div>
+                          <div className="text-stone-900 break-words">{avisStrategy.pickup.addr}</div>
+                          <div className="mt-1"><MapButton addr={avisStrategy.pickup.addr} lang={lang} /></div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <div className="text-[10px] sm:text-xs text-stone-500 uppercase">{lang === "zh" ? "電話" : "Phone"}</div>
+                            <div className="text-stone-900 font-mono text-xs">{avisStrategy.pickup.phone}</div>
+                          </div>
+                          <div>
+                            <div className="text-[10px] sm:text-xs text-stone-500 uppercase">{lang === "zh" ? "營業時間" : "Hours"}</div>
+                            <div className="text-stone-900 text-xs">{t(avisStrategy.pickup.hours, lang)}</div>
+                          </div>
+                        </div>
+                        <Separator />
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "距離飯店" : "From hotel"}</div>
+                          <div className="text-stone-700 text-xs leading-relaxed">{t(avisStrategy.pickup.distFromHotel, lang)}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "建議取車時間" : "Pickup time"}</div>
+                          <div className="font-mono text-base font-semibold text-emerald-700 mt-0.5">{t(avisStrategy.pickup.pickupTime, lang)}</div>
+                        </div>
+                        <div className="text-[11px] sm:text-xs text-stone-700 italic bg-stone-50 rounded-md p-2.5 mt-2 leading-relaxed border border-stone-200">
+                          {t(avisStrategy.pickup.advantage, lang)}
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-emerald-300 overflow-hidden">
+                      <CardHeader className="bg-emerald-50 pb-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                            <CheckCircle2 className="h-5 w-5 text-emerald-700" />
+                            {lang === "zh" ? "還車地點" : "Drop-off"}
+                          </CardTitle>
+                          <Badge className="bg-emerald-700 hover:bg-emerald-700 text-white font-mono">{avisStrategy.dropoff.code}</Badge>
+                        </div>
+                        <CardDescription className="text-stone-700 mt-1">{t(avisStrategy.dropoff.name, lang)}</CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-4 space-y-3 text-[13px] sm:text-sm">
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "地址" : "Address"}</div>
+                          <div className="text-stone-900 break-words">{avisStrategy.dropoff.addr}</div>
+                          <div className="mt-1"><MapButton addr={avisStrategy.dropoff.addr} lang={lang} /></div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "營業時間" : "Hours"}</div>
+                          <div className="text-stone-900 text-xs">{t(avisStrategy.dropoff.hours, lang)}</div>
+                        </div>
+                        <Separator />
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "建議還車時間" : "Drop-off time"}</div>
+                          <div className="font-mono text-base font-semibold text-emerald-700 mt-0.5">{t(avisStrategy.dropoff.dropoffTime, lang)}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] sm:text-xs text-stone-500 uppercase tracking-wider">{lang === "zh" ? "操作流程" : "Workflow"}</div>
+                          <div className="text-stone-700 text-xs leading-relaxed mt-1">{t(avisStrategy.dropoff.flow, lang)}</div>
+                        </div>
+                        <Alert className="bg-amber-50 border-amber-300 mt-2">
+                          <AlertTriangle className="h-4 w-4" />
+                          <AlertDescription className="text-[11px] sm:text-xs text-amber-900 leading-relaxed">
+                            {t(avisStrategy.dropoff.note, lang)}
+                          </AlertDescription>
+                        </Alert>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card className="border-red-300 overflow-hidden mt-4 sm:mt-5">
+                    <CardHeader className="bg-red-50 pb-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                          <XCircle className="h-5 w-5 text-red-700" />
+                          {lang === "zh" ? "已關閉，不可使用" : "Closed, Do Not Use"}
+                        </CardTitle>
+                        <Badge variant="outline" className="bg-white border-red-400 text-red-700 font-mono line-through">{avisStrategy.closed.code}</Badge>
+                      </div>
+                      <CardDescription className="text-red-800 mt-1">
+                        {t(avisStrategy.closed.name, lang)}
+                        <span className="mx-2 opacity-50">·</span>
+                        {t(avisStrategy.closed.status, lang)}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-4">
+                      <p className="text-[13px] sm:text-sm text-stone-700 leading-relaxed">{t(avisStrategy.closed.note, lang)}</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                <div>
+                  <SectionHeading
+                    eyebrow={bi("保險加購", "Optional Add-ons")}
+                    title={bi("租車保險建議", "Insurance Recommendations")}
+                    subtitle={bi("以信用卡 Primary CDW 為基礎判斷，預估可省約 187 美元。", `Estimated savings of about $187, assuming a credit card with Primary CDW.`)}
+                    lang={lang}
+                  />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                    <Card className="border-emerald-300">
+                      <CardHeader className="bg-emerald-50 pb-3">
+                        <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                          <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+                          {lang === "zh" ? "建議保留" : "Keep"}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-4 space-y-3.5">
+                        {avisStrategy.insurance.keep.map((item, i) => (
+                          <div key={i} className="border-l-2 border-emerald-500 pl-3">
+                            <div className="flex justify-between items-baseline gap-2 flex-wrap">
+                              <span className="font-semibold text-[13px] sm:text-sm text-stone-900">{t(item.name, lang)}</span>
+                              <span className="text-[11px] sm:text-xs font-mono text-stone-700">{t(item.price, lang)}</span>
+                            </div>
+                            <div className="text-[11px] sm:text-xs text-stone-600 mt-1 leading-relaxed">{t(item.reason, lang)}</div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-red-300">
+                      <CardHeader className="bg-red-50 pb-3">
+                        <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
+                          <XCircle className="h-4 w-4 text-red-700" />
+                          {lang === "zh" ? "建議取消" : "Skip"}
+                        </CardTitle>
+                        <CardDescription className="text-[11px] sm:text-xs text-red-800">
+                          {lang === "zh" ? "預估可省" : "Potential savings"} {t(avisStrategy.insurance.potentialSavings, lang)}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="pt-4 space-y-3.5">
+                        {avisStrategy.insurance.skip.map((item, i) => (
+                          <div key={i} className="border-l-2 border-red-400 pl-3">
+                            <div className="flex justify-between items-baseline gap-2 flex-wrap">
+                              <span className="font-semibold text-[13px] sm:text-sm text-stone-900">{t(item.name, lang)}</span>
+                              <span className="text-[11px] sm:text-xs font-mono text-stone-500 line-through">{t(item.price, lang)}</span>
+                            </div>
+                            <div className="text-[11px] sm:text-xs text-stone-600 mt-1 leading-relaxed">{t(item.reason, lang)}</div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* DINING TAB */}
+            <TabsContent value="dining" className="mt-0">
+              <div className="py-8 sm:py-12">
+                <SectionHeading
+                  eyebrow={bi("餐飲", "Dining")}
+                  title={bi("八間餐廳速覽", "Eight Restaurants at a Glance")}
+                  subtitle={bi("依日期建議、現金與時段限制一目了然。", "Sorted by suggested day, with cash-only and timing constraints flagged.")}
+                  lang={lang}
+                />
+                <Card className="border-stone-200">
+                  <CardContent className="p-0">
+                    <div className="divide-y divide-stone-200">
+                      {dining.map((r, i) => {
+                        const RIcon = r.icon;
+                        return (
+                          <div key={i} className={`p-4 sm:p-5 ${r.removed ? "bg-stone-100 opacity-60" : "hover:bg-stone-50/50"} transition-colors`}>
+                            <div className="flex items-start gap-3 sm:gap-4">
+                              <div className={`flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center ${r.removed ? "bg-stone-200 text-stone-500" : "bg-amber-50 text-amber-700 border border-amber-200"}`}>
+                                <RIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  <span className={`font-semibold text-stone-900 text-[14px] sm:text-base ${r.removed ? "line-through" : ""}`} style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                                    {r.name}
+                                  </span>
+                                  <Badge variant="outline" className="text-[10px] sm:text-xs bg-stone-50 font-normal">
+                                    {lang === "zh" ? r.typeZh : r.typeEn}
+                                  </Badge>
+                                </div>
+                                <div className="text-[12px] sm:text-sm text-stone-600 mt-1 break-words">{r.addr}</div>
+                                {(r.warningZh || r.warningEn) && (
+                                  <div className="text-[10px] sm:text-xs text-amber-900 bg-amber-50 border border-amber-200 rounded-md px-2 py-1 mt-2 inline-block">
+                                    {lang === "zh" ? r.warningZh : r.warningEn}
+                                  </div>
+                                )}
+                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-[11px] sm:text-xs">
+                                  <span className="text-stone-700 font-medium">
+                                    <Calendar className="inline h-3 w-3 mr-1 -mt-0.5" />
+                                    {lang === "zh" ? r.suggestedZh : r.suggestedEn}
+                                  </span>
+                                  {!r.removed && r.addr && r.addr !== "(N/A)" && (
+                                    <MapButton addr={r.addr} lang={lang} />
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </TabsContent>
+
+            {/* PRACTICAL TAB */}
+            <TabsContent value="practical" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-8">
+                <SectionHeading
+                  eyebrow={bi("實用資訊", "Practical")}
+                  title={bi("旅行細節速查", "Quick Reference")}
+                  subtitle={bi("天氣、時差、付款、通訊、交通、緊急聯絡，一頁解決。", "Weather, jet lag, payment, connectivity, transit, and emergency contacts on a single page.")}
+                  lang={lang}
+                />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                  {practicalInfo.map((section) => {
+                    const SIcon = section.icon;
+                    return (
+                      <Card key={section.id} className="border-stone-200">
+                        <CardHeader className="pb-3">
+                          <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                            <span className="flex items-center justify-center w-9 h-9 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                              <SIcon className="h-4 w-4" />
+                            </span>
+                            {t(section.title, lang)}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="text-[13px] sm:text-sm divide-y divide-stone-100">
+                            {section.items.map((item, i) => (
+                              <div key={i} className="grid grid-cols-[110px_1fr] sm:grid-cols-[130px_1fr] gap-2 sm:gap-3 py-2.5">
+                                <div className="text-stone-500 text-[11px] sm:text-xs uppercase tracking-wider font-medium leading-snug">{t(item.label, lang)}</div>
+                                <div className="text-stone-800 leading-relaxed">{t(item.value, lang)}</div>
+                              </div>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* CHECKLIST TAB */}
+            <TabsContent value="checklist" className="mt-0">
+              <div className="py-8 sm:py-12 space-y-6">
+                <SectionHeading
+                  eyebrow={bi("行前準備", "Pre-Trip")}
+                  title={bi("四階段確認清單", "Four-Stage Checklist")}
+                  subtitle={bi("從一個月前到出發當日，照表勾選即可。", "From one month out through departure day, check items off as you go.")}
+                  lang={lang}
+                />
+                <div className="space-y-4 sm:space-y-5">
+                  {preTripChecklist.map((phase, idx) => {
+                    const colors = [
+                      "border-l-red-500 bg-red-50/50",
+                      "border-l-orange-500 bg-orange-50/50",
+                      "border-l-amber-500 bg-amber-50/50",
+                      "border-l-emerald-500 bg-emerald-50/50",
+                    ];
+                    return (
+                      <Card key={idx} className={`border-l-4 ${colors[idx]} border-stone-200`}>
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-stone-900 text-amber-100 flex items-center justify-center font-mono text-xs font-semibold">
+                              {String(idx + 1).padStart(2, "0")}
+                            </div>
+                            <CardTitle className="text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                              {t(phase.title, lang)}
+                            </CardTitle>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pl-4">
+                          <ul className="space-y-2.5">
+                            {phase.items.map((item, i) => (
+                              <li key={i} className="flex gap-3 text-[13px] sm:text-sm text-stone-800">
+                                <div className="flex-shrink-0 w-5 h-5 rounded border-2 border-stone-300 mt-0.5" />
+                                <span className="leading-relaxed">{t(item, lang)}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setLang((current) => (current === "zh" ? "en" : "zh"))}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-[#d9ccb4] bg-[#1f2933]/95 px-4 py-3 text-sm font-semibold text-white shadow-xl backdrop-blur transition hover:bg-[#2E5C6E] md:bottom-6 md:right-6"
-        aria-label="Toggle language"
-      >
-        <Languages className="h-4 w-4" />
-        {lang === "zh" ? t.switchToEnglish : t.switchToChinese}
-      </button>
-    </main>
+      {/* FOOTER */}
+      <footer className="bg-stone-900 text-amber-100 mt-16 sm:mt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-[13px] sm:text-sm">
+            <div>
+              <div className="text-amber-200 mb-3 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                {lang === "zh" ? "住宿" : "Lodging"}
+              </div>
+              <div className="space-y-1.5 text-[12px] sm:text-xs text-amber-100/75 leading-relaxed">
+                <div>The Revolution Hotel · 40 Berkeley St</div>
+                <div>4211 Suites · 4211 Chestnut St</div>
+                <div>{lang === "zh" ? "紐約：待提供" : "New York: TBC"}</div>
+              </div>
+            </div>
+            <div>
+              <div className="text-amber-200 mb-3 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                {lang === "zh" ? "畢業典禮" : "Commencement"}
+              </div>
+              <div className="space-y-1.5 text-[12px] sm:text-xs text-amber-100/75 leading-relaxed">
+                <div>4/29 Fenway Park · 10:00 AM</div>
+                <div>4/30 Leader Bank Pavilion · 6:00 PM</div>
+                <div className="break-all">news.northeastern.edu/commencement-2026</div>
+              </div>
+            </div>
+            <div>
+              <div className="text-amber-200 mb-3 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                {lang === "zh" ? "緊急聯絡" : "Emergency"}
+              </div>
+              <div className="space-y-1.5 text-[12px] sm:text-xs text-amber-100/75 leading-relaxed">
+                <div>{lang === "zh" ? "緊急電話" : "Emergency"}: 911</div>
+                <div>Northeastern: (617) 373-3333</div>
+                <div>HKETO NY: (212) 752-3320</div>
+              </div>
+            </div>
+            <div>
+              <div className="text-amber-200 mb-3 text-base sm:text-lg" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                {lang === "zh" ? "交通速查" : "Transit"}
+              </div>
+              <div className="space-y-1.5 text-[12px] sm:text-xs text-amber-100/75 leading-relaxed">
+                <div>Amtrak: 1-800-USA-RAIL</div>
+                <div>MBTA: mbta.com</div>
+                <div>Avis BO4: (617) 534-1404</div>
+              </div>
+            </div>
+          </div>
+          <Separator className="my-7 sm:my-8 bg-amber-900/30" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-[11px] sm:text-xs text-amber-200/55">
+            <div>{t(meta.title, lang)} · {meta.dates}</div>
+            <div className="font-mono">v6 · Bilingual Edition</div>
+          </div>
+        </div>
+      </footer>
+
+      {/* FLOATING LANGUAGE TOGGLE */}
+      <LanguageToggle lang={lang} setLang={setLang} />
+    </div>
   );
 }
-
-export default App;
