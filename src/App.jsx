@@ -430,6 +430,7 @@ const ceremonies = [
     subtitle: bi("Northeastern University 全校畢業典禮", "University-wide Graduate Ceremony"),
     venue: "Fenway Park",
     address: "4 Jersey St, Boston, MA 02215",
+    url: "https://maps.app.goo.gl/GA2bRkpfRfp87s9z7",
     badge: FenwayBadge,
     headerStrip: [
       { label: bi("日期", "Date"), value: bi("2026 年 4 月 29 日（星期三）", "Wednesday, April 29, 2026"), icon: Calendar },
@@ -499,6 +500,7 @@ const ceremonies = [
     subtitle: bi("商學院畢業慶祝會", "Business School Celebration"),
     venue: "Leader Bank Pavilion",
     address: "290 Northern Avenue, Boston, MA 02210",
+    url: "https://maps.app.goo.gl/WeeuudyACxQTvkp89",
     badge: LeaderBankBadge,
     headerStrip: [
       { label: bi("日期", "Date"), value: bi("2026 年 4 月 30 日（星期四）", "Thursday, April 30, 2026"), icon: Calendar },
@@ -632,7 +634,7 @@ const days = [
       { time: "07:12", activity: bi("AS536 於 Logan Terminal B 降落", "AS536 lands at Logan Terminal B") },
       { time: "07:20 - 08:30", activity: bi("Eugene 於 Terminal B Level 1 行李提領區外接機", "Eugene meets the family outside Terminal B Level 1 baggage claim") },
       { time: "08:30 - 09:30", activity: bi("Uber 從 Terminal B Departures 上層上車前往 The Revolution Hotel", "Uber from Terminal B Departures (upper level) to The Revolution Hotel") },
-      { time: "09:30 - 11:00", activity: bi("飯店寄放行李，於附近 Tatte 享用早午餐", "Drop bags at hotel; brunch at nearby Tatte") },
+      { time: "09:30 - 11:00", activity: bi("飯店寄放行李，於 Tatte Copley Square 享用早午餐", "Drop bags at hotel; brunch at Tatte Copley Square") },
       { time: "11:00 - 14:00", activity: bi("Public Garden 緩步散步，時間不超過一小時；其餘時間於飯店大廳休息", "Light stroll through the Public Garden, no more than an hour; rest in hotel lobby otherwise") },
       { time: "15:00", activity: bi("辦理入住，立即補眠兩至三小時", "Check in and nap two to three hours") },
       { time: "18:30 - 19:30", activity: bi("Chipotle Park Plaza 輕鬆晚餐", "Casual dinner at Chipotle Park Plaza") },
@@ -644,11 +646,11 @@ const days = [
       bi("今天刻意把 Newbury Street 購物、Trader Joe's 採買、Freedom Trail、Harvard 等需要長距離步行的活動往後排。", "Newbury Street shopping, Trader Joe's, the Freedom Trail, and Harvard are deliberately moved to later days to conserve energy."),
     ],
     locations: [
-      { name: bi("Logan International Airport", "Logan International Airport"), addr: "1 Harborside Dr, Boston, MA 02128" },
-      { name: bi("The Revolution Hotel", "The Revolution Hotel"), addr: "40 Berkeley St, Boston, MA 02116" },
-      { name: bi("Tatte Bakery & Café（南端店）", "Tatte Bakery & Café (South End)"), addr: "70 Charles St, Boston, MA 02114" },
-      { name: bi("Public Garden", "Public Garden"), addr: "4 Charles St, Boston, MA 02116" },
-      { name: bi("Chipotle Park Plaza", "Chipotle Park Plaza"), addr: "8 Park Plz, Boston, MA 02116" },
+      { name: bi("Logan International Airport · Terminal B", "Logan International Airport · Terminal B"), addr: "1 Harborside Dr, Boston, MA 02128", url: "https://maps.app.goo.gl/GhQkPuGfd7KGGeZC9" },
+      { name: bi("The Revolution Hotel", "The Revolution Hotel"), addr: "40 Berkeley St, Boston, MA 02116", url: "https://maps.app.goo.gl/YtDhXZ63mXTHbp576" },
+      { name: bi("Tatte Bakery & Café（Copley Square）", "Tatte Bakery & Café (Copley Square)"), addr: "399 Boylston St, Boston, MA 02116", url: "https://maps.app.goo.gl/DeuHZJv1kFTZzqb27" },
+      { name: bi("Public Garden", "Public Garden"), addr: "4 Charles St, Boston, MA 02116", url: "https://maps.app.goo.gl/UAhrXmJBrtu3QYoz5" },
+      { name: bi("Chipotle Park Plaza", "Chipotle Park Plaza"), addr: "8 Park Plz, Boston, MA 02116", url: "https://maps.app.goo.gl/r1FNR2fakrAWcWBbA" },
     ],
   },
   {
@@ -662,7 +664,7 @@ const days = [
     icon: Flag,
     intensity: "mid",
     timeline: [
-      { time: bi("上午", "Morning"), activity: bi("Tatte 早餐，接著 Boston Common、State House 外觀、Granary Burying Ground、Beacon Hill", "Tatte breakfast, then Boston Common, State House facade, Granary Burying Ground, Beacon Hill") },
+      { time: bi("上午", "Morning"), activity: bi("Tatte 早餐，先繞 Chinatown Gate 拍照，再經 Boston Common、State House 外觀、Granary Burying Ground、Beacon Hill 上行", "Tatte breakfast, then a quick stop at Chinatown Gate for photos before walking through Boston Common, State House facade, Granary Burying Ground, and up Beacon Hill") },
       { time: bi("中午", "Midday"), activity: bi("Faneuil Hall 與 Quincy Market 用餐", "Lunch at Faneuil Hall / Quincy Market") },
       { time: bi("下午", "Afternoon"), activity: bi("Old State House、Paul Revere House 外觀，進入 North End", "Old State House, Paul Revere House facade, enter North End") },
       { time: "17:30", activity: bi("提早抵達 The Daily Catch 避開排隊高峰", "Arrive at The Daily Catch early to skip the queue") },
@@ -674,16 +676,18 @@ const days = [
     ],
     notes: [
       bi("Charlestown 與 USS Constitution 都不放這天，行程在 North End 結束即可。", "Do not push on to Charlestown or USS Constitution today. End the route at North End."),
+      bi("Chinatown Gate 距離 Boston Common 步行三分鐘，順路即可。若想品嚐中式午餐，可改於 Chinatown 用餐。", "Chinatown Gate is a three-minute walk from Boston Common and easy to fold in. For Chinese lunch, eat in Chinatown instead of Quincy Market."),
     ],
     locations: [
-      { name: bi("Boston Common", "Boston Common"), addr: "139 Tremont St, Boston, MA 02111" },
-      { name: bi("Massachusetts State House", "Massachusetts State House"), addr: "24 Beacon St, Boston, MA 02133" },
-      { name: bi("Granary Burying Ground", "Granary Burying Ground"), addr: "Tremont St, Boston, MA 02108" },
-      { name: bi("Faneuil Hall 與 Quincy Market", "Faneuil Hall / Quincy Market"), addr: "4 S Market St, Boston, MA 02109" },
-      { name: bi("Old State House", "Old State House"), addr: "206 Washington St, Boston, MA 02109" },
-      { name: bi("Paul Revere House", "Paul Revere House"), addr: "19 N Square, Boston, MA 02113" },
-      { name: bi("The Daily Catch（North End 店）", "The Daily Catch (North End)"), addr: "323 Hanover St, Boston, MA 02113" },
-      { name: bi("Mike's Pastry", "Mike's Pastry"), addr: "300 Hanover St, Boston, MA 02113" },
+      { name: bi("Chinatown Gate", "Chinatown Gate"), addr: "Boston, MA 02111", url: "https://maps.app.goo.gl/EVECjHQefVZSedKPA" },
+      { name: bi("Boston Common", "Boston Common"), addr: "139 Tremont St, Boston, MA 02111", url: "https://maps.app.goo.gl/v8NCt3LawVpzfBCY6" },
+      { name: bi("Massachusetts State House", "Massachusetts State House"), addr: "24 Beacon St, Boston, MA 02133", url: "https://maps.app.goo.gl/FtnZTL4y82T7XWds8" },
+      { name: bi("Granary Burying Ground", "Granary Burying Ground"), addr: "Tremont St, Boston, MA 02108", url: "https://maps.app.goo.gl/49WRrr2Go8Q9gJhZ6" },
+      { name: bi("Quincy Market", "Quincy Market"), addr: "4 S Market St, Boston, MA 02109", url: "https://maps.app.goo.gl/3jLAszCEVvrAu8jy9" },
+      { name: bi("Old State House", "Old State House"), addr: "206 Washington St, Boston, MA 02109", url: "https://maps.app.goo.gl/9v17KUZ81Wn1dL1b9" },
+      { name: bi("Paul Revere House", "Paul Revere House"), addr: "19 N Square, Boston, MA 02113", url: "https://maps.app.goo.gl/z5GCeFQNbE2k2QGc8" },
+      { name: bi("The Daily Catch（North End 店）", "The Daily Catch (North End)"), addr: "323 Hanover St, Boston, MA 02113", url: "https://maps.app.goo.gl/ZMz9ScVnfeRaB4Ns5" },
+      { name: bi("Mike's Pastry", "Mike's Pastry"), addr: "300 Hanover St, Boston, MA 02113", url: "https://maps.app.goo.gl/FYSbfku1inbzEhRa8" },
     ],
   },
   {
@@ -712,13 +716,15 @@ const days = [
       ],
       caution: bi("兩館不要同日參觀，會超過步數上限。", "Do not attempt both museums in one day; the step count will exceed the limit."),
     },
+    notes: [
+      bi("若午後體力仍佳，可額外加入 MIT 校園（Killian Court 與 Stata Center），從 Harvard 搭 Red Line 至 Kendall/MIT 站只需 5 分鐘。建議擇一行有餘力者單獨前往。", "If energy holds up in the afternoon, MIT campus (Killian Court and Stata Center) can be added; the Red Line from Harvard to Kendall/MIT runs five minutes. Best as an optional side trip for those with extra energy."),
+    ],
     locations: [
-      { name: bi("Harvard Square", "Harvard Square"), addr: "1400 Massachusetts Ave, Cambridge, MA 02138" },
-      { name: bi("Harvard Yard", "Harvard Yard"), addr: "Harvard Yard, Cambridge, MA 02138" },
-      { name: bi("Widener Library", "Widener Library"), addr: "Harvard Yard, Cambridge, MA 02138" },
-      { name: bi("Harvard Art Museums", "Harvard Art Museums"), addr: "32 Quincy St, Cambridge, MA 02138" },
-      { name: bi("Harvard Museum of Natural History", "Harvard Museum of Natural History"), addr: "26 Oxford St, Cambridge, MA 02138" },
-      { name: bi("Weeks Footbridge", "Weeks Footbridge"), addr: "Cambridge, MA 02138" },
+      { name: bi("Harvard Yard", "Harvard Yard"), addr: "Harvard Yard, Cambridge, MA 02138", url: "https://maps.app.goo.gl/9D9VRNK1BtwqY8FPA" },
+      { name: bi("Widener Library", "Widener Library"), addr: "Harvard Yard, Cambridge, MA 02138", url: "https://maps.app.goo.gl/CQ45stAPU4s21ZLG8" },
+      { name: bi("Harvard Art Museums", "Harvard Art Museums"), addr: "32 Quincy St, Cambridge, MA 02138", url: "https://maps.app.goo.gl/qe9rn5kXX7ba6Nbj7" },
+      { name: bi("Harvard Museum of Natural History", "Harvard Museum of Natural History"), addr: "26 Oxford St, Cambridge, MA 02138", url: "https://maps.app.goo.gl/UBq77SYKjZUhW6aK8" },
+      { name: bi("John W. Weeks Footbridge", "John W. Weeks Footbridge"), addr: "Cambridge, MA 02138", url: "https://maps.app.goo.gl/WprggNWdERm6tUPt8" },
     ],
   },
   {
@@ -728,7 +734,7 @@ const days = [
     cityKey: "boston",
     city: bi("波士頓", "Boston"),
     title: bi("Graduate Commencement，Fenway Park", "Graduate Commencement at Fenway Park"),
-    subtitle: bi("畢業典禮，全天無觀光", "Ceremony day; no sightseeing"),
+    subtitle: bi("Fenway 典禮、Prudential 慶祝午餐、Newbury 與 Fenway 文化區", "Fenway ceremony, celebration lunch at Prudential, Newbury Street and the Fenway cultural district"),
     icon: GraduationCap,
     intensity: "high",
     isCeremony: true,
@@ -741,14 +747,36 @@ const days = [
       { time: "08:00", activity: bi("雙方依序入場", "Both parties enter") },
       { time: "08:45", activity: bi("Procession 開始", "Procession begins") },
       { time: "10:00", activity: bi("典禮正式開始", "Ceremony begins") },
-      { time: "12:00 - 13:00", activity: bi("典禮結束，於 Fenway 附近用餐（Tasty Burger Fenway 或 Citizen Public House）", "Ceremony ends; lunch near Fenway (Tasty Burger Fenway or Citizen Public House)") },
-      { time: bi("下午", "Afternoon"), activity: bi("回飯店休息", "Rest at the hotel") },
-      { time: bi("晚上", "Evening"), activity: bi("Back Bay 或南端晚餐", "Dinner in Back Bay or South End") },
+      { time: "12:00", activity: bi("典禮結束；步行或短程 Uber 至 Prudential Center（10 分鐘）", "Ceremony ends; walk or short Uber to Prudential Center (10 minutes)") },
+      { time: "12:30 - 14:00", activity: bi("The Cheesecake Factory（Prudential 店）慶祝午餐；座位寬敞、菜色多元，適合伯父伯母同行", "Celebration lunch at The Cheesecake Factory (Prudential); roomy seating and broad menu, suitable if uncle and aunt join") },
+      { time: "14:00 - 15:30", activity: bi("Newbury Street 與 Prudential Center 散步購物，節奏放慢", "Stroll Newbury Street and Prudential Center; keep the pace easy") },
+      { time: "15:30 - 17:00", activity: bi("以下三項擇一：Isabella Stewart Gardner Museum、Museum of Fine Arts、或 Charles River Esplanade 河岸散步", "Choose one: Isabella Stewart Gardner Museum, Museum of Fine Arts, or a riverside walk on the Charles River Esplanade") },
+      { time: "17:00 - 18:30", activity: bi("回飯店休息整裝", "Rest at the hotel and freshen up") },
+      { time: "19:00", activity: bi("家庭晚餐：Back Bay 或 South End；若希望輕鬆收尾，Raising Cane's 也是選項", "Family dinner in Back Bay or South End; for a casual close, Raising Cane's is also an option") },
+    ],
+    decision: {
+      title: bi("典禮後下午活動三選一", "Pick one for the afternoon"),
+      items: [
+        { text: bi("Isabella Stewart Gardner Museum：威尼斯式中庭，氛圍寧靜，距 Fenway 五分鐘步行", "Isabella Stewart Gardner Museum: Venetian-style courtyard, peaceful atmosphere, five-minute walk from Fenway") },
+        { text: bi("Museum of Fine Arts, Boston：規模最大、收藏最廣，適合長者悠緩參觀", "Museum of Fine Arts, Boston: the largest collection, ideal for an unhurried visit with elders") },
+        { text: bi("Charles River Esplanade：戶外散步、視野開闊，可遠望 MIT 校園輪廓", "Charles River Esplanade: outdoor walk with open views and a glimpse of the MIT skyline") },
+      ],
+      caution: bi("此項依當天天氣與長輩體力決定即可，不必勉強。", "Choose based on the weather and the elders' energy on the day; no need to force it."),
+    },
+    notes: [
+      bi("典禮後 Eugene 與家人會直接由 Fenway 步行至 Prudential（約十分鐘），無需回飯店換裝。", "After the ceremony Eugene and family walk directly from Fenway to Prudential (about ten minutes); no need to return to the hotel to change."),
+      bi("Cheesecake Factory 旺日中午等位較長，建議透過官方 App 預先 Wait List 排隊，省下半小時等待。", "Cheesecake Factory has long midday waits on busy days; use the official app to join the wait list in advance to save thirty minutes."),
     ],
     locations: [
-      { name: bi("Fenway Park", "Fenway Park"), addr: "4 Jersey St, Boston, MA 02215" },
-      { name: bi("Gate B（畢業生入口）", "Gate B (Graduate Entry)"), addr: "Van Ness Street, Boston, MA 02215" },
-      { name: bi("Tasty Burger Fenway", "Tasty Burger Fenway"), addr: "1301 Boylston St, Boston, MA 02215" },
+      { name: bi("Fenway Park", "Fenway Park"), addr: "4 Jersey St, Boston, MA 02215", url: "https://maps.app.goo.gl/GA2bRkpfRfp87s9z7" },
+      { name: bi("Fenway Park · Gate B（畢業生入口）", "Fenway Park · Gate B (Graduate Entry)"), addr: "Van Ness Street, Boston, MA 02215", url: "https://maps.app.goo.gl/hHovf1mZijRNt9SE7" },
+      { name: bi("The Cheesecake Factory（Prudential）", "The Cheesecake Factory (Prudential)"), addr: "115 Huntington Ave, Boston, MA 02116", url: "https://maps.app.goo.gl/EcHGRsHJDcb1HQrP8" },
+      { name: bi("Prudential Center", "Prudential Center"), addr: "800 Boylston St, Boston, MA 02199", url: "https://maps.app.goo.gl/s3Q7VGTtQprGdS9k7" },
+      { name: bi("Newbury Street", "Newbury Street"), addr: "Newbury St, Boston, MA 02116", url: "https://maps.app.goo.gl/teBiAAZNnxcnMKUSA" },
+      { name: bi("Isabella Stewart Gardner Museum", "Isabella Stewart Gardner Museum"), addr: "25 Evans Way, Boston, MA 02115", url: "https://maps.app.goo.gl/biq2ghcdSgWi7N578" },
+      { name: bi("Museum of Fine Arts, Boston", "Museum of Fine Arts, Boston"), addr: "465 Huntington Ave, Boston, MA 02115", url: "https://maps.app.goo.gl/qZt79tah6HaAj3qA8" },
+      { name: bi("Charles River Esplanade", "Charles River Esplanade"), addr: "Storrow Dr, Boston, MA 02114", url: "https://maps.app.goo.gl/8WHshRineReLV2CSA" },
+      { name: bi("Raising Cane's Chicken Fingers", "Raising Cane's Chicken Fingers"), addr: "Boston, MA", url: "https://maps.app.goo.gl/wE9M8AskLZtcdWX58" },
     ],
   },
   {
@@ -778,10 +806,8 @@ const days = [
       { title: bi("不可再入場（no re-entry）", "No re-entry"), body: bi("進場後不可再外出，請事先處理洗手間與飲水。", "Once inside, you cannot exit and re-enter. Use the restroom and drink water beforehand.") },
     ],
     locations: [
-      { name: bi("Leader Bank Pavilion", "Leader Bank Pavilion"), addr: "290 Northern Ave, Boston, MA 02210" },
-      { name: bi("Northeastern 主校園", "Northeastern Main Campus"), addr: "360 Huntington Ave, Boston, MA 02115" },
-      { name: bi("ISEC 跨領域科學工程中心", "ISEC (Interdisciplinary Science & Engineering Complex)"), addr: "805 Columbus Ave, Boston, MA 02120" },
-      { name: bi("Snell Library", "Snell Library"), addr: "360 Huntington Ave, Boston, MA 02115" },
+      { name: bi("Leader Bank Pavilion", "Leader Bank Pavilion"), addr: "290 Northern Ave, Boston, MA 02210", url: "https://maps.app.goo.gl/WeeuudyACxQTvkp89" },
+      { name: bi("Northeastern University 主校園", "Northeastern University Main Campus"), addr: "360 Huntington Ave, Boston, MA 02115", url: "https://maps.app.goo.gl/qvUqgB3788Cvfeh58" },
     ],
   },
   {
@@ -796,23 +822,31 @@ const days = [
     intensity: "mid",
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("Tatte 早餐，再從 Beacon Hill 側下到 Charles River Esplanade 短走", "Tatte breakfast, then descend from Beacon Hill to a short walk on the Charles River Esplanade") },
-      { time: bi("中午", "Midday"), activity: bi("James Hook & Co 用餐（440 Atlantic Ave，週五營業至 17:00）", "Lunch at James Hook & Co (440 Atlantic Ave, Friday hours until 5 PM)") },
-      { time: bi("下午", "Afternoon"), activity: bi("從 Long Wharf 搭 MBTA Ferry 至 Charlestown Navy Yard", "Take the MBTA Ferry from Long Wharf to Charlestown Navy Yard") },
-      { time: bi("下午", "Afternoon"), activity: bi("USS Constitution Museum 與軍艦本身（週三至週日 10:00 至 16:00）", "USS Constitution Museum and ship visit (Wed–Sun, 10 AM to 4 PM)") },
-      { time: bi("傍晚", "Evening"), activity: bi("搭 Ferry 回 Long Wharf，步行至 North End", "Ferry back to Long Wharf; walk to North End") },
+      { time: bi("中午", "Midday"), activity: bi("James Hook & Co 用餐（週五營業至 17:00）", "Lunch at James Hook & Co (Friday hours until 5 PM)") },
+      { time: bi("下午", "Afternoon"), activity: bi("以下二選一：搭 MBTA Ferry 至 Charlestown Navy Yard 參觀 USS Constitution，或於港邊 Boston Tea Party Ships & Museum 互動式體驗", "Pick one: MBTA Ferry to Charlestown Navy Yard for USS Constitution, or the interactive Boston Tea Party Ships & Museum on the harbor") },
+      { time: bi("傍晚", "Evening"), activity: bi("回 Long Wharf，視體力步行至 North End", "Return to Long Wharf; if energy permits, walk to North End") },
       { time: bi("晚上", "Night"), activity: bi("若 4/27 未去 Mike's Pastry，今晚補；否則改至 Trader Joe's 採買回程禮物", "If Mike's Pastry was missed on April 27, go tonight; otherwise stop by Trader Joe's for return gifts") },
     ],
+    decision: {
+      title: bi("下午水濱二選一", "Pick one for the afternoon waterfront"),
+      items: [
+        { text: bi("USS Constitution：實體軍艦，週三至週日 10:00 至 16:00 開放，需搭 MBTA Ferry 過河", "USS Constitution: the actual warship, open Wednesday to Sunday 10 AM to 4 PM; requires the MBTA Ferry across the harbor") },
+        { text: bi("Boston Tea Party Ships & Museum：仿造船 加 互動演出，全年開放，下船即達", "Boston Tea Party Ships & Museum: replica ships with interactive performances, open year-round, walk-up access") },
+      ],
+      caution: bi("二者都在水邊但分屬不同區，請擇一即可，不要硬塞兩個。", "Both are waterfront but in different areas. Pick one; do not try to fit both."),
+    },
     notes: [
       bi("這天是波士頓段最完整的精華日，典禮已過可以慢慢享受。", "This is the most relaxed day in Boston; the ceremonies are done and the pace can ease."),
       bi("USS Constitution 必須在週三至週日才能參觀，5/1 是這趟行程最後一次機會。", "USS Constitution opens only Wednesday through Sunday. May 1 is the last opportunity on this trip."),
       bi("Mike's Pastry 與 Trader Joe's 二選一，不要硬塞兩個。", "Pick one: Mike's Pastry or Trader Joe's. Do not try to fit both."),
     ],
     locations: [
-      { name: bi("Charles River Esplanade", "Charles River Esplanade"), addr: "Storrow Dr, Boston, MA 02114" },
-      { name: bi("James Hook & Co", "James Hook & Co"), addr: "440 Atlantic Ave, Boston, MA 02210" },
-      { name: bi("Long Wharf MBTA Ferry", "Long Wharf MBTA Ferry"), addr: "1 Long Wharf, Boston, MA 02110" },
-      { name: bi("USS Constitution Museum", "USS Constitution Museum"), addr: "Bldg 22, Charlestown Navy Yard, Boston, MA 02129" },
-      { name: bi("Trader Joe's Back Bay", "Trader Joe's Back Bay"), addr: "899 Boylston St, Boston, MA 02115" },
+      { name: bi("Charles River Esplanade", "Charles River Esplanade"), addr: "Storrow Dr, Boston, MA 02114", url: "https://maps.app.goo.gl/8WHshRineReLV2CSA" },
+      { name: bi("James Hook & Co", "James Hook & Co"), addr: "440 Atlantic Ave, Boston, MA 02210", url: "https://maps.app.goo.gl/4mgqm65Lsxe7haR17" },
+      { name: bi("Long Wharf · MBTA Ferry", "Long Wharf · MBTA Ferry"), addr: "1 Long Wharf, Boston, MA 02110", url: "https://maps.app.goo.gl/keTBnTVKUwa8WaVY8" },
+      { name: bi("USS Constitution", "USS Constitution"), addr: "Charlestown Navy Yard, Boston, MA 02129", url: "https://maps.app.goo.gl/ThfXK13NoyJgAG6c7" },
+      { name: bi("Boston Tea Party Ships & Museum", "Boston Tea Party Ships & Museum"), addr: "306 Congress St, Boston, MA 02210", url: "https://maps.app.goo.gl/rytLCiuJCPASsEw46" },
+      { name: bi("Trader Joe's（市區店）", "Trader Joe's (Downtown)"), addr: "Boston, MA", url: "https://maps.app.goo.gl/PgdiJPnMtT1VagMq7" },
     ],
   },
   {
@@ -859,9 +893,9 @@ const days = [
       { title: bi("行李安全", "Luggage security"), body: bi("American Dream 停車後請勿在停車場開後車廂整理；護照、錢包、電腦隨身帶；停車後拍照記錄樓層與入口。", "Do not open the trunk in the lot at American Dream. Keep passports, wallets, and laptops on you. Photograph the level and entrance after parking.") },
     ],
     locations: [
-      { name: bi("Avis Boston Back Bay Station Garage（BO4）", "Avis Boston Back Bay Station Garage (BO4)"), addr: "100 Clarendon St, Boston, MA 02116" },
-      { name: bi("American Dream", "American Dream"), addr: "1 American Dream Way, East Rutherford, NJ 07073" },
-      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104" },
+      { name: bi("Avis Boston Back Bay Station Garage（BO4）", "Avis Boston Back Bay Station Garage (BO4)"), addr: "100 Clarendon St, Boston, MA 02116", url: "https://maps.app.goo.gl/AxawRXqMk218nM318" },
+      { name: bi("American Dream", "American Dream"), addr: "1 American Dream Way, East Rutherford, NJ 07073", url: "https://maps.app.goo.gl/TLGKBW3TUsU6es3U8" },
+      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
     ],
   },
   {
@@ -889,13 +923,13 @@ const days = [
       bi("Independence Hall、Liberty Bell、Old City 不建議同日加排，體力會被透支。", "Adding Independence Hall, Liberty Bell, and Old City the same day will exhaust the group."),
     ],
     locations: [
-      { name: bi("UPenn Locust Walk", "UPenn Locust Walk"), addr: "Locust Walk, Philadelphia, PA 19104" },
-      { name: bi("College Hall", "College Hall"), addr: "3451 Walnut St, Philadelphia, PA 19104" },
-      { name: bi("Fisher Fine Arts Library", "Fisher Fine Arts Library"), addr: "220 S 34th St, Philadelphia, PA 19104" },
-      { name: bi("Philadelphia Museum of Art", "Philadelphia Museum of Art"), addr: "2600 Benjamin Franklin Pkwy, Philadelphia, PA 19130" },
-      { name: bi("Rittenhouse Square", "Rittenhouse Square"), addr: "1800 Walnut St, Philadelphia, PA 19103" },
-      { name: bi("Reading Terminal Market", "Reading Terminal Market"), addr: "1136 Arch St, Philadelphia, PA 19107" },
-      { name: bi("Liberty Bell Center", "Liberty Bell Center"), addr: "526 Market St, Philadelphia, PA 19106" },
+      { name: bi("UPenn · Locust Walk", "UPenn · Locust Walk"), addr: "Locust Walk, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/sCkV7SbviTESNY8QA" },
+      { name: bi("College Hall", "College Hall"), addr: "3451 Walnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/PAoFbQGmAE7YKPhV9" },
+      { name: bi("Fisher Fine Arts Library", "Fisher Fine Arts Library"), addr: "220 S 34th St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/B6pkiH9Ykspwi37J7" },
+      { name: bi("Philadelphia Museum of Art", "Philadelphia Museum of Art"), addr: "2600 Benjamin Franklin Pkwy, Philadelphia, PA 19130", url: "https://maps.app.goo.gl/ujDD2fu9QzdF3ZB88" },
+      { name: bi("Rittenhouse Square", "Rittenhouse Square"), addr: "1800 Walnut St, Philadelphia, PA 19103", url: "https://maps.app.goo.gl/D9resvhuxGFxQWLh6" },
+      { name: bi("Reading Terminal Market", "Reading Terminal Market"), addr: "1136 Arch St, Philadelphia, PA 19107", url: "https://maps.app.goo.gl/8BbsWj2JNYHzQvGP8" },
+      { name: bi("Liberty Bell Center", "Liberty Bell Center"), addr: "526 Market St, Philadelphia, PA 19106", url: "https://maps.app.goo.gl/TrYyR2g5b4HL1vP19" },
     ],
   },
   {
@@ -940,13 +974,13 @@ const days = [
       { title: bi("I-95 過路費密集", "I-95 has heavy tolls"), body: bi("Delaware Memorial Bridge、Maryland JFK Highway、其他 I-95 段，建議啟用 Avis E-Toll Unlimited。", "Delaware Memorial Bridge, Maryland JFK Highway, and other I-95 segments. Activate Avis E-Toll Unlimited.") },
     ],
     locations: [
-      { name: bi("U.S. Capitol", "U.S. Capitol"), addr: "First St SE, Washington, DC 20004" },
-      { name: bi("L'Enfant Plaza Parking", "L'Enfant Plaza Parking"), addr: "470 L'Enfant Plaza SW, Washington, DC 20024" },
-      { name: bi("Washington Monument", "Washington Monument"), addr: "2 15th St NW, Washington, DC 20024" },
-      { name: bi("WWII Memorial", "WWII Memorial"), addr: "1750 Independence Ave SW, Washington, DC 20024" },
-      { name: bi("Lincoln Memorial", "Lincoln Memorial"), addr: "2 Lincoln Memorial Cir NW, Washington, DC 20002" },
-      { name: bi("National Air and Space Museum", "National Air and Space Museum"), addr: "600 Independence Ave SW, Washington, DC 20560" },
-      { name: bi("National Museum of American History", "National Museum of American History"), addr: "1300 Constitution Ave NW, Washington, DC 20560" },
+      { name: bi("U.S. Capitol", "U.S. Capitol"), addr: "First St SE, Washington, DC 20004", url: "https://maps.app.goo.gl/4yY8Lkqt2jKtkVCp9" },
+      { name: bi("L'Enfant Plaza Parking", "L'Enfant Plaza Parking"), addr: "470 L'Enfant Plaza SW, Washington, DC 20024", url: "https://maps.app.goo.gl/Hfo2X7rsYFWLsLK8A" },
+      { name: bi("Washington Monument", "Washington Monument"), addr: "2 15th St NW, Washington, DC 20024", url: "https://maps.app.goo.gl/wUxYfwZpdvRXhDZLA" },
+      { name: bi("World War II Memorial", "World War II Memorial"), addr: "1750 Independence Ave SW, Washington, DC 20024", url: "https://maps.app.goo.gl/CznrVe57LyXMGDTD7" },
+      { name: bi("Lincoln Memorial", "Lincoln Memorial"), addr: "2 Lincoln Memorial Cir NW, Washington, DC 20002", url: "https://maps.app.goo.gl/zQX7sndmMfmGaSuaA" },
+      { name: bi("National Air and Space Museum", "National Air and Space Museum"), addr: "600 Independence Ave SW, Washington, DC 20560", url: "https://maps.app.goo.gl/LurrJox7VVWSSfju7" },
+      { name: bi("National Museum of American History", "National Museum of American History"), addr: "1300 Constitution Ave NW, Washington, DC 20560", url: "https://maps.app.goo.gl/Bey9YXzvKdArsohx5" },
     ],
   },
   {
@@ -975,11 +1009,19 @@ const days = [
       { title: bi("LIRR 名稱誤解", "LIRR confusion"), body: bi("Long Island Rail Road 不開到費城。費城至紐約是 Amtrak Northeast Regional，到 Penn Station 或 Moynihan Train Hall。", "LIRR does not run to Philadelphia. The Philadelphia to New York leg is Amtrak Northeast Regional, terminating at Penn Station / Moynihan Train Hall.") },
       { title: bi("J5D 不提供 after-hours returns", "J5D has no after-hours return"), body: bi("5/5 星期二營業時間 07:00 至 19:00，請務必在這區間內還車。", "Tuesday May 5 hours are 7 AM to 7 PM. Return within this window.") },
     ],
+    decision: {
+      title: bi("費城至紐約的兩種鐵路選擇", "Two rail options from Philadelphia to New York"),
+      items: [
+        { text: bi("Amtrak Northeast Regional：直達 New York Penn Station／Moynihan Train Hall，約 1 小時 25 分鐘；兩人單程約 100 美元（依時段浮動），無需轉車，行李攜帶最從容", "Amtrak Northeast Regional: direct from 30th Street Station to New York Penn Station / Moynihan Train Hall, about 1 hour 25 minutes; about $100 for two one-way (varies by time); no transfers, easiest with luggage") },
+        { text: bi("SEPTA Trenton Line 加 NJ Transit Northeast Corridor：先搭 SEPTA 至 Trenton 轉乘 NJ Transit 抵達 Penn Station，全程約 2 小時，兩人單程約 35 美元；班次密集、彈性高，但需中途換車", "SEPTA Trenton Line + NJ Transit Northeast Corridor: SEPTA to Trenton, transfer to NJ Transit, then to Penn Station; about 2 hours total, about $35 for two one-way; frequent service, more flexible, but requires a transfer") },
+      ],
+      caution: bi("此次行程帶有大件行李、且當天還有 Eugene 返回波士頓的轉接，建議仍以 Amtrak 直達為主，SEPTA 路線作為班次延誤或臨時改期的備案。", "Given the heavy luggage and Eugene's same-day return to Boston, take direct Amtrak as the main option; keep the SEPTA route as a backup if delays or schedule changes occur."),
+    },
     locations: [
-      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104" },
-      { name: bi("30th Street Station（Amtrak）", "30th Street Station (Amtrak)"), addr: "2955 Market St, Philadelphia, PA 19104" },
-      { name: bi("Avis Convention Center Parking（J5D）", "Avis Convention Center Parking (J5D)"), addr: "1324 Arch St, Philadelphia, PA 19107" },
-      { name: bi("New York Penn Station／Moynihan Train Hall", "New York Penn Station / Moynihan Train Hall"), addr: "Moynihan Train Hall, 421 8th Ave, New York, NY 10001" },
+      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
+      { name: bi("30th Street Station（Amtrak）", "30th Street Station (Amtrak)"), addr: "2955 Market St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/UVXWHyTjnhNDQCDg8" },
+      { name: bi("Avis Convention Center Parking（J5D）", "Avis Convention Center Parking (J5D)"), addr: "1324 Arch St, Philadelphia, PA 19107", url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA" },
+      { name: bi("New York Penn Station／Moynihan Train Hall", "New York Penn Station / Moynihan Train Hall"), addr: "421 8th Ave, New York, NY 10001", url: "https://maps.app.goo.gl/z1KQFirgT97eC4cg8" },
     ],
   },
   {
@@ -996,17 +1038,24 @@ const days = [
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("Times Square、Bryant Park", "Times Square, Bryant Park") },
       { time: bi("中午", "Midday"), activity: bi("中城用餐", "Midtown lunch") },
-      { time: bi("下午", "Afternoon"), activity: bi("New York Public Library、Grand Central Terminal", "New York Public Library, Grand Central Terminal") },
-      { time: bi("傍晚", "Evening"), activity: bi("Rockefeller Center、St. Patrick's Cathedral、Fifth Avenue", "Rockefeller Center, St. Patrick's Cathedral, Fifth Avenue") },
-      { time: bi("晚上", "Night"), activity: bi("Top of the Rock 或 Summit One Vanderbilt 二選一", "Top of the Rock or Summit One Vanderbilt") },
+      { time: bi("下午", "Afternoon"), activity: bi("New York Public Library、Grand Central Terminal、Empire State Building 外觀", "New York Public Library, Grand Central Terminal, Empire State Building exterior") },
+      { time: bi("傍晚", "Evening"), activity: bi("Rockefeller Center、St. Patrick's Cathedral、Fifth Avenue 散步、Harry Potter Shop", "Rockefeller Center, St. Patrick's Cathedral, stroll Fifth Avenue, Harry Potter Shop") },
+      { time: bi("晚上", "Night"), activity: bi("Top of the Rock 觀景；若選擇 Hudson Yards 路線可加入 Vessel 拍照", "Top of the Rock observation deck; for a Hudson Yards alternative, add Vessel for photos") },
     ],
-    notes: [bi("每天只做一個大區域。地鐵轉乘判斷比景點本身更耗精神。", "One major area per day. Subway navigation is more draining than the sights themselves.")],
+    notes: [
+      bi("每天只做一個大區域。地鐵轉乘判斷比景點本身更耗精神。", "One major area per day. Subway navigation is more draining than the sights themselves."),
+      bi("Vessel 目前僅開放至四樓平臺，攀爬路線視政策而定，事先於官網確認再前往。", "Vessel currently only opens its fourth-floor platform; full climbing access depends on policy. Check the official site before going."),
+    ],
     locations: [
-      { name: bi("Times Square", "Times Square"), addr: "Manhattan, NY 10036" },
-      { name: bi("Bryant Park", "Bryant Park"), addr: "Manhattan, NY 10018" },
-      { name: bi("New York Public Library", "New York Public Library"), addr: "476 5th Ave, New York, NY 10018" },
-      { name: bi("Grand Central Terminal", "Grand Central Terminal"), addr: "89 E 42nd St, New York, NY 10017" },
-      { name: bi("Rockefeller Center", "Rockefeller Center"), addr: "45 Rockefeller Plaza, New York, NY 10111" },
+      { name: bi("Times Square", "Times Square"), addr: "Manhattan, NY 10036", url: "https://maps.app.goo.gl/FKZT1Nc664Y6sDqZ8" },
+      { name: bi("Bryant Park", "Bryant Park"), addr: "Manhattan, NY 10018", url: "https://maps.app.goo.gl/oV5A3tDSPqciq4yB9" },
+      { name: bi("New York Public Library", "New York Public Library"), addr: "476 5th Ave, New York, NY 10018", url: "https://maps.app.goo.gl/JJaDAqmWnZW5jFGW7" },
+      { name: bi("Grand Central Terminal", "Grand Central Terminal"), addr: "89 E 42nd St, New York, NY 10017", url: "https://maps.app.goo.gl/dizivugB2TKF3Vov8" },
+      { name: bi("Empire State Building", "Empire State Building"), addr: "20 W 34th St, New York, NY 10001", url: "https://maps.app.goo.gl/7JdXge5kMYgw4JC36" },
+      { name: bi("Rockefeller Center", "Rockefeller Center"), addr: "45 Rockefeller Plaza, New York, NY 10111", url: "https://maps.app.goo.gl/7hQkyWFKDW9peuiN6" },
+      { name: bi("Fifth Avenue", "Fifth Avenue"), addr: "5th Ave, New York, NY", url: "https://maps.app.goo.gl/j5N5StYYdr4sahKKA" },
+      { name: bi("Harry Potter Shop New York", "Harry Potter Shop New York"), addr: "935 Broadway, New York, NY 10010", url: "https://maps.app.goo.gl/UFUp3BPyTscZPZSc6" },
+      { name: bi("Vessel", "Vessel"), addr: "20 Hudson Yards, New York, NY 10001", url: "https://maps.app.goo.gl/nUDgZPPhj9fdr6ng6" },
     ],
   },
   {
@@ -1022,17 +1071,23 @@ const days = [
     pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("Wall Street、9/11 Memorial、Oculus", "Wall Street, 9/11 Memorial, Oculus") },
-      { time: bi("中午", "Midday"), activity: bi("金融區用餐", "Financial District lunch") },
+      { time: bi("中午", "Midday"), activity: bi("中午步行至 Lower East Side，Katz's Delicatessen 經典煙燻牛肉，或 Russ & Daughters 煙燻鮭魚 bagel", "Walk to Lower East Side for lunch: Katz's Delicatessen for classic pastrami, or Russ & Daughters for smoked salmon bagels") },
       { time: bi("下午", "Afternoon"), activity: bi("Battery Park、搭免費 Staten Island Ferry 遠望自由女神", "Battery Park; take the free Staten Island Ferry for distant Statue of Liberty views") },
       { time: bi("傍晚", "Evening"), activity: bi("依體力進 Chinatown 或 SoHo", "Chinatown or SoHo, energy permitting") },
     ],
-    notes: [bi("這是步數較高的一天，建議放在中段，不要 Day 1 也不要最後一天。", "This is a high-step day. Place it mid-trip, not Day 1 or the final day.")],
+    notes: [
+      bi("這是步數較高的一天，建議放在中段，不要 Day 1 也不要最後一天。", "This is a high-step day. Place it mid-trip, not Day 1 or the final day."),
+      bi("Katz's 與 Russ & Daughters 都是 Lower East Side 經典；前者偏熱餐、後者偏 brunch 風格，擇一即可。", "Katz's and Russ & Daughters are both Lower East Side classics; Katz's leans hot meals, Russ & Daughters leans brunch. Pick one."),
+    ],
     locations: [
-      { name: bi("9/11 Memorial 與 Museum", "9/11 Memorial & Museum"), addr: "180 Greenwich St, New York, NY 10007" },
-      { name: bi("Oculus（WTC 交通樞紐）", "Oculus (WTC Transportation Hub)"), addr: "33-34 Vesey St, New York, NY 10006" },
-      { name: bi("Wall Street 與 NYSE", "Wall Street / NYSE"), addr: "11 Wall St, New York, NY 10005" },
-      { name: bi("Battery Park", "Battery Park"), addr: "Battery Pl, New York, NY 10004" },
-      { name: bi("Staten Island Ferry Whitehall Terminal", "Staten Island Ferry Whitehall Terminal"), addr: "4 Whitehall St, New York, NY 10004" },
+      { name: bi("9/11 Memorial 與 Museum", "9/11 Memorial & Museum"), addr: "180 Greenwich St, New York, NY 10007", url: "https://maps.app.goo.gl/cX9hdHnKn5vct2Tk7" },
+      { name: bi("Oculus（WTC 交通樞紐）", "Oculus (WTC Transportation Hub)"), addr: "33-34 Vesey St, New York, NY 10006", url: "https://maps.app.goo.gl/6XAnjYPaxoeGGHur8" },
+      { name: bi("New York Stock Exchange", "New York Stock Exchange"), addr: "11 Wall St, New York, NY 10005", url: "https://maps.app.goo.gl/b4HwDzKvs1PrLE8s5" },
+      { name: bi("Wall Street", "Wall Street"), addr: "Wall St, New York, NY 10005", url: "https://maps.app.goo.gl/vTocq87zFgUiymSy7" },
+      { name: bi("Katz's Delicatessen", "Katz's Delicatessen"), addr: "205 E Houston St, New York, NY 10002", url: "https://maps.app.goo.gl/RZgNjrJeeSMVLj6J6" },
+      { name: bi("Russ & Daughters", "Russ & Daughters"), addr: "179 E Houston St, New York, NY 10002", url: "https://maps.app.goo.gl/crz6yXafjtJnQp667" },
+      { name: bi("Battery Park", "Battery Park"), addr: "Battery Pl, New York, NY 10004", url: "https://maps.app.goo.gl/c92TmjUdwjSzPeBC8" },
+      { name: bi("Staten Island Ferry · Whitehall Terminal", "Staten Island Ferry · Whitehall Terminal"), addr: "4 Whitehall St, New York, NY 10004", url: "https://maps.app.goo.gl/bdsHbm3xHC3Carwy5" },
     ],
   },
   {
@@ -1054,10 +1109,10 @@ const days = [
     ],
     notes: [bi("The Met 與 AMNH 都是大館，二選一，不要硬塞兩個。", "Both museums are massive. Pick one; do not attempt both.")],
     locations: [
-      { name: bi("Central Park（南入口）", "Central Park (south entrance)"), addr: "Central Park S, New York, NY 10019" },
-      { name: bi("The Metropolitan Museum of Art", "The Metropolitan Museum of Art"), addr: "1000 5th Ave, New York, NY 10028" },
-      { name: bi("American Museum of Natural History", "American Museum of Natural History"), addr: "200 Central Park West, New York, NY 10024" },
-      { name: bi("Lincoln Center", "Lincoln Center"), addr: "10 Lincoln Center Plaza, New York, NY 10023" },
+      { name: bi("Central Park", "Central Park"), addr: "Central Park, New York, NY", url: "https://maps.app.goo.gl/f7MjA6gdQjEMyXM59" },
+      { name: bi("The Metropolitan Museum of Art", "The Metropolitan Museum of Art"), addr: "1000 5th Ave, New York, NY 10028", url: "https://maps.app.goo.gl/tAHeuT1s4Ktcy54c7" },
+      { name: bi("American Museum of Natural History", "American Museum of Natural History"), addr: "200 Central Park West, New York, NY 10024", url: "https://maps.app.goo.gl/F7tKVLEoq7Q595st5" },
+      { name: bi("Lincoln Center", "Lincoln Center"), addr: "10 Lincoln Center Plaza, New York, NY 10023", url: "https://maps.app.goo.gl/H1nP4ffQnai6fTQt8" },
     ],
   },
   {
@@ -1073,15 +1128,16 @@ const days = [
     pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("搭地鐵至 DUMBO", "Subway to DUMBO") },
-      { time: bi("中午", "Midday"), activity: bi("布魯克林用餐", "Brooklyn lunch") },
+      { time: bi("中午", "Midday"), activity: bi("Junior's Brooklyn 經典芝士蛋糕，或 DUMBO 區內用餐", "Junior's Brooklyn for the classic cheesecake, or lunch within DUMBO") },
       { time: bi("下午", "Afternoon"), activity: bi("Brooklyn Bridge Park、走 Brooklyn Bridge 回曼哈頓", "Brooklyn Bridge Park; walk Brooklyn Bridge back to Manhattan") },
       { time: bi("傍晚", "Evening"), activity: bi("回飯店休息", "Return to hotel") },
     ],
     notes: [bi("Brooklyn Bridge 步行較長且陽光直曬，建議備帽子與水。", "The Brooklyn Bridge walk is long and sunny; bring a hat and water.")],
     locations: [
-      { name: "DUMBO", addr: "DUMBO, Brooklyn, NY 11201" },
-      { name: bi("Brooklyn Bridge Park", "Brooklyn Bridge Park"), addr: "334 Furman St, Brooklyn, NY 11201" },
-      { name: bi("Brooklyn Bridge（布魯克林側）", "Brooklyn Bridge (Brooklyn Side)"), addr: "Brooklyn Bridge, New York, NY 10038" },
+      { name: "DUMBO", addr: "DUMBO, Brooklyn, NY 11201", url: "https://maps.app.goo.gl/1y9jsTZkjtkjs7xq6" },
+      { name: bi("Brooklyn Bridge Park", "Brooklyn Bridge Park"), addr: "334 Furman St, Brooklyn, NY 11201", url: "https://maps.app.goo.gl/43qWjtSvcFbkcpmHA" },
+      { name: bi("Brooklyn Bridge", "Brooklyn Bridge"), addr: "Brooklyn Bridge, New York, NY", url: "https://maps.app.goo.gl/JcYjGsseNhVijJzR9" },
+      { name: bi("Junior's Restaurant", "Junior's Restaurant"), addr: "Brooklyn / Times Square", url: "https://maps.app.goo.gl/vNBMGXJK62qgkgeM7" },
     ],
   },
   {
@@ -1096,16 +1152,18 @@ const days = [
     intensity: "low",
     pendingInfo: true,
     timeline: [
-      { time: bi("上午", "Morning"), activity: bi("SoHo 精品街", "SoHo boutiques") },
-      { time: bi("中午", "Midday"), activity: bi("Chelsea Market 用餐", "Lunch at Chelsea Market") },
+      { time: bi("上午", "Morning"), activity: bi("SoHo 精品街，可順道 Hamburger America 享用招牌漢堡", "SoHo boutiques; Hamburger America for a classic burger nearby") },
+      { time: bi("中午", "Midday"), activity: bi("Chelsea Market 用餐：LOS TACOS No.1 是市場內必試的招牌墨西哥小食", "Lunch at Chelsea Market; LOS TACOS No.1 inside the market is a classic must-try") },
       { time: bi("下午", "Afternoon"), activity: bi("High Line 散步", "Walk the High Line") },
       { time: bi("傍晚", "Evening"), activity: bi("整理行李，最後晚餐", "Pack and have a final dinner") },
     ],
     notes: [bi("最後緩衝日，不要排太多景點，預留時間整理行李。", "Final buffer day. Do not overschedule; leave time to pack.")],
     locations: [
-      { name: "SoHo", addr: "SoHo, New York, NY 10012" },
-      { name: bi("Chelsea Market", "Chelsea Market"), addr: "75 9th Ave, New York, NY 10011" },
-      { name: bi("The High Line", "The High Line"), addr: "The High Line, New York, NY 10011" },
+      { name: "SoHo", addr: "SoHo, New York, NY 10012", url: "https://maps.app.goo.gl/XKB4rG8z1w2psuew5" },
+      { name: bi("Hamburger America", "Hamburger America"), addr: "51 MacDougal St, New York, NY 10012", url: "https://maps.app.goo.gl/CbAmSeBjg7epGg7H9" },
+      { name: bi("Chelsea Market", "Chelsea Market"), addr: "75 9th Ave, New York, NY 10011", url: "https://maps.app.goo.gl/4dfvFwP81QnsPuKe9" },
+      { name: bi("LOS TACOS No.1（Chelsea Market）", "LOS TACOS No.1 (Chelsea Market)"), addr: "75 9th Ave, New York, NY 10011", url: "https://maps.app.goo.gl/MaeWG1h5XJnixs1WA" },
+      { name: bi("The High Line", "The High Line"), addr: "The High Line, New York, NY 10011", url: "https://maps.app.goo.gl/9Gnrj5tpTTqUoiVY8" },
     ],
   },
   {
@@ -1139,12 +1197,14 @@ const hotels = [
     name: "The Revolution Hotel",
     nights: bi("4/26 至 5/2，六晚", "April 26 to May 2, 6 nights"),
     addr: "40 Berkeley St, Boston, MA 02116",
+    url: "https://maps.app.goo.gl/YtDhXZ63mXTHbp576",
     note: bi("位於 Back Bay 與南端交界，距離 Avis BO4 取車點 0.4 英里。", "On the Back Bay / South End border, 0.4 miles from Avis BO4 pickup."),
   },
   {
     name: "4211 Suites",
     nights: bi("5/2 至 5/5，三晚", "May 2 to May 5, 3 nights"),
     addr: "4211 Chestnut St, Philadelphia, PA 19104",
+    url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7",
     rating: "8.2/10",
     note: bi("位於 University City，距 UPenn 約 1.3 公里；務必確認停車費與是否需事先預約。", "In University City, 1.3 km from UPenn. Confirm parking fees and whether reservation is required."),
   },
@@ -1182,7 +1242,7 @@ const transitCards = [
       "After 12 rides on the same card in one week (Mon to Sun), all additional rides that week are free (effective cap of about $34.80)"
     ),
     recommendation: bi(
-      "建議全程使用 OMNY tap-to-pay，不需要購買實體 MetroCard。家屬與 Eugene 應使用各自的卡片或裝置感應，週上限以單一裝置計算。連續搭六天地鐵時這項上限會自動觸發。",
+      "建議全程使用 OMNY tap-to-pay，不需要購買實體 MetroCard。每位旅客應使用各自的卡片或裝置感應，週上限以單一裝置計算。連續搭六天地鐵時這項上限會自動觸發。",
       "Use OMNY tap-to-pay throughout; no physical MetroCard needed. Each person should tap with their own card or device since the weekly cap is calculated per device. The cap will automatically trigger across six days of subway use."
     ),
     color: C.plum,
@@ -1194,6 +1254,7 @@ const avisStrategy = {
     code: "BO4",
     name: "Boston Back Bay Station Garage",
     addr: "100 Clarendon St (Parking Garage), Boston, MA 02116",
+    url: "https://maps.app.goo.gl/AxawRXqMk218nM318",
     phone: "(617) 534-1404",
     hours: bi("週一至週日 24 小時", "Open 24 hours, all days"),
     distFromHotel: bi("距 The Revolution Hotel 0.4 英里，步行 8 分鐘，Uber 約 3 分鐘 8 至 10 美元", "0.4 miles from The Revolution Hotel; 8-minute walk or 3-minute Uber at $8 to $10"),
@@ -1204,6 +1265,7 @@ const avisStrategy = {
     code: "J5D",
     name: "PHL Convention Center Parking",
     addr: "1324 Arch Street, Philadelphia, PA 19107",
+    url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA",
     hours: bi("週一至週五 07:00 至 19:00；週六、日 08:00 至 13:00", "Mon to Fri 7 AM to 7 PM; Sat to Sun 8 AM to 1 PM"),
     note: bi("不提供 after-hours returns，必須於營業時間內歸還。", "No after-hours returns. Must return during business hours."),
     dropoffTime: bi("5/5 上午 10:00", "May 5, 10:00 AM"),
@@ -1232,13 +1294,20 @@ const avisStrategy = {
 };
 
 const dining = [
-  { name: "Tatte Bakery & Café", typeZh: "早餐／早午餐", typeEn: "Breakfast / brunch", addr: "70 Charles St, Boston, MA 02114", suggestedZh: "4/26、4/29、4/30、5/1 早餐", suggestedEn: "Breakfast on Apr 26, 29, 30, May 1", icon: Coffee },
-  { name: "Chipotle Park Plaza", typeZh: "美式快餐", typeEn: "American fast casual", addr: "8 Park Plz, Boston, MA 02116", suggestedZh: "4/26 晚餐輕食", suggestedEn: "Light dinner on Apr 26", icon: Utensils },
-  { name: "The Daily Catch (North End)", typeZh: "義式海鮮（現金）", typeEn: "Italian seafood (cash only)", addr: "323 Hanover St, Boston, MA 02113", suggestedZh: "4/27 晚餐", suggestedEn: "Dinner on Apr 27", icon: Anchor, warningZh: "現金 only，不接受訂位", warningEn: "Cash only; no reservations" },
-  { name: "Mike's Pastry", typeZh: "甜點", typeEn: "Pastries", addr: "300 Hanover St, Boston, MA 02113", suggestedZh: "4/27 或 5/1 晚上", suggestedEn: "Evening of Apr 27 or May 1", icon: Coffee },
-  { name: "James Hook & Co", typeZh: "海鮮、龍蝦堡", typeEn: "Seafood, lobster rolls", addr: "440 Atlantic Ave, Boston, MA 02210", suggestedZh: "5/1 午餐", suggestedEn: "Lunch on May 1", icon: Anchor, warningZh: "週五營業至 17:00", warningEn: "Friday hours until 5 PM" },
-  { name: "Trader Joe's Back Bay", typeZh: "雜貨採買", typeEn: "Grocery", addr: "899 Boylston St, Boston, MA 02115", suggestedZh: "5/1 採買回程禮物", suggestedEn: "Souvenir snacks on May 1", icon: ShoppingBag },
-  { name: "Reading Terminal Market", typeZh: "費城市集", typeEn: "Philadelphia market", addr: "1136 Arch St, Philadelphia, PA 19107", suggestedZh: "5/3 晚餐或 5/4 早餐", suggestedEn: "Dinner May 3 or breakfast May 4", icon: Utensils },
+  { name: "Tatte Bakery & Café", typeZh: "早餐／早午餐", typeEn: "Breakfast / brunch", addr: "Copley Square 與其他多間分店", addrEn: "Copley Square and other locations", suggestedZh: "4/26、4/29、4/30、5/1 早餐", suggestedEn: "Breakfast on Apr 26, 29, 30, May 1", icon: Coffee, url: "https://maps.app.goo.gl/DeuHZJv1kFTZzqb27" },
+  { name: "Chipotle Park Plaza", typeZh: "美式快餐", typeEn: "American fast casual", addr: "8 Park Plz, Boston, MA 02116", suggestedZh: "4/26 晚餐輕食", suggestedEn: "Light dinner on Apr 26", icon: Utensils, url: "https://maps.app.goo.gl/r1FNR2fakrAWcWBbA" },
+  { name: "The Daily Catch (North End)", typeZh: "義式海鮮（現金）", typeEn: "Italian seafood (cash only)", addr: "323 Hanover St, Boston, MA 02113", suggestedZh: "4/27 晚餐", suggestedEn: "Dinner on Apr 27", icon: Anchor, warningZh: "現金 only，不接受訂位", warningEn: "Cash only; no reservations", url: "https://maps.app.goo.gl/ZMz9ScVnfeRaB4Ns5" },
+  { name: "Mike's Pastry", typeZh: "甜點", typeEn: "Pastries", addr: "300 Hanover St, Boston, MA 02113", suggestedZh: "4/27 或 5/1 晚上", suggestedEn: "Evening of Apr 27 or May 1", icon: Coffee, url: "https://maps.app.goo.gl/FYSbfku1inbzEhRa8" },
+  { name: "The Cheesecake Factory (Prudential)", typeZh: "美式家庭餐廳", typeEn: "American family restaurant", addr: "115 Huntington Ave, Boston, MA 02116", suggestedZh: "4/29 典禮後慶祝午餐", suggestedEn: "Celebration lunch after the April 29 ceremony", icon: Utensils, url: "https://maps.app.goo.gl/EcHGRsHJDcb1HQrP8" },
+  { name: "Raising Cane's Chicken Fingers", typeZh: "炸雞速食", typeEn: "Chicken finger fast food", addr: "Boston, MA", suggestedZh: "4/29 或彈性日輕鬆晚餐", suggestedEn: "April 29 or other casual dinner option", icon: Utensils, url: "https://maps.app.goo.gl/wE9M8AskLZtcdWX58" },
+  { name: "James Hook & Co", typeZh: "海鮮、龍蝦堡", typeEn: "Seafood, lobster rolls", addr: "440 Atlantic Ave, Boston, MA 02210", suggestedZh: "5/1 午餐", suggestedEn: "Lunch on May 1", icon: Anchor, warningZh: "週五營業至 17:00", warningEn: "Friday hours until 5 PM", url: "https://maps.app.goo.gl/4mgqm65Lsxe7haR17" },
+  { name: "Trader Joe's", typeZh: "雜貨採買", typeEn: "Grocery", addr: "Boston, MA", suggestedZh: "5/1 採買回程禮物", suggestedEn: "Souvenir snacks on May 1", icon: ShoppingBag, url: "https://maps.app.goo.gl/PgdiJPnMtT1VagMq7" },
+  { name: "Reading Terminal Market", typeZh: "費城市集", typeEn: "Philadelphia market", addr: "1136 Arch St, Philadelphia, PA 19107", suggestedZh: "5/3 晚餐或 5/4 早餐", suggestedEn: "Dinner May 3 or breakfast May 4", icon: Utensils, url: "https://maps.app.goo.gl/8BbsWj2JNYHzQvGP8" },
+  { name: "Katz's Delicatessen", typeZh: "Lower East Side 經典煙燻牛肉", typeEn: "Lower East Side pastrami classic", addr: "205 E Houston St, New York, NY 10002", suggestedZh: "5/7 下曼哈頓午餐", suggestedEn: "Lunch on May 7 (Lower Manhattan)", icon: Utensils, url: "https://maps.app.goo.gl/RZgNjrJeeSMVLj6J6" },
+  { name: "Russ & Daughters", typeZh: "煙燻鮭魚 bagel 與猶太風味", typeEn: "Smoked salmon bagels & appetizing", addr: "179 E Houston St, New York, NY 10002", suggestedZh: "5/7 早午餐替代選項", suggestedEn: "Brunch alternative on May 7", icon: Coffee, url: "https://maps.app.goo.gl/crz6yXafjtJnQp667" },
+  { name: "LOS TACOS No.1 (Chelsea Market)", typeZh: "墨西哥小食", typeEn: "Mexican tacos", addr: "75 9th Ave, New York, NY 10011", suggestedZh: "5/10 Chelsea Market 午餐", suggestedEn: "Lunch on May 10 at Chelsea Market", icon: Utensils, url: "https://maps.app.goo.gl/MaeWG1h5XJnixs1WA" },
+  { name: "Hamburger America", typeZh: "經典美式漢堡", typeEn: "Classic American burgers", addr: "51 MacDougal St, New York, NY 10012", suggestedZh: "5/10 SoHo 散步", suggestedEn: "May 10 SoHo stroll", icon: Utensils, url: "https://maps.app.goo.gl/CbAmSeBjg7epGg7H9" },
+  { name: "Junior's Restaurant", typeZh: "紐約經典芝士蛋糕", typeEn: "Iconic New York cheesecake", addr: "Brooklyn 與 Times Square 分店", addrEn: "Brooklyn and Times Square locations", suggestedZh: "5/9 Brooklyn 或 5/6 中城", suggestedEn: "May 9 Brooklyn or May 6 Midtown", icon: Coffee, url: "https://maps.app.goo.gl/vNBMGXJK62qgkgeM7" },
 ];
 
 const checklist = [
@@ -1311,10 +1380,10 @@ const checklist = [
 // SUB-COMPONENTS
 // =============================================================================
 
-function MapButton({ addr, label, lang, compact = false }) {
+function MapButton({ addr, url, label, lang, compact = false }) {
   return (
     <a
-      href={mapLink(addr)}
+      href={url || mapLink(addr)}
       target="_blank"
       rel="noopener noreferrer"
       className={`inline-flex items-center gap-1 transition-colors group ${compact ? "text-[11px]" : "text-[11px] sm:text-xs"}`}
@@ -1327,7 +1396,7 @@ function MapButton({ addr, label, lang, compact = false }) {
   );
 }
 
-function LocationRow({ name, addr, lang }) {
+function LocationRow({ name, addr, url, lang }) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 py-2.5 border-b last:border-0" style={{ borderColor: C.tanSoft }}>
       <div className="flex-1 min-w-0">
@@ -1335,7 +1404,7 @@ function LocationRow({ name, addr, lang }) {
         <div className="text-[11px] sm:text-xs mt-0.5 break-words" style={{ color: C.mute }}>{addr}</div>
       </div>
       <div className="sm:flex-shrink-0 sm:pt-0.5">
-        <MapButton addr={addr} lang={lang} />
+        <MapButton addr={addr} url={url} lang={lang} />
       </div>
     </div>
   );
@@ -1538,7 +1607,7 @@ function CeremonyCard({ ceremony, lang }) {
           <MapPin className="h-4 w-4 flex-shrink-0" style={{ color: C.goldSoft }} />
           <span className="font-semibold text-[14px] sm:text-base" style={{ fontFamily: 'Georgia, serif' }}>{ceremony.venue}</span>
           <span className="opacity-70 text-xs sm:text-sm flex-1 truncate ml-2">{ceremony.address}</span>
-          <a href={mapLink(ceremony.address)} target="_blank" rel="noopener noreferrer" className="text-xs underline-offset-2 hover:underline flex items-center gap-1" style={{ color: C.goldSoft }}>
+          <a href={ceremony.url || mapLink(ceremony.address)} target="_blank" rel="noopener noreferrer" className="text-xs underline-offset-2 hover:underline flex items-center gap-1" style={{ color: C.goldSoft }}>
             <span className="hidden sm:inline">{lang === "zh" ? "開啟地圖" : "Open map"}</span>
             <ExternalLink className="h-3 w-3" />
           </a>
@@ -1844,7 +1913,7 @@ function DayCard({ day, lang }) {
               <AccordionContent className="pb-3">
                 <div>
                   {day.locations.map((loc, i) => (
-                    <LocationRow key={i} name={loc.name} addr={loc.addr} lang={lang} />
+                    <LocationRow key={i} name={loc.name} addr={loc.addr} url={loc.url} lang={lang} />
                   ))}
                 </div>
               </AccordionContent>
@@ -2099,6 +2168,33 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* Google Maps Collection Link */}
+                <a
+                  href="https://maps.app.goo.gl/ayy7zbWE67jCK3zQ8"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block rounded-2xl border shadow-sm hover:shadow-md transition-shadow group"
+                  style={{ background: C.navy, borderColor: C.navy, color: "#ffffff" }}
+                >
+                  <div className="flex items-center gap-4 p-5 sm:p-6">
+                    <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl" style={{ background: "rgba(212,175,55,0.18)", color: C.goldSoft }}>
+                      <Map className="h-6 w-6 sm:h-7 sm:w-7" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[10px] sm:text-xs uppercase tracking-[0.2em] font-semibold mb-1" style={{ color: C.goldSoft }}>
+                        {lang === "zh" ? "Google Maps 完整景點清單" : "Full Google Maps Collection"}
+                      </div>
+                      <div className="font-semibold text-base sm:text-lg leading-tight" style={{ fontFamily: '"PingFang TC", Georgia, serif' }}>
+                        {lang === "zh" ? "全部地點皆已整理於 Google Maps 共享清單" : "All locations are pre-saved in a shared Google Maps list"}
+                      </div>
+                      <div className="text-[12px] sm:text-sm mt-1 leading-relaxed" style={{ color: "rgba(255,255,255,0.78)" }}>
+                        {lang === "zh" ? "點此開啟列表，可一鍵加入手機 Google Maps，方便導航與分享。" : "Tap to open the list, save it to your Google Maps app for one-tap navigation and sharing."}
+                      </div>
+                    </div>
+                    <ExternalLink className="h-5 w-5 shrink-0 group-hover:translate-x-0.5 transition-transform" style={{ color: C.goldSoft }} />
+                  </div>
+                </a>
+
                 <RouteDiagram lang={lang} />
 
                 <div>
@@ -2136,7 +2232,7 @@ export default function App() {
                           </div>
                           <div className="text-[11px] sm:text-xs mt-0.5" style={{ color: C.mute }}>{t(h.nights, lang)}</div>
                           <div className="text-[12px] sm:text-sm mt-1.5 break-words" style={{ color: C.body }}>{t(h.addr, lang)}</div>
-                          {!h.pending && <div className="mt-1"><MapButton addr={h.addr} lang={lang} /></div>}
+                          {!h.pending && <div className="mt-1"><MapButton addr={h.addr} url={h.url} lang={lang} /></div>}
                           <div className="text-[11px] sm:text-xs italic mt-1.5 leading-relaxed" style={{ color: C.mute }}>{t(h.note, lang)}</div>
                         </div>
                       ))}
@@ -2151,18 +2247,18 @@ export default function App() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-4">
-                      <div className="text-[13px] sm:text-sm divide-y" style={{ borderColor: C.tanSoft }}>
+                      <div className="text-[13px] sm:text-sm">
                         {[
                           [bi("波士頓市內", "Within Boston"), bi("Uber 與 MBTA", "Uber + MBTA")],
                           [bi("波士頓 → 費城", "Boston → Philly"), bi("Avis 自駕", "Avis self-drive")],
                           [bi("費城市內", "Within Philly"), bi("步行加 Uber", "Walking + Uber")],
                           [bi("費城 ↔ DC", "Philly ↔ DC"), bi("自駕往返", "Self-drive round trip")],
-                          [bi("費城 → 紐約", "Philly → NYC"), bi("Amtrak NER", "Amtrak NER")],
+                          [bi("費城 → 紐約", "Philly → NYC"), bi("Amtrak 直達；備案 SEPTA + NJ Transit", "Amtrak direct; backup SEPTA + NJ Transit")],
                           [bi("紐約市內", "Within NYC"), bi("Subway 加 Uber", "Subway + Uber")],
                         ].map(([k, v], i) => (
                           <div key={i} className="flex justify-between gap-3 py-2.5 border-b last:border-0" style={{ borderColor: C.tanSoft }}>
                             <span style={{ color: C.body }}>{t(k, lang)}</span>
-                            <span className="font-semibold" style={{ color: C.navy }}>{t(v, lang)}</span>
+                            <span className="font-semibold text-right" style={{ color: C.navy }}>{t(v, lang)}</span>
                           </div>
                         ))}
                       </div>
@@ -2282,7 +2378,7 @@ export default function App() {
                               </div>
                               <div className="break-words leading-snug" style={{ color: C.ink }}>{t(h.addr, lang)}</div>
                               {!h.pending && (
-                                <div className="mt-2"><MapButton addr={t(h.addr, lang)} lang={lang} /></div>
+                                <div className="mt-2"><MapButton addr={t(h.addr, lang)} url={h.url} lang={lang} /></div>
                               )}
                             </div>
                             {h.rating && (
@@ -2326,7 +2422,7 @@ export default function App() {
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "地址" : "Address"}</div>
                           <div className="break-words" style={{ color: C.ink }}>{avisStrategy.pickup.addr}</div>
-                          <div className="mt-1"><MapButton addr={avisStrategy.pickup.addr} lang={lang} /></div>
+                          <div className="mt-1"><MapButton addr={avisStrategy.pickup.addr} url={avisStrategy.pickup.url} lang={lang} /></div>
                         </div>
                         <div className="grid grid-cols-2 gap-3">
                           <div>
@@ -2368,7 +2464,7 @@ export default function App() {
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "地址" : "Address"}</div>
                           <div className="break-words" style={{ color: C.ink }}>{avisStrategy.dropoff.addr}</div>
-                          <div className="mt-1"><MapButton addr={avisStrategy.dropoff.addr} lang={lang} /></div>
+                          <div className="mt-1"><MapButton addr={avisStrategy.dropoff.addr} url={avisStrategy.dropoff.url} lang={lang} /></div>
                         </div>
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "營業時間" : "Hours"}</div>
@@ -2543,7 +2639,7 @@ export default function App() {
                                     {lang === "zh" ? r.typeZh : r.typeEn}
                                   </Badge>
                                 </div>
-                                <div className="text-[12px] sm:text-sm mt-1 break-words" style={{ color: C.body }}>{r.addr}</div>
+                                <div className="text-[12px] sm:text-sm mt-1 break-words" style={{ color: C.body }}>{lang === "en" && r.addrEn ? r.addrEn : r.addr}</div>
                                 {(r.warningZh || r.warningEn) && (
                                   <div className="text-[10px] sm:text-xs rounded-md px-2 py-1 mt-2 inline-block border" style={{ background: "#fff7ed", color: "#a8531e", borderColor: "#e6c2a3" }}>
                                     <AlertTriangle className="inline h-3 w-3 mr-1 mb-0.5" />
@@ -2555,7 +2651,7 @@ export default function App() {
                                     <Calendar className="inline h-3 w-3 mr-1 -mt-0.5" />
                                     {lang === "zh" ? r.suggestedZh : r.suggestedEn}
                                   </span>
-                                  {r.addr && <MapButton addr={r.addr} lang={lang} />}
+                                  {r.addr && <MapButton addr={r.addr} url={r.url} lang={lang} />}
                                 </div>
                               </div>
                             </div>
