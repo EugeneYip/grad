@@ -1,1886 +1,1435 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Sparkles, Settings, Upload, Globe, ArrowUpRight, CheckCircle2, Lightbulb, Anchor, Sun, Moon, Copy, Check } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import {
+  AlertTriangle,
+  ArrowRight,
+  BadgeCheck,
+  Briefcase,
+  Building2,
+  Bus,
+  CalendarDays,
+  Camera,
+  Car,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  ChevronUp,
+  Clock,
+  Coffee,
+  CreditCard,
+  DollarSign,
+  ExternalLink,
+  Flag,
+  GraduationCap,
+  Hotel,
+  Info,
+  Landmark,
+  Languages,
+  Luggage,
+  Map,
+  MapPin,
+  Menu,
+  Museum,
+  Navigation,
+  ParkingCircle,
+  Plane,
+  Route,
+  Search,
+  ShieldCheck,
+  ShipWheel,
+  ShoppingBag,
+  Ticket,
+  Train,
+  Umbrella,
+  Users,
+  Utensils,
+  WalletCards,
+  XCircle,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] } },
+const mapSearch = (query) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+const mapDirections = (origin, destination, mode = "driving") =>
+  `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=${mode}`;
+
+const ICONS = {
+  alert: AlertTriangle,
+  badge: BadgeCheck,
+  bag: ShoppingBag,
+  briefcase: Briefcase,
+  building: Building2,
+  bus: Bus,
+  calendar: CalendarDays,
+  camera: Camera,
+  car: Car,
+  check: CheckCircle2,
+  clock: Clock,
+  coffee: Coffee,
+  credit: CreditCard,
+  dollar: DollarSign,
+  flag: Flag,
+  graduation: GraduationCap,
+  hotel: Hotel,
+  info: Info,
+  landmark: Landmark,
+  luggage: Luggage,
+  map: Map,
+  pin: MapPin,
+  museum: Museum,
+  navigation: Navigation,
+  parking: ParkingCircle,
+  plane: Plane,
+  route: Route,
+  shield: ShieldCheck,
+  ship: ShipWheel,
+  ticket: Ticket,
+  train: Train,
+  umbrella: Umbrella,
+  users: Users,
+  food: Utensils,
+  wallet: WalletCards,
+  x: XCircle,
 };
 
-const translations = {
-  en: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Publish AI pages", "in one push."],
-    heroSubtitle:
-      "A clean template for turning any AI-generated React artifact into a live website. Replace one file. Push to GitHub. Done.",
-    ctaPrimary: "Use this template",
-    ctaSecondary: "Read the README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb#readme",
-    includedLabel: "Included",
-    includedTitle: "What you get",
-    includes: [
-      "40+ shadcn/ui components",
-      "160+ pre-installed packages",
-      "Tailwind CSS, ready to use",
-      "GitHub Actions deployment",
-      "Custom domain support",
-      "Auto base path detection",
-    ],
-    howItWorksLabel: "How it works",
-    howItWorksTitle: "Three steps to go live",
-    howItWorksSubtitle:
-      "No coding experience needed. Ask any AI for JSX, paste it, push, done.",
-    steps: [
-      {
-        number: "01",
-        title: "Ask your AI for JSX",
-        body: "Tell Claude, ChatGPT, or any AI to generate the page you want as a React component in JSX format.",
-      },
-      {
-        number: "02",
-        title: "Set up your repo",
-        body: "Use this template to create your own repository. Go to Settings → Pages and set Source to GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Replace and push",
-        body: "Paste the JSX into src/App.jsx and push to main. GitHub Actions builds and publishes your site automatically.",
-      },
-    ],
-    filesLabel: "Your files",
-    filesTitle: "What you'll change",
-    filesSubtitle:
-      "Most of the time you only touch one file. The other two are optional.",
-    files: [
-      { name: "src/App.jsx", tag: "Required", desc: "Paste your AI-generated JSX here. This is the only file you need to change.", required: true },
-      { name: "index.html", tag: "Optional", desc: "Update the page title, meta description, and Google Analytics to match your site.", required: false },
-      { name: "public/CNAME", tag: "Optional", desc: "Set your custom domain. Leave as-is if you don't need one.", required: false },
-    ],
-    tipLabel: "Tip",
-    tipText: "If your AI code uses a package not included in the template, run",
-    tipCommand: "npm run check",
-    tipAfter: "to find and fix missing dependencies.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "All Rights Reserved.",
-    langLabel: "Language",
-    promptLabel: "Starter Prompt",
-    promptHint: "Copy this prompt template into your AI tool, then fill in the blanks.",
-    promptTemplate: `Create a React page in JSX format that I can use as src/App.jsx.
+const addresses = {
+  bostonHotel: "The Revolution Hotel, 40 Berkeley St, Boston, MA 02116",
+  fenway: "Fenway Park, 4 Jersey St, Boston, MA 02215",
+  leader: "Leader Bank Pavilion, 290 Northern Ave, Boston, MA 02210",
+  northeastern: "Northeastern University, 360 Huntington Ave, Boston, MA 02115",
+  backBayAvis: "Avis Boston Back Bay Station Garage, 100 Clarendon St, Boston, MA 02116",
+  loganAvis: "Avis Boston Logan International Airport, 15 Transportation Way, East Boston, MA 02128",
+  americanDream: "American Dream, 1 American Dream Way, East Rutherford, NJ 07073",
+  phillyHotel: "4211 Suites, 4211 Chestnut St, Philadelphia, PA 19104",
+  avisJ5D: "Avis PHL Convention Ctr Parking, 1324 Arch St, Philadelphia, PA 19107",
+  station30: "William H. Gray III 30th Street Station, 2955 Market St, Philadelphia, PA 19104",
+  nationalMall: "National Mall, Washington, DC",
+  nyPenn: "New York Penn Station, New York, NY 10001",
+};
 
-Topic: [your website topic — e.g. coffee shop, portfolio, SaaS product]
-Style: [design style — e.g. minimal, modern, colorful, corporate]
-Details: [sections you want — e.g. hero, features, testimonials, pricing, contact]
-
-Requirements:
-- Use Tailwind CSS for all styling
-- Use shadcn/ui components (import from @/components/ui/) when suitable
-- Use lucide-react for icons
-- Make it responsive for both mobile and desktop
-- Export as: export default function App()
-- Single file, no additional CSS files or CDN scripts`,
-    promptCopy: "Copy",
-    promptCopied: "Copied!",
-  },
+const uiText = {
   zh: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Push 一次", "AI 頁面就上線"],
-    heroSubtitle:
-      "把 AI 生成的 React 成品直接變成線上網站的簡潔範本。換掉一個檔案，push 到 GitHub，就完成了。",
-    ctaPrimary: "使用這個範本",
-    ctaSecondary: "閱讀 README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.zh.md",
-    includedLabel: "內建項目",
-    includedTitle: "範本包含甚麼",
-    includes: [
-      "40+ 個 shadcn/ui 元件",
-      "160+ 個預裝套件",
-      "Tailwind CSS，開箱即用",
-      "GitHub Actions 自動部署",
-      "支援自訂網域",
-      "自動偵測 base path",
-    ],
-    howItWorksLabel: "運作方式",
-    howItWorksTitle: "三步就上線",
-    howItWorksSubtitle:
-      "不需要寫程式經驗。請 AI 生成 JSX，貼上，push，即可上線。",
-    steps: [
-      {
-        number: "01",
-        title: "請 AI 生成 JSX",
-        body: "告訴 Claude、ChatGPT 或任何 AI，請它用 JSX 格式幫你生成想要的 React 頁面。",
-      },
-      {
-        number: "02",
-        title: "建立你的 repo",
-        body: "用這個範本建立自己的 repo。到 Settings → Pages 把 Source 設成 GitHub Actions。",
-      },
-      {
-        number: "03",
-        title: "貼上並 Push",
-        body: "將 JSX 貼進 src/App.jsx，push 到 main。GitHub Actions 會自動 build 並發佈你的網站。",
-      },
-    ],
-    filesLabel: "你的檔案",
-    filesTitle: "需要改的檔案",
-    filesSubtitle: "通常只需要修改一個檔案，其餘兩個是進階選用。",
-    files: [
-      { name: "src/App.jsx", tag: "必要", desc: "把 AI 生成的 JSX 貼到這裡。這是唯一需要改的檔案。", required: true },
-      { name: "index.html", tag: "選用", desc: "更新頁面標題、描述和 Google Analytics，讓它符合你的網站。", required: false },
-      { name: "public/CNAME", tag: "選用", desc: "設定你的自訂網域。不需要的話維持原樣即可。", required: false },
-    ],
-    tipLabel: "小提示",
-    tipText: "如果 AI 的程式碼用到了範本沒預裝的套件，執行",
-    tipCommand: "npm run check",
-    tipAfter: "就能找到並修復缺少的相依套件。",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "版權所有。",
-    langLabel: "語言",
-    promptLabel: "Prompt 範本",
-    promptHint: "複製以下 prompt 貼到你的 AI 工具中，填入空白處即可。",
-    promptTemplate: `請用 JSX 格式製作一個 React 頁面，可以直接替換 src/App.jsx。
-
-主題：[你的網站主題——例如：咖啡店、個人作品集、SaaS 產品介紹]
-風格：[設計風格——例如：簡約、現代、繽紛、企業專業]
-詳細內容：[想要的區塊——例如：主視覺、產品特色、客戶評價、定價、聯絡表單]
-
-技術要求：
-- 使用 Tailwind CSS 處理所有樣式
-- 適當使用 shadcn/ui 元件（從 @/components/ui/ 匯入）
-- 使用 lucide-react 圖示
-- 必須支援手機與桌面響應式
-- 匯出方式：export default function App()
-- 單一檔案，不要額外的 CSS 檔或 CDN 腳本`,
-    promptCopy: "複製",
-    promptCopied: "已複製！",
+    docTitle: "2026 東北大學畢業家庭行程視覺化指南",
+    subtitle:
+      "以畢業典禮為核心，整合波士頓、費城、華盛頓特區與紐約的住宿、交通、餐廳、景點、租車、停車、票券與風險控制。",
+    defaultNote: "主要版本為中文。右下角可切換純英文版本。",
+    quickNav: "快速導覽",
+    searchPlaceholder: "搜尋日期、地點、餐廳、風險或交通",
+    openMap: "開啟地圖",
+    openSource: "開啟來源",
+    routeMap: "城市與交通主線",
+    routeMapNote: "此圖用來判斷地理動線，不是精準距離圖。",
+    stickyTitle: "目前最重要的操作判斷",
+    summary: "摘要",
+    all: "全部",
+    boston: "波士頓",
+    ceremonies: "畢業典禮",
+    transport: "交通與租車",
+    philly: "費城",
+    dc: "華盛頓特區",
+    nyc: "紐約",
+    risks: "風險與待確認",
+    maps: "地圖目錄",
+    sources: "官方來源",
+    dayPlan: "逐日行程",
+    ceremonyDetails: "畢業典禮細節",
+    transportLogic: "交通與租車決策",
+    riskBoard: "風險控制板",
+    mapDirectory: "Google Maps 地圖目錄",
+    sourceDirectory: "官方資訊來源與待確認項目",
+    intensity: "強度",
+    theme: "主軸",
+    avoid: "不要加排",
+    mapLinks: "相關地圖",
+    readerMode: "讀者版",
+    switchToEnglish: "English",
+    switchToChinese: "中文",
+    unresolved: "仍需確認",
+    completeCheck: "完整性檢查",
   },
-  "zh-CN": {
-    badge: "AI Page Publisher",
-    heroTitle: ["Push 一次", "AI 页面就上线"],
-    heroSubtitle:
-      "把 AI 生成的 React 成品直接变成线上网站的简洁模板。换掉一个文件，push 到 GitHub，就完成了。",
-    ctaPrimary: "使用这个模板",
-    ctaSecondary: "阅读 README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.zh-CN.md",
-    includedLabel: "内置项目",
-    includedTitle: "模板包含什么",
-    includes: [
-      "40+ 个 shadcn/ui 组件",
-      "160+ 个预装包",
-      "Tailwind CSS，开箱即用",
-      "GitHub Actions 自动部署",
-      "支持自定义域名",
-      "自动检测 base path",
-    ],
-    howItWorksLabel: "运作方式",
-    howItWorksTitle: "三步就上线",
-    howItWorksSubtitle:
-      "不需要编程经验。让 AI 生成 JSX，粘贴，push，即可上线。",
-    steps: [
-      {
-        number: "01",
-        title: "让 AI 生成 JSX",
-        body: "告诉 Claude、ChatGPT 或任何 AI，让它用 JSX 格式帮你生成想要的 React 页面。",
-      },
-      {
-        number: "02",
-        title: "创建你的 repo",
-        body: "用这个模板创建自己的 repo。到 Settings → Pages 把 Source 设成 GitHub Actions。",
-      },
-      {
-        number: "03",
-        title: "粘贴并 Push",
-        body: "将 JSX 粘贴到 src/App.jsx，push 到 main。GitHub Actions 会自动 build 并发布你的网站。",
-      },
-    ],
-    filesLabel: "你的文件",
-    filesTitle: "需要改的文件",
-    filesSubtitle: "通常只需要修改一个文件，其余两个是进阶选用。",
-    files: [
-      { name: "src/App.jsx", tag: "必要", desc: "把 AI 生成的 JSX 粘贴到这里。这是唯一需要改的文件。", required: true },
-      { name: "index.html", tag: "选用", desc: "更新页面标题、描述和 Google Analytics，让它符合你的网站。", required: false },
-      { name: "public/CNAME", tag: "选用", desc: "设置你的自定义域名。不需要的话保持原样即可。", required: false },
-    ],
-    tipLabel: "小提示",
-    tipText: "如果 AI 的代码用到了模板没预装的包，执行",
-    tipCommand: "npm run check",
-    tipAfter: "就能找到并修复缺少的依赖包。",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "保留所有权利。",
-    langLabel: "语言",
-    promptLabel: "Prompt 模板",
-    promptHint: "复制以下 prompt 粘贴到你的 AI 工具中，填入空白处即可。",
-    promptTemplate: `请用 JSX 格式制作一个 React 页面，可以直接替换 src/App.jsx。
-
-主题：[你的网站主题——例如：咖啡店、个人作品集、SaaS 产品介绍]
-风格：[设计风格——例如：简约、现代、缤纷、企业专业]
-详细内容：[想要的区块——例如：主视觉、产品特色、客户评价、定价、联系表单]
-
-技术要求：
-- 使用 Tailwind CSS 处理所有样式
-- 适当使用 shadcn/ui 组件（从 @/components/ui/ 导入）
-- 使用 lucide-react 图标
-- 必须支持手机与桌面响应式
-- 导出方式：export default function App()
-- 单一文件，不要额外的 CSS 文件或 CDN 脚本`,
-    promptCopy: "复制",
-    promptCopied: "已复制！",
-  },
-  es: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Publica páginas de IA", "con un solo push."],
-    heroSubtitle:
-      "Una plantilla sencilla para llevar cualquier componente de React generado por IA directo a la web. Cambias un archivo, haces push a GitHub y listo.",
-    ctaPrimary: "Usar esta plantilla",
-    ctaSecondary: "Leer el README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.es.md",
-    includedLabel: "Incluido",
-    includedTitle: "Lo que obtienes",
-    includes: [
-      "Más de 40 componentes de shadcn/ui",
-      "Más de 160 paquetes preinstalados",
-      "Tailwind CSS, listo para usar",
-      "Despliegue con GitHub Actions",
-      "Soporte para dominio personalizado",
-      "Detección automática de base path",
-    ],
-    howItWorksLabel: "Cómo funciona",
-    howItWorksTitle: "Tres pasos y listo",
-    howItWorksSubtitle:
-      "No necesitas saber programar. Pide JSX a la IA, pégalo, haz push y ya.",
-    steps: [
-      {
-        number: "01",
-        title: "Pide JSX a tu IA",
-        body: "Dile a Claude, ChatGPT o la IA que prefieras que te genere la página que quieres como componente React en formato JSX.",
-      },
-      {
-        number: "02",
-        title: "Configura tu repo",
-        body: "Usa esta plantilla para crear tu propio repo. Ve a Settings → Pages y pon Source en GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Pega y haz push",
-        body: "Pega el JSX en src/App.jsx y haz push a main. GitHub Actions se encarga de compilar y publicar tu sitio automáticamente.",
-      },
-    ],
-    filesLabel: "Tus archivos",
-    filesTitle: "Qué vas a cambiar",
-    filesSubtitle:
-      "Casi siempre solo tocas un archivo. Los otros dos son opcionales.",
-    files: [
-      { name: "src/App.jsx", tag: "Obligatorio", desc: "Pega aquí el JSX que te generó la IA. Es el único archivo que tienes que cambiar.", required: true },
-      { name: "index.html", tag: "Opcional", desc: "Actualiza el título, la descripción y Google Analytics para que coincidan con tu sitio.", required: false },
-      { name: "public/CNAME", tag: "Opcional", desc: "Configura tu dominio personalizado. Si no lo necesitas, déjalo como está.", required: false },
-    ],
-    tipLabel: "Tip",
-    tipText: "Si el código de tu IA usa un paquete que no viene en la plantilla, ejecuta",
-    tipCommand: "npm run check",
-    tipAfter: "para encontrar y arreglar las dependencias que faltan.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Todos los derechos reservados.",
-    langLabel: "Idioma",
-    promptLabel: "Prompt inicial",
-    promptHint: "Copia este prompt y pégalo en tu herramienta de IA. Rellena los espacios en blanco.",
-    promptTemplate: `Crea una página React en formato JSX que pueda usar como src/App.jsx.
-
-Tema: [el tema de tu sitio — ej. cafetería, portafolio, producto SaaS]
-Estilo: [estilo de diseño — ej. minimalista, moderno, colorido, corporativo]
-Detalles: [secciones que deseas — ej. hero, características, testimonios, precios, contacto]
-
-Requisitos:
-- Usa Tailwind CSS para todos los estilos
-- Usa componentes de shadcn/ui (importar desde @/components/ui/) cuando sea adecuado
-- Usa lucide-react para los iconos
-- Hazlo responsivo para móvil y escritorio
-- Exportar como: export default function App()
-- Un solo archivo, sin archivos CSS adicionales ni scripts de CDN`,
-    promptCopy: "Copiar",
-    promptCopied: "¡Copiado!",
-  },
-  ja: {
-    badge: "AI Page Publisher",
-    heroTitle: ["ワンプッシュで", "AIページを公開。"],
-    heroSubtitle:
-      "AI が生成した React コードを、そのままウェブサイトとして公開できるシンプルなテンプレート。ファイルを 1 つ差し替えて、GitHub に push するだけ。",
-    ctaPrimary: "このテンプレートを使う",
-    ctaSecondary: "README を読む",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.ja.md",
-    includedLabel: "含まれるもの",
-    includedTitle: "テンプレートの中身",
-    includes: [
-      "shadcn/ui コンポーネント 40 種以上",
-      "160 以上のパッケージをプリインストール",
-      "Tailwind CSS をそのまま利用可能",
-      "GitHub Actions で自動デプロイ",
-      "カスタムドメイン対応",
-      "ベースパスを自動検出",
-    ],
-    howItWorksLabel: "仕組み",
-    howItWorksTitle: "3 ステップで公開",
-    howItWorksSubtitle:
-      "プログラミングの経験は不要。AI に JSX を頼んで、貼り付けて、push するだけ。",
-    steps: [
-      {
-        number: "01",
-        title: "AI に JSX を頼む",
-        body: "Claude、ChatGPT、お好きな AI に、作りたいページを JSX 形式の React コンポーネントとして書いてもらいます。",
-      },
-      {
-        number: "02",
-        title: "リポジトリを準備",
-        body: "このテンプレートで自分のリポジトリを作成。Settings → Pages で Source を GitHub Actions に設定。",
-      },
-      {
-        number: "03",
-        title: "貼り付けて push",
-        body: "JSX を src/App.jsx に貼り付けて main に push。GitHub Actions が自動でビルドして公開してくれます。",
-      },
-    ],
-    filesLabel: "ファイル",
-    filesTitle: "変更するファイル",
-    filesSubtitle:
-      "ほとんどの場合、触るのは 1 ファイルだけ。残り 2 つは任意です。",
-    files: [
-      { name: "src/App.jsx", tag: "必須", desc: "AI が生成した JSX をここに貼り付けます。変更が必要なのはこのファイルだけです。", required: true },
-      { name: "index.html", tag: "任意", desc: "ページのタイトル、説明、Google Analytics を自分のサイトに合わせて変更します。", required: false },
-      { name: "public/CNAME", tag: "任意", desc: "カスタムドメインを設定します。不要ならそのままで OK。", required: false },
-    ],
-    tipLabel: "ヒント",
-    tipText: "AI のコードがテンプレートに含まれないパッケージを使っている場合は",
-    tipCommand: "npm run check",
-    tipAfter: "を実行すれば、足りない依存を見つけて修正できます。",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "All Rights Reserved.",
-    langLabel: "言語",
-    promptLabel: "プロンプトテンプレート",
-    promptHint: "以下のプロンプトをAIツールにコピー＆ペーストし、空欄を埋めてください。",
-    promptTemplate: `src/App.jsx としてそのまま使える React ページを JSX 形式で作成してください。
-
-テーマ：[サイトのテーマ — 例：カフェ、ポートフォリオ、SaaS プロダクト紹介]
-スタイル：[デザインスタイル — 例：ミニマル、モダン、カラフル、コーポレート]
-詳細：[必要なセクション — 例：ヒーロー、特徴紹介、お客様の声、料金、お問い合わせ]
-
-技術要件：
-- スタイリングはすべて Tailwind CSS を使用
-- 必要に応じて shadcn/ui コンポーネントを使用（@/components/ui/ からインポート）
-- アイコンは lucide-react を使用
-- モバイルとデスクトップの両方に対応（レスポンシブ）
-- エクスポート形式：export default function App()
-- 単一ファイルのみ、追加の CSS ファイルや CDN スクリプトは不要`,
-    promptCopy: "コピー",
-    promptCopied: "コピーしました！",
-  },
-  pt: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Publique páginas de IA", "com um único push."],
-    heroSubtitle:
-      "Um template simples para transformar qualquer componente React gerado por IA em um site no ar. Troque um arquivo. Faça push no GitHub. Pronto.",
-    ctaPrimary: "Usar este template",
-    ctaSecondary: "Ler o README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.pt.md",
-    includedLabel: "Incluído",
-    includedTitle: "O que você recebe",
-    includes: [
-      "40+ componentes shadcn/ui",
-      "160+ pacotes pré-instalados",
-      "Tailwind CSS, pronto para usar",
-      "Deploy com GitHub Actions",
-      "Suporte a domínio personalizado",
-      "Detecção automática de base path",
-    ],
-    howItWorksLabel: "Como funciona",
-    howItWorksTitle: "Três passos para o ar",
-    howItWorksSubtitle:
-      "Não precisa saber programar. Peça JSX à IA, cole, faça push e pronto.",
-    steps: [
-      {
-        number: "01",
-        title: "Peça JSX à sua IA",
-        body: "Diga ao Claude, ChatGPT ou qualquer IA para gerar a página que você quer como componente React em formato JSX.",
-      },
-      {
-        number: "02",
-        title: "Configure seu repo",
-        body: "Use este template para criar seu repositório. Vá em Settings → Pages e defina Source como GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Cole e faça push",
-        body: "Cole o JSX em src/App.jsx e faça push para main. O GitHub Actions compila e publica seu site automaticamente.",
-      },
-    ],
-    filesLabel: "Seus arquivos",
-    filesTitle: "O que você vai mudar",
-    filesSubtitle:
-      "Na maioria das vezes você só altera um arquivo. Os outros dois são opcionais.",
-    files: [
-      { name: "src/App.jsx", tag: "Obrigatório", desc: "Cole o JSX gerado pela IA aqui. Este é o único arquivo que você precisa mudar.", required: true },
-      { name: "index.html", tag: "Opcional", desc: "Atualize o título, a descrição e o Google Analytics para combinar com seu site.", required: false },
-      { name: "public/CNAME", tag: "Opcional", desc: "Configure seu domínio personalizado. Se não precisar, deixe como está.", required: false },
-    ],
-    tipLabel: "Dica",
-    tipText: "Se o código da IA usa um pacote que não está no template, execute",
-    tipCommand: "npm run check",
-    tipAfter: "para encontrar e corrigir dependências faltantes.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Todos os direitos reservados.",
-    langLabel: "Idioma",
-    promptLabel: "Prompt inicial",
-    promptHint: "Copie este prompt e cole na sua ferramenta de IA. Preencha os espaços em branco.",
-    promptTemplate: `Crie uma página React em formato JSX que eu possa usar como src/App.jsx.
-
-Tema: [o tema do seu site — ex: cafeteria, portfólio, produto SaaS]
-Estilo: [estilo de design — ex: minimalista, moderno, colorido, corporativo]
-Detalhes: [seções desejadas — ex: hero, funcionalidades, depoimentos, preços, contato]
-
-Requisitos:
-- Use Tailwind CSS para toda a estilização
-- Use componentes shadcn/ui (importar de @/components/ui/) quando adequado
-- Use lucide-react para ícones
-- Torne responsivo para mobile e desktop
-- Exportar como: export default function App()
-- Arquivo único, sem arquivos CSS adicionais ou scripts de CDN`,
-    promptCopy: "Copiar",
-    promptCopied: "Copiado!",
-  },
-  ar: {
-    badge: "AI Page Publisher",
-    heroTitle: ["انشر صفحات الذكاء الاصطناعي", "بضغطة واحدة."],
-    heroSubtitle:
-      "قالب بسيط لتحويل أي مكوّن React مولّد بالذكاء الاصطناعي إلى موقع ويب. استبدل ملفاً واحداً. ادفع إلى GitHub. انتهى.",
-    ctaPrimary: "استخدم هذا القالب",
-    ctaSecondary: "اقرأ الـ README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.ar.md",
-    includedLabel: "مُتضمَّن",
-    includedTitle: "ما الذي تحصل عليه",
-    includes: [
-      "أكثر من 40 مكوّن shadcn/ui",
-      "أكثر من 160 حزمة مثبّتة مسبقاً",
-      "Tailwind CSS جاهز للاستخدام",
-      "نشر تلقائي عبر GitHub Actions",
-      "دعم النطاق المخصص",
-      "اكتشاف تلقائي لمسار القاعدة",
-    ],
-    howItWorksLabel: "كيف يعمل",
-    howItWorksTitle: "ثلاث خطوات للنشر",
-    howItWorksSubtitle:
-      "لا تحتاج خبرة في البرمجة. اطلب JSX من الذكاء الاصطناعي، الصقه، ادفعه، انتهى.",
-    steps: [
-      {
-        number: "01",
-        title: "اطلب JSX من الذكاء الاصطناعي",
-        body: "اطلب من Claude أو ChatGPT أو أي ذكاء اصطناعي أن يولّد صفحتك كمكوّن React بتنسيق JSX.",
-      },
-      {
-        number: "02",
-        title: "أعدّ مستودعك",
-        body: "استخدم هذا القالب لإنشاء مستودعك الخاص. اذهب إلى Settings → Pages واضبط Source على GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "الصق وادفع",
-        body: "الصق كود JSX في src/App.jsx وادفع إلى main. سيقوم GitHub Actions بالبناء والنشر تلقائياً.",
-      },
-    ],
-    filesLabel: "ملفاتك",
-    filesTitle: "ما الذي ستغيّره",
-    filesSubtitle:
-      "في أغلب الأحيان ستعدّل ملفاً واحداً فقط. الملفان الآخران اختياريان.",
-    files: [
-      { name: "src/App.jsx", tag: "مطلوب", desc: "الصق كود JSX المولّد بالذكاء الاصطناعي هنا. هذا هو الملف الوحيد الذي تحتاج تغييره.", required: true },
-      { name: "index.html", tag: "اختياري", desc: "حدّث عنوان الصفحة والوصف وGoogle Analytics ليتوافقوا مع موقعك.", required: false },
-      { name: "public/CNAME", tag: "اختياري", desc: "اضبط نطاقك المخصص. اتركه كما هو إن لم تحتج واحداً.", required: false },
-    ],
-    tipLabel: "نصيحة",
-    tipText: "إذا استخدم كود الذكاء الاصطناعي حزمة غير موجودة في القالب، نفّذ",
-    tipCommand: "npm run check",
-    tipAfter: "لاكتشاف وإصلاح التبعيات المفقودة.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "جميع الحقوق محفوظة.",
-    langLabel: "اللغة",
-    promptLabel: "قالب البرومبت",
-    promptHint: "انسخ هذا البرومبت والصقه في أداة الذكاء الاصطناعي، ثم املأ الفراغات.",
-    promptTemplate: `أنشئ صفحة React بتنسيق JSX يمكنني استخدامها كملف src/App.jsx.
-
-الموضوع: [موضوع موقعك — مثلاً: مقهى، معرض أعمال، منتج SaaS]
-الأسلوب: [أسلوب التصميم — مثلاً: بسيط، عصري، ملوّن، مؤسسي]
-التفاصيل: [الأقسام المطلوبة — مثلاً: بطل الصفحة، الميزات، آراء العملاء، الأسعار، نموذج التواصل]
-
-المتطلبات التقنية:
-- استخدم Tailwind CSS لجميع الأنماط
-- استخدم مكونات shadcn/ui (استيراد من @/components/ui/) عند الحاجة
-- استخدم lucide-react للأيقونات
-- اجعل الصفحة متجاوبة مع الهاتف وسطح المكتب
-- صدّرها كـ: export default function App()
-- ملف واحد فقط، بدون ملفات CSS إضافية أو سكربتات CDN`,
-    promptCopy: "نسخ",
-    promptCopied: "تم النسخ!",
-  },
-  fr: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Publiez des pages IA", "en un seul push."],
-    heroSubtitle:
-      "Un template simple pour transformer n'importe quel composant React généré par IA en site web. Remplacez un fichier. Pushez sur GitHub. C'est fait.",
-    ctaPrimary: "Utiliser ce template",
-    ctaSecondary: "Lire le README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.fr.md",
-    includedLabel: "Inclus",
-    includedTitle: "Ce que vous obtenez",
-    includes: [
-      "Plus de 40 composants shadcn/ui",
-      "Plus de 160 paquets préinstallés",
-      "Tailwind CSS, prêt à l'emploi",
-      "Déploiement via GitHub Actions",
-      "Support de domaine personnalisé",
-      "Détection automatique du base path",
-    ],
-    howItWorksLabel: "Comment ça marche",
-    howItWorksTitle: "Trois étapes pour publier",
-    howItWorksSubtitle:
-      "Aucune expérience en programmation requise. Demandez du JSX à l'IA, collez-le, pushez, c'est fait.",
-    steps: [
-      {
-        number: "01",
-        title: "Demandez du JSX à votre IA",
-        body: "Dites à Claude, ChatGPT ou n'importe quelle IA de générer la page que vous voulez en tant que composant React au format JSX.",
-      },
-      {
-        number: "02",
-        title: "Configurez votre dépôt",
-        body: "Utilisez ce template pour créer votre propre dépôt. Allez dans Settings → Pages et définissez Source sur GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Collez et pushez",
-        body: "Collez le JSX dans src/App.jsx et pushez vers main. GitHub Actions compile et publie votre site automatiquement.",
-      },
-    ],
-    filesLabel: "Vos fichiers",
-    filesTitle: "Ce que vous allez modifier",
-    filesSubtitle:
-      "La plupart du temps, vous ne touchez qu'un seul fichier. Les deux autres sont optionnels.",
-    files: [
-      { name: "src/App.jsx", tag: "Requis", desc: "Collez le JSX généré par l'IA ici. C'est le seul fichier que vous devez modifier.", required: true },
-      { name: "index.html", tag: "Optionnel", desc: "Mettez à jour le titre, la description et Google Analytics pour correspondre à votre site.", required: false },
-      { name: "public/CNAME", tag: "Optionnel", desc: "Configurez votre domaine personnalisé. Laissez tel quel si vous n'en avez pas besoin.", required: false },
-    ],
-    tipLabel: "Astuce",
-    tipText: "Si le code de l'IA utilise un paquet non inclus dans le template, exécutez",
-    tipCommand: "npm run check",
-    tipAfter: "pour trouver et corriger les dépendances manquantes.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Tous droits réservés.",
-    langLabel: "Langue",
-    promptLabel: "Prompt de départ",
-    promptHint: "Copiez ce prompt et collez-le dans votre outil IA. Remplissez les champs vides.",
-    promptTemplate: `Crée une page React en format JSX que je puisse utiliser comme src/App.jsx.
-
-Thème : [le thème de votre site — ex : café, portfolio, produit SaaS]
-Style : [style de design — ex : minimaliste, moderne, coloré, corporate]
-Détails : [sections souhaitées — ex : hero, fonctionnalités, témoignages, tarifs, contact]
-
-Exigences :
-- Utilise Tailwind CSS pour tout le style
-- Utilise les composants shadcn/ui (import depuis @/components/ui/) si approprié
-- Utilise lucide-react pour les icônes
-- Rends la page responsive pour mobile et desktop
-- Exporter comme : export default function App()
-- Fichier unique, pas de fichiers CSS supplémentaires ni de scripts CDN`,
-    promptCopy: "Copier",
-    promptCopied: "Copié !",
-  },
-  hi: {
-    badge: "AI Page Publisher",
-    heroTitle: ["AI पेज पब्लिश करें", "एक ही push में।"],
-    heroSubtitle:
-      "AI से बना कोई भी React कंपोनेंट सीधे लाइव वेबसाइट में बदलने का आसान टेम्पलेट। एक फ़ाइल बदलें। GitHub पर push करें। बस।",
-    ctaPrimary: "यह टेम्पलेट इस्तेमाल करें",
-    ctaSecondary: "README पढ़ें",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.hi.md",
-    includedLabel: "शामिल है",
-    includedTitle: "आपको क्या मिलता है",
-    includes: [
-      "40+ shadcn/ui कंपोनेंट",
-      "160+ पैकेज पहले से इंस्टॉल",
-      "Tailwind CSS, तुरंत इस्तेमाल के लिए तैयार",
-      "GitHub Actions से डिप्लॉयमेंट",
-      "कस्टम डोमेन सपोर्ट",
-      "ऑटो base path डिटेक्शन",
-    ],
-    howItWorksLabel: "कैसे काम करता है",
-    howItWorksTitle: "तीन स्टेप में लाइव",
-    howItWorksSubtitle:
-      "कोडिंग का अनुभव ज़रूरी नहीं। AI से JSX माँगें, पेस्ट करें, push करें, बस।",
-    steps: [
-      {
-        number: "01",
-        title: "AI से JSX माँगें",
-        body: "Claude, ChatGPT या किसी भी AI से अपना पेज JSX फ़ॉर्मेट में React कंपोनेंट के रूप में बनवाएँ।",
-      },
-      {
-        number: "02",
-        title: "अपना repo सेट करें",
-        body: "इस टेम्पलेट से अपना रिपॉज़िटरी बनाएँ। Settings → Pages में जाकर Source को GitHub Actions पर सेट करें।",
-      },
-      {
-        number: "03",
-        title: "पेस्ट करें और push करें",
-        body: "JSX को src/App.jsx में पेस्ट करें और main पर push करें। GitHub Actions ऑटोमैटिक बिल्ड और पब्लिश कर देगा।",
-      },
-    ],
-    filesLabel: "आपकी फ़ाइलें",
-    filesTitle: "क्या बदलना है",
-    filesSubtitle:
-      "ज़्यादातर सिर्फ़ एक फ़ाइल बदलनी होती है। बाकी दो वैकल्पिक हैं।",
-    files: [
-      { name: "src/App.jsx", tag: "ज़रूरी", desc: "AI द्वारा बनाया गया JSX यहाँ पेस्ट करें। बस यही एक फ़ाइल बदलनी है।", required: true },
-      { name: "index.html", tag: "वैकल्पिक", desc: "पेज का टाइटल, विवरण और Google Analytics अपनी साइट के अनुसार अपडेट करें।", required: false },
-      { name: "public/CNAME", tag: "वैकल्पिक", desc: "अपना कस्टम डोमेन सेट करें। ज़रूरत न हो तो ऐसे ही छोड़ दें।", required: false },
-    ],
-    tipLabel: "सुझाव",
-    tipText: "अगर AI का कोड ऐसा पैकेज इस्तेमाल करता है जो टेम्पलेट में नहीं है, तो चलाएँ",
-    tipCommand: "npm run check",
-    tipAfter: "गायब डिपेंडेंसी खोजने और ठीक करने के लिए।",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "सर्वाधिकार सुरक्षित।",
-    langLabel: "भाषा",
-    promptLabel: "शुरुआती प्रॉम्प्ट",
-    promptHint: "इस प्रॉम्प्ट को कॉपी करके अपने AI टूल में पेस्ट करें। खाली जगहें भरें।",
-    promptTemplate: `src/App.jsx के रूप में उपयोग करने के लिए JSX फॉर्मेट में एक React पेज बनाएं।
-
-विषय: [आपकी वेबसाइट का विषय — उदा: कॉफी शॉप, पोर्टफोलियो, SaaS प्रोडक्ट]
-शैली: [डिज़ाइन शैली — उदा: न्यूनतम, आधुनिक, रंगीन, कॉर्पोरेट]
-विवरण: [चाहिए सेक्शन — उदा: हीरो, फ़ीचर्स, प्रशंसापत्र, मूल्य निर्धारण, संपर्क]
-
-तकनीकी आवश्यकताएं:
-- सभी स्टाइलिंग के लिए Tailwind CSS का उपयोग करें
-- उपयुक्त होने पर shadcn/ui कंपोनेंट्स का उपयोग करें (@/components/ui/ से इम्पोर्ट)
-- आइकन के लिए lucide-react का उपयोग करें
-- मोबाइल और डेस्कटॉप दोनों के लिए रिस्पॉन्सिव बनाएं
-- एक्सपोर्ट: export default function App()
-- एकल फ़ाइल, कोई अतिरिक्त CSS फ़ाइल या CDN स्क्रिप्ट नहीं`,
-    promptCopy: "कॉपी करें",
-    promptCopied: "कॉपी हो गया!",
-  },
-  ko: {
-    badge: "AI Page Publisher",
-    heroTitle: ["AI 페이지를 배포하세요,", "단 한 번의 push로."],
-    heroSubtitle:
-      "AI가 생성한 React 컴포넌트를 바로 라이브 웹사이트로 만드는 간결한 템플릿. 파일 하나만 교체하고 GitHub에 push하면 끝.",
-    ctaPrimary: "이 템플릿 사용하기",
-    ctaSecondary: "README 읽기",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.ko.md",
-    includedLabel: "포함 항목",
-    includedTitle: "무엇이 들어있나요",
-    includes: [
-      "40개 이상의 shadcn/ui 컴포넌트",
-      "160개 이상의 사전 설치 패키지",
-      "Tailwind CSS, 바로 사용 가능",
-      "GitHub Actions 자동 배포",
-      "커스텀 도메인 지원",
-      "자동 base path 감지",
-    ],
-    howItWorksLabel: "작동 방식",
-    howItWorksTitle: "세 단계로 배포",
-    howItWorksSubtitle:
-      "코딩 경험이 없어도 됩니다. AI에게 JSX를 요청하고, 붙여넣고, push하면 끝.",
-    steps: [
-      {
-        number: "01",
-        title: "AI에게 JSX 요청",
-        body: "Claude, ChatGPT 또는 아무 AI에게 원하는 페이지를 JSX 형식의 React 컴포넌트로 생성해 달라고 하세요.",
-      },
-      {
-        number: "02",
-        title: "저장소 설정",
-        body: "이 템플릿으로 자신만의 저장소를 만드세요. Settings → Pages에서 Source를 GitHub Actions로 설정하세요.",
-      },
-      {
-        number: "03",
-        title: "붙여넣고 push",
-        body: "JSX를 src/App.jsx에 붙여넣고 main에 push하세요. GitHub Actions가 자동으로 빌드하고 배포합니다.",
-      },
-    ],
-    filesLabel: "파일",
-    filesTitle: "변경할 파일",
-    filesSubtitle:
-      "대부분의 경우 파일 하나만 수정하면 됩니다. 나머지 둘은 선택사항입니다.",
-    files: [
-      { name: "src/App.jsx", tag: "필수", desc: "AI가 생성한 JSX를 여기에 붙여넣으세요. 변경이 필요한 유일한 파일입니다.", required: true },
-      { name: "index.html", tag: "선택", desc: "페이지 제목, 설명, Google Analytics를 사이트에 맞게 수정하세요.", required: false },
-      { name: "public/CNAME", tag: "선택", desc: "커스텀 도메인을 설정하세요. 필요 없으면 그대로 두세요.", required: false },
-    ],
-    tipLabel: "팁",
-    tipText: "AI 코드가 템플릿에 포함되지 않은 패키지를 사용하는 경우 실행하세요",
-    tipCommand: "npm run check",
-    tipAfter: "누락된 의존성을 찾아 수정할 수 있습니다.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "All Rights Reserved.",
-    langLabel: "언어",
-    promptLabel: "시작 프롬프트",
-    promptHint: "이 프롬프트를 복사하여 AI 도구에 붙여넣고 빈칸을 채우세요.",
-    promptTemplate: `src/App.jsx로 바로 사용할 수 있는 React 페이지를 JSX 형식으로 만들어 주세요.
-
-주제: [웹사이트 주제 — 예: 카페, 포트폴리오, SaaS 제품 소개]
-스타일: [디자인 스타일 — 예: 미니멀, 모던, 컬러풀, 기업형]
-세부사항: [원하는 섹션 — 예: 히어로, 기능 소개, 후기, 요금제, 문의]
-
-기술 요구사항:
-- 모든 스타일링에 Tailwind CSS 사용
-- 적절한 경우 shadcn/ui 컴포넌트 사용 (@/components/ui/에서 import)
-- 아이콘은 lucide-react 사용
-- 모바일과 데스크톱 모두 반응형으로 제작
-- 내보내기 형식: export default function App()
-- 단일 파일, 추가 CSS 파일이나 CDN 스크립트 없이`,
-    promptCopy: "복사",
-    promptCopied: "복사됨!",
-  },
-  ur: {
-    badge: "AI Page Publisher",
-    heroTitle: ["AI صفحات شائع کریں", "ایک push میں۔"],
-    heroSubtitle:
-      "AI سے بنے کسی بھی React کمپوننٹ کو لائیو ویب سائٹ میں بدلنے کا آسان ٹیمپلیٹ۔ ایک فائل بدلیں۔ GitHub پر push کریں۔ ہو گیا۔",
-    ctaPrimary: "یہ ٹیمپلیٹ استعمال کریں",
-    ctaSecondary: "README پڑھیں",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.ur.md",
-    includedLabel: "شامل ہے",
-    includedTitle: "آپ کو کیا ملتا ہے",
-    includes: [
-      "40+ shadcn/ui کمپوننٹس",
-      "160+ پہلے سے نصب پیکجز",
-      "Tailwind CSS، فوری استعمال کے لیے تیار",
-      "GitHub Actions سے ڈیپلائمنٹ",
-      "حسب ضرورت ڈومین سپورٹ",
-      "خودکار base path کی شناخت",
-    ],
-    howItWorksLabel: "کیسے کام کرتا ہے",
-    howItWorksTitle: "تین قدم میں لائیو",
-    howItWorksSubtitle:
-      "کوڈنگ کا تجربہ ضروری نہیں۔ AI سے JSX مانگیں، چسپاں کریں، push کریں، بس۔",
-    steps: [
-      {
-        number: "01",
-        title: "AI سے JSX مانگیں",
-        body: "Claude، ChatGPT یا کسی بھی AI سے اپنا صفحہ JSX فارمیٹ میں React کمپوننٹ کے طور پر بنوائیں۔",
-      },
-      {
-        number: "02",
-        title: "اپنا repo تیار کریں",
-        body: "اس ٹیمپلیٹ سے اپنا ذخیرہ بنائیں۔ Settings → Pages میں جا کر Source کو GitHub Actions پر سیٹ کریں۔",
-      },
-      {
-        number: "03",
-        title: "چسپاں کریں اور push کریں",
-        body: "JSX کو src/App.jsx میں چسپاں کریں اور main پر push کریں۔ GitHub Actions خود بخود بلڈ اور شائع کر دے گا۔",
-      },
-    ],
-    filesLabel: "آپ کی فائلز",
-    filesTitle: "کیا بدلنا ہے",
-    filesSubtitle:
-      "اکثر صرف ایک فائل بدلنی ہوتی ہے۔ باقی دو اختیاری ہیں۔",
-    files: [
-      { name: "src/App.jsx", tag: "ضروری", desc: "AI کا بنایا ہوا JSX یہاں چسپاں کریں۔ صرف یہی ایک فائل بدلنی ہے۔", required: true },
-      { name: "index.html", tag: "اختیاری", desc: "صفحے کا عنوان، تفصیل اور Google Analytics اپنی سائٹ کے مطابق بدلیں۔", required: false },
-      { name: "public/CNAME", tag: "اختیاری", desc: "اپنا حسب ضرورت ڈومین سیٹ کریں۔ ضرورت نہ ہو تو ایسے ہی چھوڑ دیں۔", required: false },
-    ],
-    tipLabel: "مشورہ",
-    tipText: "اگر AI کا کوڈ ایسا پیکج استعمال کرتا ہے جو ٹیمپلیٹ میں نہیں ہے تو چلائیں",
-    tipCommand: "npm run check",
-    tipAfter: "گمشدہ ڈیپنڈنسیز تلاش اور ٹھیک کرنے کے لیے۔",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "جملہ حقوق محفوظ ہیں۔",
-    langLabel: "زبان",
-    promptLabel: "شروعاتی پرامپٹ",
-    promptHint: "اس پرامپٹ کو کاپی کر کے اپنے AI ٹول میں پیسٹ کریں۔ خالی جگہیں پُر کریں۔",
-    promptTemplate: `src/App.jsx کے طور پر استعمال کے لیے JSX فارمیٹ میں ایک React صفحہ بنائیں۔
-
-موضوع: [آپ کی ویب سائٹ کا موضوع — مثلاً: کافی شاپ، پورٹ فولیو، SaaS پروڈکٹ]
-انداز: [ڈیزائن اسٹائل — مثلاً: سادہ، جدید، رنگین، کارپوریٹ]
-تفصیلات: [مطلوبہ سیکشنز — مثلاً: ہیرو، خصوصیات، تعریفیں، قیمتیں، رابطہ]
-
-تکنیکی تقاضے:
-- تمام اسٹائلنگ کے لیے Tailwind CSS استعمال کریں
-- ضرورت پر shadcn/ui اجزاء استعمال کریں (@/components/ui/ سے درآمد)
-- آئیکنز کے لیے lucide-react استعمال کریں
-- موبائل اور ڈیسک ٹاپ دونوں کے لیے ریسپانسو بنائیں
-- ایکسپورٹ: export default function App()
-- ایک فائل، کوئی اضافی CSS فائل یا CDN اسکرپٹ نہیں`,
-    promptCopy: "کاپی",
-    promptCopied: "کاپی ہو گیا!",
-  },
-  th: {
-    badge: "AI Page Publisher",
-    heroTitle: ["เผยแพร่หน้า AI", "แค่ push ครั้งเดียว"],
-    heroSubtitle:
-      "เทมเพลตง่าย ๆ สำหรับเปลี่ยน React component ที่ AI สร้างให้เป็นเว็บไซต์จริง เปลี่ยนไฟล์เดียว Push ขึ้น GitHub เสร็จ",
-    ctaPrimary: "ใช้เทมเพลตนี้",
-    ctaSecondary: "อ่าน README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.th.md",
-    includedLabel: "รวมมาให้แล้ว",
-    includedTitle: "มีอะไรบ้าง",
-    includes: [
-      "คอมโพเนนต์ shadcn/ui กว่า 40 ตัว",
-      "แพ็กเกจติดตั้งล่วงหน้ากว่า 160 ตัว",
-      "Tailwind CSS พร้อมใช้งาน",
-      "ดีพลอยด้วย GitHub Actions",
-      "รองรับโดเมนที่กำหนดเอง",
-      "ตรวจจับ base path อัตโนมัติ",
-    ],
-    howItWorksLabel: "วิธีการทำงาน",
-    howItWorksTitle: "สามขั้นตอนสู่การเผยแพร่",
-    howItWorksSubtitle:
-      "ไม่ต้องมีประสบการณ์เขียนโค้ด ขอ JSX จาก AI วางลงไป push แค่นั้น",
-    steps: [
-      {
-        number: "01",
-        title: "ขอ JSX จาก AI",
-        body: "บอก Claude, ChatGPT หรือ AI ตัวไหนก็ได้ให้สร้างหน้าเว็บที่ต้องการเป็น React component ในรูปแบบ JSX",
-      },
-      {
-        number: "02",
-        title: "ตั้งค่า repo ของคุณ",
-        body: "ใช้เทมเพลตนี้สร้าง repository ของตัวเอง ไปที่ Settings → Pages แล้วตั้ง Source เป็น GitHub Actions",
-      },
-      {
-        number: "03",
-        title: "วางแล้ว push",
-        body: "วาง JSX ลงใน src/App.jsx แล้ว push ไปที่ main GitHub Actions จะบิลด์และเผยแพร่เว็บไซต์ให้อัตโนมัติ",
-      },
-    ],
-    filesLabel: "ไฟล์ของคุณ",
-    filesTitle: "ต้องเปลี่ยนอะไร",
-    filesSubtitle:
-      "ส่วนใหญ่แค่แก้ไฟล์เดียว อีกสองไฟล์เป็นตัวเลือกเพิ่มเติม",
-    files: [
-      { name: "src/App.jsx", tag: "จำเป็น", desc: "วาง JSX ที่ AI สร้างให้ตรงนี้ นี่คือไฟล์เดียวที่ต้องเปลี่ยน", required: true },
-      { name: "index.html", tag: "ไม่บังคับ", desc: "อัปเดตชื่อหน้า คำอธิบาย และ Google Analytics ให้ตรงกับเว็บไซต์ของคุณ", required: false },
-      { name: "public/CNAME", tag: "ไม่บังคับ", desc: "ตั้งค่าโดเมนที่กำหนดเอง ไม่ต้องการก็ปล่อยไว้ตามเดิม", required: false },
-    ],
-    tipLabel: "เคล็ดลับ",
-    tipText: "หากโค้ดจาก AI ใช้แพ็กเกจที่ไม่ได้รวมมาในเทมเพลต ให้รัน",
-    tipCommand: "npm run check",
-    tipAfter: "เพื่อค้นหาและแก้ไข dependency ที่ขาดหาย",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "สงวนลิขสิทธิ์",
-    langLabel: "ภาษา",
-    promptLabel: "เทมเพลตพรอมต์",
-    promptHint: "คัดลอกพรอมต์นี้ไปวางในเครื่องมือ AI ของคุณ แล้วเติมข้อมูลในช่องว่าง",
-    promptTemplate: `สร้างหน้า React ในรูปแบบ JSX ที่ฉันสามารถใช้แทนไฟล์ src/App.jsx ได้เลย
-
-หัวข้อ: [หัวข้อเว็บไซต์ของคุณ — เช่น ร้านกาแฟ, พอร์ตโฟลิโอ, สินค้า SaaS]
-สไตล์: [สไตล์การออกแบบ — เช่น มินิมอล, โมเดิร์น, สีสัน, องค์กร]
-รายละเอียด: [ส่วนที่ต้องการ — เช่น ฮีโร่, ฟีเจอร์, รีวิว, ราคา, ติดต่อ]
-
-ข้อกำหนดทางเทคนิค:
-- ใช้ Tailwind CSS สำหรับสไตล์ทั้งหมด
-- ใช้คอมโพเนนต์ shadcn/ui (import จาก @/components/ui/) ตามความเหมาะสม
-- ใช้ lucide-react สำหรับไอคอน
-- ทำให้รองรับทั้งมือถือและเดสก์ท็อป (responsive)
-- Export เป็น: export default function App()
-- ไฟล์เดียว ไม่ต้องมีไฟล์ CSS เพิ่มเติมหรือสคริปต์ CDN`,
-    promptCopy: "คัดลอก",
-    promptCopied: "คัดลอกแล้ว!",
-  },
-  de: {
-    badge: "AI Page Publisher",
-    heroTitle: ["KI-Seiten veröffentlichen", "mit einem Push."],
-    heroSubtitle:
-      "Ein schlankes Template, um jedes KI-generierte React-Artefakt in eine Live-Website zu verwandeln. Eine Datei ersetzen. Auf GitHub pushen. Fertig.",
-    ctaPrimary: "Dieses Template verwenden",
-    ctaSecondary: "README lesen",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.de.md",
-    includedLabel: "Enthalten",
-    includedTitle: "Was du bekommst",
-    includes: [
-      "Über 40 shadcn/ui-Komponenten",
-      "Über 160 vorinstallierte Pakete",
-      "Tailwind CSS, sofort einsatzbereit",
-      "Deployment mit GitHub Actions",
-      "Eigene Domain wird unterstützt",
-      "Automatische Base-Path-Erkennung",
-    ],
-    howItWorksLabel: "So funktioniert's",
-    howItWorksTitle: "In drei Schritten online",
-    howItWorksSubtitle:
-      "Keine Programmierkenntnisse nötig. Frag eine KI nach JSX, füge es ein, push, fertig.",
-    steps: [
-      {
-        number: "01",
-        title: "Frag deine KI nach JSX",
-        body: "Bitte Claude, ChatGPT oder eine beliebige KI, die gewünschte Seite als React-Komponente im JSX-Format zu erstellen.",
-      },
-      {
-        number: "02",
-        title: "Richte dein Repo ein",
-        body: "Verwende dieses Template, um dein eigenes Repository zu erstellen. Gehe zu Settings → Pages und setze Source auf GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Einfügen und pushen",
-        body: "Füge das JSX in src/App.jsx ein und push nach main. GitHub Actions baut und veröffentlicht deine Seite automatisch.",
-      },
-    ],
-    filesLabel: "Deine Dateien",
-    filesTitle: "Was du änderst",
-    filesSubtitle:
-      "Meistens änderst du nur eine Datei. Die anderen beiden sind optional.",
-    files: [
-      { name: "src/App.jsx", tag: "Erforderlich", desc: "Füge das KI-generierte JSX hier ein. Das ist die einzige Datei, die du ändern musst.", required: true },
-      { name: "index.html", tag: "Optional", desc: "Aktualisiere Seitentitel, Beschreibung und Google Analytics passend zu deiner Seite.", required: false },
-      { name: "public/CNAME", tag: "Optional", desc: "Richte deine eigene Domain ein. Lass es wie es ist, wenn du keine brauchst.", required: false },
-    ],
-    tipLabel: "Tipp",
-    tipText: "Falls dein KI-Code ein Paket verwendet, das nicht im Template enthalten ist, führe",
-    tipCommand: "npm run check",
-    tipAfter: "aus, um fehlende Abhängigkeiten zu finden und zu beheben.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Alle Rechte vorbehalten.",
-    langLabel: "Sprache",
-    promptLabel: "Starter-Prompt",
-    promptHint: "Kopieren Sie diesen Prompt und fügen Sie ihn in Ihr KI-Tool ein. Füllen Sie die Lücken aus.",
-    promptTemplate: `Erstelle eine React-Seite im JSX-Format, die ich als src/App.jsx verwenden kann.
-
-Thema: [Thema deiner Website — z.B. Café, Portfolio, SaaS-Produkt]
-Stil: [Designstil — z.B. minimalistisch, modern, farbenfroh, geschäftlich]
-Details: [gewünschte Abschnitte — z.B. Hero, Features, Testimonials, Preise, Kontakt]
-
-Technische Anforderungen:
-- Verwende Tailwind CSS für alle Styles
-- Verwende shadcn/ui-Komponenten (Import von @/components/ui/) wenn passend
-- Verwende lucide-react für Icons
-- Mach die Seite responsiv für Mobil und Desktop
-- Export als: export default function App()
-- Einzelne Datei, keine zusätzlichen CSS-Dateien oder CDN-Skripte`,
-    promptCopy: "Kopieren",
-    promptCopied: "Kopiert!",
-  },
-  tr: {
-    badge: "AI Page Publisher",
-    heroTitle: ["AI sayfalarını yayınlayın,", "tek bir push ile."],
-    heroSubtitle:
-      "Yapay zeka tarafından oluşturulan her React bileşenini canlı bir web sitesine dönüştürmek için sade bir şablon. Bir dosyayı değiştirin. GitHub'a push edin. Bitti.",
-    ctaPrimary: "Bu şablonu kullan",
-    ctaSecondary: "README'yi oku",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.tr.md",
-    includedLabel: "Dahil",
-    includedTitle: "Neler geliyor",
-    includes: [
-      "40'tan fazla shadcn/ui bileşeni",
-      "160'dan fazla önceden kurulu paket",
-      "Tailwind CSS, kullanıma hazır",
-      "GitHub Actions ile dağıtım",
-      "Özel alan adı desteği",
-      "Otomatik base path algılama",
-    ],
-    howItWorksLabel: "Nasıl çalışır",
-    howItWorksTitle: "Üç adımda yayına girin",
-    howItWorksSubtitle:
-      "Programlama deneyimine gerek yok. Yapay zekadan JSX isteyin, yapıştırın, push edin, bitti.",
-    steps: [
-      {
-        number: "01",
-        title: "Yapay zekadan JSX isteyin",
-        body: "Claude, ChatGPT veya herhangi bir yapay zekadan istediğiniz sayfayı JSX formatında React bileşeni olarak oluşturmasını isteyin.",
-      },
-      {
-        number: "02",
-        title: "Deponuzu kurun",
-        body: "Bu şablonu kullanarak kendi deponuzu oluşturun. Settings → Pages sayfasına gidin ve Source'u GitHub Actions olarak ayarlayın.",
-      },
-      {
-        number: "03",
-        title: "Yapıştırın ve push edin",
-        body: "JSX'i src/App.jsx dosyasına yapıştırın ve main dalına push edin. GitHub Actions sitenizi otomatik olarak derleyip yayınlar.",
-      },
-    ],
-    filesLabel: "Dosyalarınız",
-    filesTitle: "Neyi değiştireceksiniz",
-    filesSubtitle:
-      "Çoğu zaman yalnızca bir dosyaya dokunursunuz. Diğer ikisi isteğe bağlıdır.",
-    files: [
-      { name: "src/App.jsx", tag: "Zorunlu", desc: "Yapay zekanın oluşturduğu JSX'i buraya yapıştırın. Değiştirmeniz gereken tek dosya budur.", required: true },
-      { name: "index.html", tag: "İsteğe bağlı", desc: "Sayfa başlığını, açıklamasını ve Google Analytics'i sitenize uygun şekilde güncelleyin.", required: false },
-      { name: "public/CNAME", tag: "İsteğe bağlı", desc: "Özel alan adınızı ayarlayın. Gerekmiyorsa olduğu gibi bırakın.", required: false },
-    ],
-    tipLabel: "İpucu",
-    tipText: "Yapay zekanın kodu şablonda bulunmayan bir paket kullanıyorsa şunu çalıştırın:",
-    tipCommand: "npm run check",
-    tipAfter: "Eksik bağımlılıkları bulup düzeltmek için.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Tüm hakları saklıdır.",
-    langLabel: "Dil",
-    promptLabel: "Başlangıç Promptu",
-    promptHint: "Bu promptu kopyalayıp AI aracınıza yapıştırın. Boşlukları doldurun.",
-    promptTemplate: `src/App.jsx olarak kullanabileceğim JSX formatında bir React sayfası oluştur.
-
-Konu: [web sitenizin konusu — örn: kafe, portföy, SaaS ürünü]
-Stil: [tasarım stili — örn: minimalist, modern, renkli, kurumsal]
-Detaylar: [istediğiniz bölümler — örn: hero, özellikler, referanslar, fiyatlandırma, iletişim]
-
-Teknik gereksinimler:
-- Tüm stillendirme için Tailwind CSS kullan
-- Uygun olduğunda shadcn/ui bileşenlerini kullan (@/components/ui/ üzerinden import)
-- İkonlar için lucide-react kullan
-- Mobil ve masaüstü için responsive yap
-- Dışa aktarım: export default function App()
-- Tek dosya, ek CSS dosyası veya CDN script'i yok`,
-    promptCopy: "Kopyala",
-    promptCopied: "Kopyalandı!",
-  },
-  ru: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Публикуйте страницы ИИ", "одним push."],
-    heroSubtitle:
-      "Простой шаблон для превращения любого React-компонента, сгенерированного ИИ, в работающий сайт. Замените один файл. Сделайте push на GitHub. Готово.",
-    ctaPrimary: "Использовать шаблон",
-    ctaSecondary: "Читать README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.ru.md",
-    includedLabel: "Включено",
-    includedTitle: "Что вы получаете",
-    includes: [
-      "Более 40 компонентов shadcn/ui",
-      "Более 160 предустановленных пакетов",
-      "Tailwind CSS, готов к использованию",
-      "Деплой через GitHub Actions",
-      "Поддержка своего домена",
-      "Автоматическое определение base path",
-    ],
-    howItWorksLabel: "Как это работает",
-    howItWorksTitle: "Три шага до публикации",
-    howItWorksSubtitle:
-      "Опыт программирования не нужен. Попросите ИИ сгенерировать JSX, вставьте, сделайте push, готово.",
-    steps: [
-      {
-        number: "01",
-        title: "Попросите ИИ создать JSX",
-        body: "Попросите Claude, ChatGPT или любой ИИ сгенерировать нужную страницу как React-компонент в формате JSX.",
-      },
-      {
-        number: "02",
-        title: "Настройте свой репозиторий",
-        body: "Используйте этот шаблон для создания своего репозитория. Перейдите в Settings → Pages и установите Source на GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Вставьте и сделайте push",
-        body: "Вставьте JSX в src/App.jsx и сделайте push в main. GitHub Actions автоматически соберёт и опубликует ваш сайт.",
-      },
-    ],
-    filesLabel: "Ваши файлы",
-    filesTitle: "Что вы измените",
-    filesSubtitle:
-      "Обычно вы меняете только один файл. Остальные два — необязательные.",
-    files: [
-      { name: "src/App.jsx", tag: "Обязательно", desc: "Вставьте сюда JSX, сгенерированный ИИ. Это единственный файл, который нужно изменить.", required: true },
-      { name: "index.html", tag: "Необязательно", desc: "Обновите заголовок, описание страницы и Google Analytics под ваш сайт.", required: false },
-      { name: "public/CNAME", tag: "Необязательно", desc: "Укажите свой домен. Оставьте как есть, если он не нужен.", required: false },
-    ],
-    tipLabel: "Совет",
-    tipText: "Если код ИИ использует пакет, не включённый в шаблон, выполните",
-    tipCommand: "npm run check",
-    tipAfter: "чтобы найти и исправить отсутствующие зависимости.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Все права защищены.",
-    langLabel: "Язык",
-    promptLabel: "Шаблон промпта",
-    promptHint: "Скопируйте этот промпт и вставьте его в ваш AI-инструмент. Заполните пропуски.",
-    promptTemplate: `Создай страницу React в формате JSX, которую можно использовать как src/App.jsx.
-
-Тема: [тема вашего сайта — напр.: кофейня, портфолио, SaaS-продукт]
-Стиль: [стиль дизайна — напр.: минималистичный, современный, яркий, корпоративный]
-Детали: [нужные разделы — напр.: герой, преимущества, отзывы, цены, контакты]
-
-Технические требования:
-- Используй Tailwind CSS для всех стилей
-- Используй компоненты shadcn/ui (импорт из @/components/ui/) при необходимости
-- Используй lucide-react для иконок
-- Сделай адаптивную вёрстку для мобильных и десктопа
-- Экспорт: export default function App()
-- Один файл, без дополнительных CSS-файлов или CDN-скриптов`,
-    promptCopy: "Копировать",
-    promptCopied: "Скопировано!",
-  },
-  he: {
-    badge: "AI Page Publisher",
-    heroTitle: ["פרסם דפי AI", "בדחיפה אחת."],
-    heroSubtitle:
-      "תבנית פשוטה להפיכת כל רכיב React שנוצר על ידי בינה מלאכותית לאתר חי. החלף קובץ אחד. דחוף ל-GitHub. סיום.",
-    ctaPrimary: "השתמש בתבנית זו",
-    ctaSecondary: "קרא את ה-README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.he.md",
-    includedLabel: "כלול",
-    includedTitle: "מה אתה מקבל",
-    includes: [
-      "מעל 40 רכיבי shadcn/ui",
-      "מעל 160 חבילות מותקנות מראש",
-      "Tailwind CSS, מוכן לשימוש",
-      "פריסה עם GitHub Actions",
-      "תמיכה בדומיין מותאם אישית",
-      "זיהוי אוטומטי של נתיב בסיס",
-    ],
-    howItWorksLabel: "כיצד זה עובד",
-    howItWorksTitle: "שלושה שלבים לעלייה לאוויר",
-    howItWorksSubtitle:
-      "אין צורך בניסיון בתכנות. בקש JSX מהבינה המלאכותית, הדבק, דחוף, סיום.",
-    steps: [
-      {
-        number: "01",
-        title: "בקש JSX מהבינה המלאכותית",
-        body: "אמור ל-Claude, ל-ChatGPT או לכל בינה מלאכותית ליצור את הדף שאתה רוצה כרכיב React בפורמט JSX.",
-      },
-      {
-        number: "02",
-        title: "הגדר את ה-repo שלך",
-        body: "השתמש בתבנית זו ליצירת המאגר שלך. עבור אל Settings → Pages והגדר את Source ל-GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "הדבק ודחוף",
-        body: "הדבק את ה-JSX ב-src/App.jsx ודחוף ל-main. GitHub Actions יבנה וייפרס את האתר שלך אוטומטית.",
-      },
-    ],
-    filesLabel: "הקבצים שלך",
-    filesTitle: "מה תשנה",
-    filesSubtitle:
-      "ברוב המקרים אתה נוגע בקובץ אחד בלבד. שני הקבצים האחרים הם אופציונליים.",
-    files: [
-      { name: "src/App.jsx", tag: "נדרש", desc: "הדבק כאן את ה-JSX שנוצר על ידי בינה מלאכותית. זהו הקובץ היחיד שעליך לשנות.", required: true },
-      { name: "index.html", tag: "אופציונלי", desc: "עדכן את כותרת הדף, התיאור ו-Google Analytics כך שיתאימו לאתר שלך.", required: false },
-      { name: "public/CNAME", tag: "אופציונלי", desc: "הגדר את הדומיין המותאם אישית שלך. השאר כפי שהוא אם אינך זקוק לאחד.", required: false },
-    ],
-    tipLabel: "טיפ",
-    tipText: "אם קוד הבינה המלאכותית משתמש בחבילה שאינה כלולה בתבנית, הפעל",
-    tipCommand: "npm run check",
-    tipAfter: "כדי למצוא ולתקן תלויות חסרות.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "כל הזכויות שמורות.",
-    langLabel: "שפה",
-    promptLabel: "תבנית פרומפט",
-    promptHint: "העתיקו את הפרומפט הזה והדביקו אותו בכלי ה-AI שלכם. מלאו את השדות הריקים.",
-    promptTemplate: `צרו עמוד React בפורמט JSX שאוכל להשתמש בו כ-src/App.jsx.
-
-נושא: [נושא האתר שלכם — למשל: בית קפה, תיק עבודות, מוצר SaaS]
-סגנון: [סגנון עיצוב — למשל: מינימליסטי, מודרני, צבעוני, עסקי]
-פרטים: [הסקשנים שתרצו — למשל: hero, תכונות, המלצות, מחירים, צור קשר]
-
-דרישות טכניות:
-- השתמשו ב-Tailwind CSS לכל העיצוב
-- השתמשו ברכיבי shadcn/ui (ייבוא מ-@/components/ui/) לפי הצורך
-- השתמשו ב-lucide-react לאייקונים
-- הפכו את העמוד לרספונסיבי למובייל ולדסקטופ
-- ייצוא כ: export default function App()
-- קובץ יחיד, ללא קובצי CSS נוספים או סקריפטים מ-CDN`,
-    promptCopy: "העתקה",
-    promptCopied: "הועתק!",
-  },
-  it: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Pubblica pagine AI", "con un solo push."],
-    heroSubtitle:
-      "Un template semplice per trasformare qualsiasi componente React generato dall'AI in un sito web live. Sostituisci un file. Fai push su GitHub. Fatto.",
-    ctaPrimary: "Usa questo template",
-    ctaSecondary: "Leggi il README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.it.md",
-    includedLabel: "Incluso",
-    includedTitle: "Cosa ottieni",
-    includes: [
-      "Oltre 40 componenti shadcn/ui",
-      "Oltre 160 pacchetti preinstallati",
-      "Tailwind CSS, pronto all'uso",
-      "Deployment con GitHub Actions",
-      "Supporto dominio personalizzato",
-      "Rilevamento automatico del base path",
-    ],
-    howItWorksLabel: "Come funziona",
-    howItWorksTitle: "Tre passi per andare live",
-    howItWorksSubtitle:
-      "Non serve esperienza di programmazione. Chiedi il JSX all'AI, incollalo, fai push, fatto.",
-    steps: [
-      {
-        number: "01",
-        title: "Chiedi il JSX alla tua AI",
-        body: "Di' a Claude, ChatGPT o qualsiasi AI di generare la pagina che vuoi come componente React in formato JSX.",
-      },
-      {
-        number: "02",
-        title: "Configura il tuo repo",
-        body: "Usa questo template per creare il tuo repository. Vai su Settings → Pages e imposta Source su GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Incolla e fai push",
-        body: "Incolla il JSX in src/App.jsx e fai push su main. GitHub Actions compila e pubblica il tuo sito automaticamente.",
-      },
-    ],
-    filesLabel: "I tuoi file",
-    filesTitle: "Cosa cambierai",
-    filesSubtitle:
-      "Nella maggior parte dei casi tocchi solo un file. Gli altri due sono opzionali.",
-    files: [
-      { name: "src/App.jsx", tag: "Obbligatorio", desc: "Incolla qui il JSX generato dall'AI. È l'unico file che devi modificare.", required: true },
-      { name: "index.html", tag: "Opzionale", desc: "Aggiorna il titolo, la descrizione e Google Analytics per il tuo sito.", required: false },
-      { name: "public/CNAME", tag: "Opzionale", desc: "Imposta il tuo dominio personalizzato. Lascia com'è se non ne hai bisogno.", required: false },
-    ],
-    tipLabel: "Suggerimento",
-    tipText: "Se il codice dell'AI usa un pacchetto non incluso nel template, esegui",
-    tipCommand: "npm run check",
-    tipAfter: "per trovare e correggere le dipendenze mancanti.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Tutti i diritti riservati.",
-    langLabel: "Lingua",
-    promptLabel: "Prompt iniziale",
-    promptHint: "Copia questo prompt e incollalo nel tuo strumento AI. Compila gli spazi vuoti.",
-    promptTemplate: `Crea una pagina React in formato JSX che possa usare come src/App.jsx.
-
-Tema: [il tema del tuo sito — es: caffetteria, portfolio, prodotto SaaS]
-Stile: [stile di design — es: minimalista, moderno, colorato, aziendale]
-Dettagli: [sezioni desiderate — es: hero, funzionalità, testimonianze, prezzi, contatti]
-
-Requisiti tecnici:
-- Usa Tailwind CSS per tutti gli stili
-- Usa i componenti shadcn/ui (importare da @/components/ui/) quando opportuno
-- Usa lucide-react per le icone
-- Rendilo responsive per mobile e desktop
-- Esportare come: export default function App()
-- File singolo, nessun file CSS aggiuntivo o script CDN`,
-    promptCopy: "Copia",
-    promptCopied: "Copiato!",
-  },
-  id: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Terbitkan halaman AI", "hanya satu push."],
-    heroSubtitle:
-      "Template sederhana untuk mengubah komponen React buatan AI menjadi website langsung. Ganti satu file. Push ke GitHub. Selesai.",
-    ctaPrimary: "Gunakan template ini",
-    ctaSecondary: "Baca README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.id.md",
-    includedLabel: "Sudah Disertakan",
-    includedTitle: "Yang kamu dapatkan",
-    includes: [
-      "Lebih dari 40 komponen shadcn/ui",
-      "Lebih dari 160 paket yang sudah terpasang",
-      "Tailwind CSS, siap digunakan",
-      "Deployment dengan GitHub Actions",
-      "Dukungan domain kustom",
-      "Deteksi base path otomatis",
-    ],
-    howItWorksLabel: "Cara kerjanya",
-    howItWorksTitle: "Tiga langkah untuk online",
-    howItWorksSubtitle:
-      "Tidak perlu pengalaman coding. Minta JSX dari AI, tempel, push, selesai.",
-    steps: [
-      {
-        number: "01",
-        title: "Minta JSX dari AI",
-        body: "Minta Claude, ChatGPT, atau AI mana pun untuk membuat halaman yang kamu inginkan sebagai komponen React dalam format JSX.",
-      },
-      {
-        number: "02",
-        title: "Siapkan repo-mu",
-        body: "Gunakan template ini untuk membuat repositorimu sendiri. Buka Settings → Pages dan atur Source ke GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Tempel dan push",
-        body: "Tempel JSX ke src/App.jsx lalu push ke main. GitHub Actions akan mem-build dan menerbitkan situsmu secara otomatis.",
-      },
-    ],
-    filesLabel: "File-mu",
-    filesTitle: "Yang akan kamu ubah",
-    filesSubtitle:
-      "Biasanya kamu hanya mengubah satu file. Dua file lainnya bersifat opsional.",
-    files: [
-      { name: "src/App.jsx", tag: "Wajib", desc: "Tempel JSX buatan AI di sini. Ini satu-satunya file yang perlu kamu ubah.", required: true },
-      { name: "index.html", tag: "Opsional", desc: "Perbarui judul, deskripsi halaman, dan Google Analytics agar sesuai dengan situsmu.", required: false },
-      { name: "public/CNAME", tag: "Opsional", desc: "Atur domain kustom-mu. Biarkan apa adanya jika tidak membutuhkannya.", required: false },
-    ],
-    tipLabel: "Tips",
-    tipText: "Jika kode AI menggunakan paket yang tidak ada di template, jalankan",
-    tipCommand: "npm run check",
-    tipAfter: "untuk menemukan dan memperbaiki dependensi yang hilang.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "Semua hak dilindungi.",
-    langLabel: "Bahasa",
-    promptLabel: "Prompt Awal",
-    promptHint: "Salin prompt ini dan tempelkan ke alat AI Anda. Isi bagian yang kosong.",
-    promptTemplate: `Buatkan halaman React dalam format JSX yang bisa saya gunakan sebagai src/App.jsx.
-
-Topik: [topik website Anda — mis: kedai kopi, portofolio, produk SaaS]
-Gaya: [gaya desain — mis: minimalis, modern, warna-warni, korporat]
-Detail: [bagian yang diinginkan — mis: hero, fitur, testimoni, harga, kontak]
-
-Persyaratan teknis:
-- Gunakan Tailwind CSS untuk semua styling
-- Gunakan komponen shadcn/ui (import dari @/components/ui/) jika sesuai
-- Gunakan lucide-react untuk ikon
-- Buat responsif untuk mobile dan desktop
-- Ekspor sebagai: export default function App()
-- Satu file saja, tanpa file CSS tambahan atau skrip CDN`,
-    promptCopy: "Salin",
-    promptCopied: "Tersalin!",
-  },
-  vi: {
-    badge: "AI Page Publisher",
-    heroTitle: ["Một lần push,", "trang AI đã lên web."],
-    heroSubtitle:
-      "Một template gọn gàng để biến code React do AI sinh ra thành website đang chạy. Thay đúng một file, push lên GitHub, xong.",
-    ctaPrimary: "Dùng template này",
-    ctaSecondary: "Đọc README",
-    readmeUrl: "https://github.com/EugeneYip/aiweb/blob/main/i/README.vi.md",
-    includedLabel: "Có sẵn",
-    includedTitle: "Trong template có gì",
-    includes: [
-      "40+ component shadcn/ui",
-      "160+ package cài sẵn",
-      "Tailwind CSS, dùng được ngay",
-      "Deploy bằng GitHub Actions",
-      "Hỗ trợ custom domain",
-      "Tự detect base path",
-    ],
-    howItWorksLabel: "Cách hoạt động",
-    howItWorksTitle: "Ba bước là lên web",
-    howItWorksSubtitle:
-      "Không cần biết lập trình. Nhờ AI sinh JSX, dán vào, push, xong.",
-    steps: [
-      {
-        number: "01",
-        title: "Nhờ AI sinh JSX",
-        body: "Bảo Claude, ChatGPT hay AI nào đó sinh trang bạn muốn dưới dạng component React định dạng JSX.",
-      },
-      {
-        number: "02",
-        title: "Tạo repo của bạn",
-        body: "Dùng template này để tạo repo riêng. Vào Settings → Pages đặt Source là GitHub Actions.",
-      },
-      {
-        number: "03",
-        title: "Dán vào, push",
-        body: "Dán JSX vào src/App.jsx rồi push lên main. GitHub Actions sẽ tự build và publish site cho bạn.",
-      },
-    ],
-    filesLabel: "File của bạn",
-    filesTitle: "Cần thay đổi gì",
-    filesSubtitle:
-      "Hầu hết bạn chỉ cần đổi một file. Hai file còn lại là tuỳ chọn.",
-    files: [
-      { name: "src/App.jsx", tag: "Bắt buộc", desc: "Dán JSX do AI sinh ra vào đây. Đây là file duy nhất bạn cần thay.", required: true },
-      { name: "index.html", tag: "Tuỳ chọn", desc: "Đổi tiêu đề, mô tả trang và Google Analytics cho phù hợp với site của bạn.", required: false },
-      { name: "public/CNAME", tag: "Tuỳ chọn", desc: "Cài custom domain. Không cần thì để nguyên.", required: false },
-    ],
-    tipLabel: "Mẹo",
-    tipText: "Nếu code AI dùng package chưa có sẵn trong template, chạy",
-    tipCommand: "npm run check",
-    tipAfter: "để tìm và sửa các dependency còn thiếu.",
-    footerLine1: "© 2026 Eugene Yip.",
-    footerLine2: "All Rights Reserved.",
-    langLabel: "Ngôn ngữ",
-    promptLabel: "Prompt mẫu",
-    promptHint: "Sao chép prompt này và dán vào công cụ AI của bạn. Điền vào chỗ trống.",
-    promptTemplate: `Tạo một trang React dạng JSX mà tôi có thể dùng làm src/App.jsx.
-
-Chủ đề: [chủ đề website của bạn — VD: quán cà phê, portfolio, sản phẩm SaaS]
-Phong cách: [phong cách thiết kế — VD: tối giản, hiện đại, nhiều màu sắc, doanh nghiệp]
-Chi tiết: [các phần mong muốn — VD: hero, tính năng, đánh giá, bảng giá, liên hệ]
-
-Yêu cầu kỹ thuật:
-- Sử dụng Tailwind CSS cho toàn bộ styling
-- Sử dụng component shadcn/ui (import từ @/components/ui/) khi phù hợp
-- Sử dụng lucide-react cho icon
-- Làm responsive cho cả mobile và desktop
-- Export dạng: export default function App()
-- Một file duy nhất, không thêm file CSS hay script CDN`,
-    promptCopy: "Sao chép",
-    promptCopied: "Đã sao chép!",
+  en: {
+    docTitle: "2026 Northeastern Commencement Family Travel Guide",
+    subtitle:
+      "A visual, reader-facing itinerary infrastructure for Boston, Philadelphia, Washington, DC, and New York, built around commencement logistics, family pacing, transportation, dining, maps, car rental, parking, tickets, and risk control.",
+    defaultNote: "Chinese is the primary version. Use the floating button at the lower right to switch to English only.",
+    quickNav: "Quick navigation",
+    searchPlaceholder: "Search dates, places, food, risks, or transport",
+    openMap: "Open map",
+    openSource: "Open source",
+    routeMap: "City and transport spine",
+    routeMapNote: "This diagram explains geographic logic. It is not a precise distance map.",
+    stickyTitle: "Current highest-priority operating decisions",
+    summary: "Summary",
+    all: "All",
+    boston: "Boston",
+    ceremonies: "Ceremonies",
+    transport: "Transport and car rental",
+    philly: "Philadelphia",
+    dc: "Washington, DC",
+    nyc: "New York",
+    risks: "Risks and confirmations",
+    maps: "Map directory",
+    sources: "Official sources",
+    dayPlan: "Daily itinerary",
+    ceremonyDetails: "Commencement details",
+    transportLogic: "Transport and rental decisions",
+    riskBoard: "Risk control board",
+    mapDirectory: "Google Maps directory",
+    sourceDirectory: "Official sources and pending confirmations",
+    intensity: "Intensity",
+    theme: "Theme",
+    avoid: "Do not add",
+    mapLinks: "Map links",
+    readerMode: "Reader mode",
+    switchToEnglish: "English",
+    switchToChinese: "中文",
+    unresolved: "Still pending",
+    completeCheck: "Completeness check",
   },
 };
 
-const LANGUAGES = [
-  { code: "en", label: "English", short: "EN" },
-  { code: "zh", label: "中文", short: "中" },
-  { code: "zh-CN", label: "简体", short: "简" },
-  { code: "es", label: "Español", short: "ES" },
-  { code: "ja", label: "日本語", short: "日" },
-  { code: "de", label: "Deutsch", short: "DE" },
-  { code: "fr", label: "Français", short: "FR" },
-  { code: "ar", label: "العربية", short: "ع" },
-  { code: "pt", label: "Português", short: "PT" },
-  { code: "hi", label: "हिन्दी", short: "हि" },
-  { code: "vi", label: "Tiếng Việt", short: "VI" },
-  { code: "id", label: "Bahasa Indonesia", short: "ID" },
-  { code: "ko", label: "한국어", short: "한" },
-  { code: "ru", label: "Русский", short: "RU" },
-  { code: "it", label: "Italiano", short: "IT" },
-  { code: "tr", label: "Türkçe", short: "TR" },
-  { code: "ur", label: "اردو", short: "ار" },
-  { code: "th", label: "ไทย", short: "ไท" },
-  { code: "he", label: "עברית", short: "עב" },
+const stickyItems = [
+  {
+    icon: "car",
+    tone: "amber",
+    zh: "5/2 不應使用中午 12:00 取車。若保留 American Dream，需改成早上 8:00 至 8:30 左右取車，或至少能在上午離開波士頓。",
+    en: "Do not keep a 12:00 PM pickup on May 2 if American Dream remains in the plan. Reprice an 8:00 to 8:30 AM city pickup, or at least leave Boston in the morning.",
+  },
+  {
+    icon: "parking",
+    tone: "red",
+    zh: "Avis 30th Street Station PH4 已關閉。費城還車以 J5D Convention Center Parking 為主，並避免 after-hours return。",
+    en: "Avis 30th Street Station PH4 is closed. Use J5D Convention Center Parking as the practical Philadelphia return point and avoid after-hours return.",
+  },
+  {
+    icon: "graduation",
+    tone: "blue",
+    zh: "4/29 與 4/30 是畢業典禮核心日，不再加排重景點。票券、服裝、手機電量、小包與提早抵達優先。",
+    en: "April 29 and April 30 are ceremony-first days. Do not add heavy sightseeing. Tickets, regalia, phone battery, small bags, and early arrival come first.",
+  },
+  {
+    icon: "train",
+    tone: "slate",
+    zh: "費城到紐約應使用 Amtrak 或 NJ Transit。LIRR 不從費城發車，只在抵達紐約後可能有用。",
+    en: "Philadelphia to New York should be Amtrak or NJ Transit. LIRR does not run from Philadelphia and matters only after reaching New York.",
+  },
 ];
 
-const RTL_LANGS = new Set(["ar", "ur", "he"]);
-
-const STEP_ICONS = [
-  <Sparkles className="h-5 w-5" />,
-  <Settings className="h-5 w-5" />,
-  <Upload className="h-5 w-5" />,
+const routeNodes = [
+  { id: "bos", label: { zh: "波士頓", en: "Boston" }, date: "4/26–5/2", icon: "graduation", note: { zh: "住宿、畢業典禮、哈佛、自由之路、水岸線", en: "Hotel, ceremonies, Harvard, Freedom Trail, waterfront" } },
+  { id: "ad", label: { zh: "American Dream", en: "American Dream" }, date: "5/2", icon: "bag", note: { zh: "午餐與限時購物，取代 Texas Roadhouse", en: "Lunch and controlled shopping, replaces Texas Roadhouse" } },
+  { id: "phl", label: { zh: "費城", en: "Philadelphia" }, date: "5/2–5/5", icon: "landmark", note: { zh: "4211 Suites、UPenn、還車與上 Amtrak", en: "4211 Suites, UPenn, car return, Amtrak" } },
+  { id: "dc", label: { zh: "華盛頓特區", en: "Washington, DC" }, date: "5/4", icon: "flag", note: { zh: "開車一日遊，固定車庫，保守路線", en: "Driving day trip, one garage, conservative route" } },
+  { id: "nyc", label: { zh: "紐約", en: "New York" }, date: "5/5–5/11", icon: "train", note: { zh: "住宿與航班未定，暫用模組化行程", en: "Hotel and flight pending, modular plan only" } },
 ];
 
-const HTML_LANG = {
-  en: "en",
-  zh: "zh",
-  "zh-CN": "zh-Hans",
-  es: "es",
-  ja: "ja",
-  pt: "pt",
-  ar: "ar",
-  fr: "fr",
-  hi: "hi",
-  ko: "ko",
-  ur: "ur",
-  th: "th",
-  de: "de",
-  id: "id",
-  it: "it",
-  he: "he",
-  tr: "tr",
-  ru: "ru",
-  vi: "vi",
-};
+const ceremonies = [
+  {
+    key: "fenway",
+    logo: "NU",
+    tone: "blue",
+    title: { zh: "第一場：Graduate Commencement", en: "Ceremony 1: Graduate Commencement" },
+    date: { zh: "2026 年 4 月 29 日，星期三", en: "Wednesday, April 29, 2026" },
+    time: { zh: "上午 10:00 開始", en: "10:00 AM start" },
+    venue: { zh: "Fenway Park", en: "Fenway Park" },
+    address: addresses.fenway,
+    duration: { zh: "約 90 至 120 分鐘", en: "Approximately 90 to 120 minutes" },
+    weather: { zh: "雨天照常舉行，需依天氣穿著", en: "Rain or shine. Dress for weather." },
+    graduate: [
+      { zh: "畢業生上午 8:00 於 Gate B 報到，位置在 Van Ness Street。", en: "Graduate arrival is 8:00 AM at Gate B on Van Ness Street." },
+      { zh: "學生進場隊伍約上午 8:45 開始。", en: "Student procession begins around 8:45 AM." },
+      { zh: "穿著 cap、gown、hood、alumni pin。", en: "Wear cap, gown, hood, and alumni pin." },
+      { zh: "畢業生需先處理自己的 field ticket，再處理來賓票。", en: "The graduate must claim the field ticket before handling guest tickets." },
+    ],
+    guests: [
+      { zh: "來賓上午 8:00 入場，入口為 Gates A、D、E。", en: "Guest gates open at 8:00 AM at Gates A, D, and E." },
+      { zh: "每位符合資格的研究生最多可領 6 張來賓票。", en: "Each eligible graduate student may claim up to 6 guest tickets." },
+      { zh: "2 歲以上兒童需要票。2 歲或以下若能坐在成人腿上，不需票，但嬰兒車禁止入場。", en: "Children older than 2 need tickets. Children 2 or younger sitting on an adult's lap do not need a ticket, but strollers are prohibited." },
+      { zh: "Fenway concessions 在典禮開始前開放，並在典禮開始後關閉。", en: "Fenway concessions open before the ceremony and close once it begins." },
+    ],
+    rules: [
+      { zh: "大型包、後背包、超過 12 × 12 × 6 英寸的包不得入場。", en: "Large bags, backpacks, and bags over 12 × 12 × 6 inches are prohibited." },
+      { zh: "可攜帶 1 瓶未開封 16 oz 清水。", en: "One sealed 16 oz water bottle is permitted." },
+      { zh: "所有人需接受安檢。", en: "All attendees are subject to security screening." },
+      { zh: "此日不安排觀光，典禮、拍照、午餐、休息即可。", en: "No sightseeing should be added this day. Ceremony, photos, lunch, and rest are enough." },
+    ],
+    maps: [
+      { label: { zh: "Fenway Park", en: "Fenway Park" }, url: mapSearch(addresses.fenway) },
+      { label: { zh: "Gate B 與 Van Ness Street", en: "Gate B and Van Ness Street" }, url: mapSearch("Fenway Park Gate B Van Ness Street Boston MA") },
+      { label: { zh: "飯店至 Fenway", en: "Hotel to Fenway" }, url: mapDirections(addresses.bostonHotel, addresses.fenway) },
+    ],
+  },
+  {
+    key: "dmsb",
+    logo: "DMSB",
+    tone: "plum",
+    title: { zh: "第二場：D’Amore-McKim Graduate Celebration", en: "Ceremony 2: D’Amore-McKim Graduate Celebration" },
+    date: { zh: "2026 年 4 月 30 日，星期四", en: "Thursday, April 30, 2026" },
+    time: { zh: "晚上 6:00 開始", en: "6:00 PM start" },
+    venue: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" },
+    address: addresses.leader,
+    duration: { zh: "約 2 小時，視學院規模可能接近 3 小時", en: "About 2 hours, but some college celebrations may approach 3 hours depending on size" },
+    weather: { zh: "戶外帳棚場地，Seaport 晚上有風，需帶外套。", en: "Outdoor tented venue. Bring a jacket for Seaport evening wind." },
+    graduate: [
+      { zh: "畢業生應在典禮前 90 分鐘抵達，也就是下午 4:30。", en: "Graduates should arrive 90 minutes early, at 4:30 PM." },
+      { zh: "畢業生入口在 Harborwalk，Main Entrance 左側遠端。", en: "Graduate lineup is on Harborwalk, far left of the Main Entrance." },
+      { zh: "必須穿著 regalia。若同時參加大典，需保留完整畢業服。", en: "Regalia is required. Keep full regalia if also attending university commencement." },
+      { zh: "畢業生強烈建議不要攜帶個人物品。", en: "Graduates are strongly encouraged not to bring personal items." },
+    ],
+    guests: [
+      { zh: "來賓應在典禮前 60 分鐘抵達，也就是下午 5:00。", en: "Guests should arrive 60 minutes early, at 5:00 PM." },
+      { zh: "每位畢業生可領最多 4 張 college celebration 來賓票。", en: "Each graduate may claim up to 4 college celebration guest tickets." },
+      { zh: "票券為 general admission，座位先到先坐。", en: "Seating is ticketed general admission and first come, first served." },
+      { zh: "Bag Check 位於主入口外，每件 5 美元。", en: "Bag Check is outside the main gates for $5 per item." },
+    ],
+    rules: [
+      { zh: "Leader Bank Pavilion 地址是 290 Northern Avenue，不是附近的 Leader Bank Seaport branch。", en: "Use 290 Northern Avenue. It is not the nearby Leader Bank Seaport branch." },
+      { zh: "包包尺寸上限為 12 × 12 × 6 英寸。大於 6 × 9 英寸的非透明包亦可能不被接受。", en: "Bag size limit is 12 × 12 × 6 inches. Non-clear bags larger than 6 × 9 inches may also be restricted." },
+      { zh: "場館沒有現場停車。建議 Uber 或預留大量交通時間。", en: "There is no on-site parking. Use rideshare or build a large traffic buffer." },
+      { zh: "不准攜帶外食飲料，例外為 1 瓶未開封 16 oz 清水。", en: "Outside food and beverages are prohibited except one sealed 16 oz water bottle." },
+    ],
+    maps: [
+      { label: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" }, url: mapSearch(addresses.leader) },
+      { label: { zh: "東北大學至 Leader Bank Pavilion", en: "Northeastern to Leader Bank Pavilion" }, url: mapDirections(addresses.northeastern, addresses.leader) },
+      { label: { zh: "飯店至 Leader Bank Pavilion", en: "Hotel to Leader Bank Pavilion" }, url: mapDirections(addresses.bostonHotel, addresses.leader) },
+    ],
+  },
+];
 
-function detectInitialLang() {
-  if (typeof window === "undefined") return "en";
-  try {
-    const stored = window.localStorage.getItem("aiweb-lang");
-    if (stored && translations[stored]) return stored;
-  } catch (_) {
-    // ignore storage errors
-  }
-  const browser = (window.navigator.language || "en").toLowerCase();
-  if (browser.startsWith("zh")) {
-    if (browser === "zh-cn" || browser === "zh-hans" || browser.startsWith("zh-hans")) return "zh-CN";
-    return "zh";
-  }
-  if (browser.startsWith("es")) return "es";
-  if (browser.startsWith("ja")) return "ja";
-  if (browser.startsWith("pt")) return "pt";
-  if (browser.startsWith("ar")) return "ar";
-  if (browser.startsWith("fr")) return "fr";
-  if (browser.startsWith("hi")) return "hi";
-  if (browser.startsWith("ko")) return "ko";
-  if (browser.startsWith("ur")) return "ur";
-  if (browser.startsWith("th")) return "th";
-  if (browser.startsWith("de")) return "de";
-  if (browser.startsWith("id")) return "id";
-  if (browser.startsWith("it")) return "it";
-  if (browser.startsWith("he")) return "he";
-  if (browser.startsWith("tr")) return "tr";
-  if (browser.startsWith("ru")) return "ru";
-  if (browser.startsWith("vi")) return "vi";
-  return "en";
+const dailyPlans = [
+  {
+    id: "d0426",
+    filter: "boston",
+    date: { zh: "4/26 星期日", en: "Sun Apr 26" },
+    city: { zh: "波士頓", en: "Boston" },
+    title: { zh: "抵達與恢復日", en: "Arrival and recovery day" },
+    intensity: { zh: "低", en: "Low" },
+    status: { zh: "不安排正式觀光", en: "No formal sightseeing" },
+    theme: {
+      zh: "媽媽與妹妹經香港、臺北、西雅圖抵達波士頓，疲勞與時差是主風險。這天只能做最低限度活動。",
+      en: "Mother and sister arrive after a long HKG, Taipei, Seattle, Boston routing. Fatigue and jet lag are the main risks. Keep the day minimal.",
+    },
+    steps: [
+      { time: "07:12", icon: "plane", zh: "預計抵達 Boston Logan Airport。", en: "Expected arrival at Boston Logan Airport." },
+      { time: "08:30 至 09:30", icon: "car", zh: "出關、領行李後 Uber 至 The Revolution Hotel。", en: "Immigration, baggage claim, then Uber to The Revolution Hotel." },
+      { time: "09:30 至 11:00", icon: "coffee", zh: "飯店寄放行李，附近 Tatte 或同級早餐、早午餐。", en: "Leave luggage at the hotel. Breakfast or brunch at Tatte or similar." },
+      { time: "11:00 至 14:00", icon: "map", zh: "若精神尚可，只在 Boston Common 或 Public Garden 坐著休息與短走，不超過 1 小時主動步行。", en: "If energy allows, sit and take a very short walk at Boston Common or Public Garden. Keep active walking under 1 hour." },
+      { time: "15:00", icon: "hotel", zh: "標準入住後休息 2 至 3 小時。", en: "Check in and rest for 2 to 3 hours." },
+      { time: "18:30 至 19:30", icon: "food", zh: "Chipotle 或飯店附近簡餐。這是體驗型快速餐，不是正式晚餐。", en: "Chipotle or a simple meal near the hotel. This is a casual experience, not a formal dinner." },
+      { time: "20:00 後", icon: "clock", zh: "回飯店早睡。", en: "Return to hotel and sleep early." },
+    ],
+    avoid: [
+      { zh: "不要排 Freedom Trail。", en: "Do not schedule Freedom Trail." },
+      { zh: "不要排 Harvard 或博物館。", en: "Do not schedule Harvard or museums." },
+      { zh: "不要用 Newbury Street 或 Trader Joe's 消耗體力。", en: "Do not spend energy on Newbury Street or Trader Joe's." },
+    ],
+    maps: [
+      { label: { zh: "The Revolution Hotel", en: "The Revolution Hotel" }, url: mapSearch(addresses.bostonHotel) },
+      { label: { zh: "Tatte Tremont 附近", en: "Tatte near Tremont" }, url: mapSearch("Tatte Bakery Cafe Tremont Boston MA") },
+      { label: { zh: "Boston Public Garden", en: "Boston Public Garden" }, url: mapSearch("Boston Public Garden Boston MA") },
+      { label: { zh: "Chipotle Park Plaza", en: "Chipotle Park Plaza" }, url: mapSearch("Chipotle 8 Park Plaza Boston MA") },
+    ],
+  },
+  {
+    id: "d0427",
+    filter: "boston",
+    date: { zh: "4/27 星期一", en: "Mon Apr 27" },
+    city: { zh: "波士頓", en: "Boston" },
+    title: { zh: "自由之路精簡段與 North End", en: "Concise Freedom Trail and North End" },
+    intensity: { zh: "中", en: "Medium" },
+    status: { zh: "歷史核心日", en: "Historic Boston day" },
+    theme: {
+      zh: "從住宿區往北推進，串連 Boston Common、Beacon Hill、Downtown、North End，不硬走到 Charlestown。",
+      en: "Move north from the hotel area through Boston Common, Beacon Hill, Downtown, and North End without forcing the full Charlestown extension.",
+    },
+    steps: [
+      { time: "上午", icon: "landmark", zh: "Tatte 早餐後，Boston Common、Massachusetts State House 外觀、Beacon Hill、Granary Burying Ground。", en: "After Tatte breakfast, visit Boston Common, Massachusetts State House exterior, Beacon Hill, and Granary Burying Ground." },
+      { time: "中午", icon: "food", zh: "Faneuil Hall 或 Quincy Market 午餐與休息。", en: "Lunch and rest at Faneuil Hall or Quincy Market." },
+      { time: "下午", icon: "map", zh: "Old State House、Paul Revere House 外觀，慢慢進 North End。", en: "Old State House, Paul Revere House exterior, then slow walk into North End." },
+      { time: "17:30 目標", icon: "food", zh: "The Daily Catch North End。North End 店為 first come, first serve，且 Gift Cards 與 Cash Only。", en: "The Daily Catch North End. The North End location is first come, first serve, and accepts gift cards and cash only." },
+      { time: "晚餐後", icon: "bag", zh: "Mike's Pastry 外帶，不單獨為甜點跨區。", en: "Mike's Pastry takeaway. Do not make a separate cross-town dessert trip." },
+    ],
+    avoid: [
+      { zh: "不要把 USS Constitution 放在星期一。", en: "Do not put USS Constitution on Monday." },
+      { zh: "若時差仍明顯，不走完整 Freedom Trail。", en: "Do not complete the full Freedom Trail if jet lag remains strong." },
+    ],
+    maps: [
+      { label: { zh: "Boston Common", en: "Boston Common" }, url: mapSearch("Boston Common Boston MA") },
+      { label: { zh: "Massachusetts State House", en: "Massachusetts State House" }, url: mapSearch("Massachusetts State House Boston MA") },
+      { label: { zh: "Faneuil Hall", en: "Faneuil Hall" }, url: mapSearch("Faneuil Hall Boston MA") },
+      { label: { zh: "Paul Revere House", en: "Paul Revere House" }, url: mapSearch("Paul Revere House Boston MA") },
+      { label: { zh: "The Daily Catch North End", en: "The Daily Catch North End" }, url: mapSearch("The Daily Catch North End 323 Hanover St Boston MA") },
+      { label: { zh: "Mike's Pastry", en: "Mike's Pastry" }, url: mapSearch("Mike's Pastry 300 Hanover St Boston MA") },
+    ],
+  },
+  {
+    id: "d0428",
+    filter: "boston",
+    date: { zh: "4/28 星期二", en: "Tue Apr 28" },
+    city: { zh: "Cambridge", en: "Cambridge" },
+    title: { zh: "Harvard 校園與一間博物館", en: "Harvard campus and one museum" },
+    intensity: { zh: "中", en: "Medium" },
+    status: { zh: "Cambridge 獨立成日", en: "Cambridge as one cluster" },
+    theme: {
+      zh: "Harvard 區域獨立完成，不與波士頓市中心或 North End 混排。博物館只選一條主線。",
+      en: "Treat Harvard as its own day. Do not mix it with Downtown Boston or North End. Choose one museum track only.",
+    },
+    steps: [
+      { time: "上午", icon: "train", zh: "搭 Uber 或 MBTA Red Line 至 Harvard Square。", en: "Take Uber or MBTA Red Line to Harvard Square." },
+      { time: "上午", icon: "graduation", zh: "Harvard Yard、John Harvard Statue、Widener Library 外觀與校園拍照。", en: "Harvard Yard, John Harvard Statue, Widener Library exterior, and campus photos." },
+      { time: "中午", icon: "food", zh: "Harvard Square 午餐，選可坐下休息的店。", en: "Lunch in Harvard Square, preferably a seated option." },
+      { time: "下午", icon: "museum", zh: "二選一：Harvard Art Museums，或 Harvard Museum of Natural History 搭配 Peabody Museum 輕量參觀。", en: "Choose one: Harvard Art Museums, or Harvard Museum of Natural History with a light Peabody pairing." },
+      { time: "傍晚", icon: "map", zh: "若體力足夠，可在 Weeks Footbridge 或 Charles River Cambridge 側短走。", en: "If energy remains, take a short walk near Weeks Footbridge or the Cambridge side of the Charles River." },
+      { time: "晚上", icon: "car", zh: "回波士頓飯店附近輕鬆吃。", en: "Return to Boston and eat near the hotel." },
+    ],
+    avoid: [
+      { zh: "不要同日完整逛兩條博物館主線。", en: "Do not fully complete both museum tracks on the same day." },
+      { zh: "不要加 MIT、North End 或 Back Bay 購物。", en: "Do not add MIT, North End, or Back Bay shopping." },
+    ],
+    maps: [
+      { label: { zh: "Harvard Square", en: "Harvard Square" }, url: mapSearch("Harvard Square Cambridge MA") },
+      { label: { zh: "Harvard Yard", en: "Harvard Yard" }, url: mapSearch("Harvard Yard Cambridge MA") },
+      { label: { zh: "Harvard Art Museums", en: "Harvard Art Museums" }, url: mapSearch("Harvard Art Museums 32 Quincy St Cambridge MA") },
+      { label: { zh: "Harvard Museum of Natural History", en: "Harvard Museum of Natural History" }, url: mapSearch("Harvard Museum of Natural History 26 Oxford St Cambridge MA") },
+      { label: { zh: "Weeks Footbridge", en: "Weeks Footbridge" }, url: mapSearch("Weeks Footbridge Cambridge MA") },
+    ],
+  },
+  {
+    id: "d0429",
+    filter: "ceremonies",
+    date: { zh: "4/29 星期三", en: "Wed Apr 29" },
+    city: { zh: "波士頓", en: "Boston" },
+    title: { zh: "第一場畢業典禮：Fenway Park", en: "Ceremony 1 at Fenway Park" },
+    intensity: { zh: "中高", en: "Medium high" },
+    status: { zh: "典禮優先", en: "Ceremony first" },
+    theme: {
+      zh: "這天只服務畢業典禮。等待、入場、安檢、隊伍、拍照與散場本身就會消耗體力。",
+      en: "This day serves the ceremony only. Waiting, entry, security, procession, photos, and exit will already consume energy.",
+    },
+    steps: [
+      { time: "06:30", icon: "shield", zh: "起床、早餐、確認票券、手機電量、cap、gown、hood、alumni pin。", en: "Wake up, breakfast, confirm tickets, phone battery, cap, gown, hood, and alumni pin." },
+      { time: "07:10", icon: "car", zh: "Uber 從 The Revolution Hotel 前往 Fenway Park。", en: "Uber from The Revolution Hotel to Fenway Park." },
+      { time: "07:30 至 07:45", icon: "pin", zh: "抵達 Fenway 附近，畢業生與來賓分流。", en: "Arrive near Fenway and separate graduate and guest flows." },
+      { time: "08:00", icon: "ticket", zh: "畢業生 Gate B 報到，來賓 Gates A、D、E 入場。", en: "Graduate reports at Gate B. Guests enter through Gates A, D, and E." },
+      { time: "08:45", icon: "route", zh: "學生隊伍約開始進場。", en: "Student procession begins around this time." },
+      { time: "10:00", icon: "graduation", zh: "Graduate Commencement 開始。", en: "Graduate Commencement begins." },
+      { time: "中午後", icon: "food", zh: "Fenway 附近簡單午餐後回飯店休息。", en: "Simple lunch near Fenway, then return to hotel to rest." },
+      { time: "晚上", icon: "food", zh: "Back Bay 或 South End 慶祝晚餐，不跑太遠。", en: "Celebration dinner in Back Bay or South End. Keep it close." },
+    ],
+    avoid: [
+      { zh: "不要排 Freedom Trail。", en: "Do not schedule Freedom Trail." },
+      { zh: "不要排 Harvard。", en: "Do not schedule Harvard." },
+      { zh: "不要安排遠距離晚餐。", en: "Do not book a distant dinner." },
+    ],
+    maps: [
+      { label: { zh: "Fenway Park", en: "Fenway Park" }, url: mapSearch(addresses.fenway) },
+      { label: { zh: "飯店至 Fenway", en: "Hotel to Fenway" }, url: mapDirections(addresses.bostonHotel, addresses.fenway) },
+      { label: { zh: "Gate B 位置搜尋", en: "Gate B location search" }, url: mapSearch("Fenway Park Gate B Van Ness Street Boston MA") },
+    ],
+  },
+  {
+    id: "d0430",
+    filter: "ceremonies",
+    date: { zh: "4/30 星期四", en: "Thu Apr 30" },
+    city: { zh: "波士頓", en: "Boston" },
+    title: { zh: "Northeastern 校園與 D’Amore-McKim Celebration", en: "Northeastern campus and D’Amore-McKim Celebration" },
+    intensity: { zh: "中高", en: "Medium high" },
+    status: { zh: "校園拍照加晚間典禮", en: "Campus photos and evening ceremony" },
+    theme: {
+      zh: "上午拍校園照，下午完整休息，傍晚前往 Seaport。這天的風險是交通、海風、包包尺寸與錯誤 GPS。",
+      en: "Campus photos in the morning, full rest in the afternoon, then Seaport. The risks are traffic, sea wind, bag size, and wrong GPS destination.",
+    },
+    steps: [
+      { time: "上午", icon: "camera", zh: "Northeastern 校園拍照：ISEC、Snell Library、Centennial Common、D’Amore-McKim 相關區域。", en: "Northeastern campus photos: ISEC, Snell Library, Centennial Common, and D’Amore-McKim related areas." },
+      { time: "中午", icon: "food", zh: "校園、Symphony 或 Back Bay 附近午餐，不繞遠。", en: "Lunch near campus, Symphony, or Back Bay. Do not detour far." },
+      { time: "14:00 至 15:30", icon: "hotel", zh: "回飯店休息、整理服裝、票券與小包。", en: "Return to hotel to rest and organize clothing, tickets, and small bag." },
+      { time: "16:00", icon: "car", zh: "Uber 至 Leader Bank Pavilion。不要壓線使用大眾運輸。", en: "Uber to Leader Bank Pavilion. Do not rely on tight public transit timing." },
+      { time: "16:30", icon: "users", zh: "畢業生於 Harborwalk graduate entrance 報到。", en: "Graduate arrival at Harborwalk graduate entrance." },
+      { time: "17:00", icon: "users", zh: "來賓於 Main Entrance 入場。", en: "Guest arrival at Main Entrance." },
+      { time: "18:00", icon: "graduation", zh: "D’Amore-McKim Graduate Celebration 開始。", en: "D’Amore-McKim Graduate Celebration begins." },
+      { time: "20:00 後", icon: "clock", zh: "視體力決定直接回飯店，或在 Seaport 簡單吃。", en: "Depending on energy, return directly or eat a simple dinner in Seaport." },
+    ],
+    avoid: [
+      { zh: "不要帶大包。", en: "Do not bring a large bag." },
+      { zh: "不要把 GPS 設到 Leader Bank Seaport branch。", en: "Do not set GPS to the Leader Bank Seaport branch." },
+      { zh: "不要安排複雜餐廳訂位。", en: "Do not schedule a complicated dinner reservation." },
+    ],
+    maps: [
+      { label: { zh: "Northeastern University", en: "Northeastern University" }, url: mapSearch(addresses.northeastern) },
+      { label: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" }, url: mapSearch(addresses.leader) },
+      { label: { zh: "飯店至 Leader Bank Pavilion", en: "Hotel to Leader Bank Pavilion" }, url: mapDirections(addresses.bostonHotel, addresses.leader) },
+    ],
+  },
+  {
+    id: "d0501",
+    filter: "boston",
+    date: { zh: "5/1 星期五", en: "Fri May 1" },
+    city: { zh: "波士頓", en: "Boston" },
+    title: { zh: "Waterfront、James Hook 與 Charlestown", en: "Waterfront, James Hook, and Charlestown" },
+    intensity: { zh: "中", en: "Medium" },
+    status: { zh: "水岸線精華日", en: "Waterfront day" },
+    theme: {
+      zh: "畢業典禮已結束，這天串 Waterfront、James Hook、Long Wharf、Charlestown、USS Constitution。North End 視體力追加。",
+      en: "After the ceremonies, link Waterfront, James Hook, Long Wharf, Charlestown, and USS Constitution. Add North End only if energy remains.",
+    },
+    steps: [
+      { time: "上午", icon: "map", zh: "二選一短走：Charles River Esplanade 或 Public Garden。不要兩個都做滿。", en: "Choose one short walk: Charles River Esplanade or Public Garden. Do not fully do both." },
+      { time: "中午", icon: "food", zh: "James Hook & Co 午餐。", en: "Lunch at James Hook & Co." },
+      { time: "下午", icon: "ship", zh: "Long Wharf 至 Charlestown Navy Yard。若 ferry 時間不順，可直接 rideshare。", en: "Long Wharf to Charlestown Navy Yard. If ferry timing is poor, use rideshare." },
+      { time: "下午主段", icon: "museum", zh: "USS Constitution 與 USS Constitution Museum。船艦開放時間需出發前再確認。", en: "USS Constitution and USS Constitution Museum. Reconfirm ship hours before departure." },
+      { time: "傍晚", icon: "ship", zh: "返回 Long Wharf 或 North End。", en: "Return toward Long Wharf or North End." },
+      { time: "晚上", icon: "luggage", zh: "若 4/27 未補到 Mike's Pastry，可放這天。否則回飯店整理行李，準備隔天去費城。", en: "If Mike's Pastry was missed on Apr 27, add it here. Otherwise return to pack for Philadelphia." },
+    ],
+    avoid: [
+      { zh: "不要加 Harvard 或大型博物館。", en: "Do not add Harvard or another major museum." },
+      { zh: "不要把購物排成主行程。", en: "Do not turn shopping into the main plan." },
+    ],
+    maps: [
+      { label: { zh: "Charles River Esplanade", en: "Charles River Esplanade" }, url: mapSearch("Charles River Esplanade Boston MA") },
+      { label: { zh: "James Hook & Co", en: "James Hook & Co" }, url: mapSearch("James Hook & Co 440 Atlantic Ave Boston MA") },
+      { label: { zh: "Long Wharf", en: "Long Wharf" }, url: mapSearch("Long Wharf Boston MA") },
+      { label: { zh: "Charlestown Navy Yard", en: "Charlestown Navy Yard" }, url: mapSearch("Charlestown Navy Yard Boston MA") },
+      { label: { zh: "USS Constitution Museum", en: "USS Constitution Museum" }, url: mapSearch("USS Constitution Museum Charlestown MA") },
+    ],
+  },
+  {
+    id: "d0502",
+    filter: "transport",
+    date: { zh: "5/2 星期六", en: "Sat May 2" },
+    city: { zh: "波士頓至 New Jersey 至費城", en: "Boston to New Jersey to Philadelphia" },
+    title: { zh: "租車移動日與 American Dream 限時停靠", en: "Rental car travel day with limited American Dream stop" },
+    intensity: { zh: "高", en: "High" },
+    status: { zh: "移動加購物，不是完整景點日", en: "Travel plus shopping, not a full attraction day" },
+    theme: {
+      zh: "American Dream 可加入，但只能作為午餐與限時購物停靠點。若要這樣走，租車時間必須提早。",
+      en: "American Dream can be included only as a lunch and controlled shopping stop. This requires an early rental pickup.",
+    },
+    steps: [
+      { time: "優先試算", icon: "car", zh: "先試 Boston Back Bay Station Garage 或其他市中心 Avis。人在市中心，不應先預設跑去 BOS。", en: "First test Boston Back Bay Station Garage or another city Avis. Since the family is downtown, BOS should not be the default." },
+      { time: "需要修正", icon: "alert", zh: "目前截圖的 12:00 PM 取車太晚。若保留 American Dream，應改成早上 8:00 或 8:30 左右。", en: "The current 12:00 PM pickup in the screenshot is too late. If American Dream remains, change to around 8:00 or 8:30 AM." },
+      { time: "目標離開", icon: "route", zh: "盡量在上午離開波士頓。", en: "Leave Boston in the morning if possible." },
+      { time: "中午", icon: "bag", zh: "抵達 American Dream。午餐在 mall 內解決。", en: "Arrive at American Dream. Eat lunch inside the mall." },
+      { time: "最多 3 至 3.5 小時", icon: "clock", zh: "只購物，不玩水上樂園、室內滑雪、主題樂園或水族館。", en: "Shopping only. Do not visit the water park, indoor skiing, theme park, or aquarium." },
+      { time: "15:30 左右", icon: "car", zh: "離開 American Dream 前往費城。", en: "Leave American Dream for Philadelphia." },
+      { time: "18:00 至 18:30 目標", icon: "hotel", zh: "抵達 4211 Suites，停車、入住、簡單晚餐。", en: "Arrive at 4211 Suites, park, check in, and have a simple dinner." },
+    ],
+    avoid: [
+      { zh: "若加入 American Dream，就取消 Texas Roadhouse。", en: "If American Dream is included, cancel Texas Roadhouse." },
+      { zh: "不要在停車場打開行李箱整理行李。", en: "Do not open the trunk and reorganize luggage in the parking lot." },
+      { zh: "護照、錢包、電腦與貴重物品隨身帶。", en: "Keep passports, wallets, computers, and valuables with the family." },
+    ],
+    maps: [
+      { label: { zh: "Back Bay Avis", en: "Back Bay Avis" }, url: mapSearch(addresses.backBayAvis) },
+      { label: { zh: "BOS Avis 備案", en: "BOS Avis backup" }, url: mapSearch(addresses.loganAvis) },
+      { label: { zh: "The Revolution Hotel 至 American Dream", en: "Hotel to American Dream" }, url: mapDirections(addresses.bostonHotel, addresses.americanDream) },
+      { label: { zh: "American Dream", en: "American Dream" }, url: mapSearch(addresses.americanDream) },
+      { label: { zh: "American Dream 至 4211 Suites", en: "American Dream to 4211 Suites" }, url: mapDirections(addresses.americanDream, addresses.phillyHotel) },
+    ],
+  },
+  {
+    id: "d0503",
+    filter: "philly",
+    date: { zh: "5/3 星期日", en: "Sun May 3" },
+    city: { zh: "費城", en: "Philadelphia" },
+    title: { zh: "UPenn 與費城西往東精華線", en: "UPenn and west to east Philadelphia highlights" },
+    intensity: { zh: "中，晚啟動", en: "Medium, late start" },
+    status: { zh: "UPenn 為主軸", en: "UPenn as anchor" },
+    theme: {
+      zh: "5/2 已是長途移動日，因此 5/3 不早起。從住宿附近的 UPenn 開始，逐步往東，不塞滿 Old City。",
+      en: "May 2 is already a long travel day, so May 3 should not start early. Begin with UPenn near the hotel and move east gradually without overloading Old City.",
+    },
+    steps: [
+      { time: "09:00 至 10:00", icon: "coffee", zh: "悠閒早餐與恢復。", en: "Slow breakfast and recovery." },
+      { time: "10:30", icon: "graduation", zh: "從 4211 Chestnut 區域出發逛 UPenn。", en: "Start the UPenn walk from the 4211 Chestnut area." },
+      { time: "上午", icon: "building", zh: "Locust Walk、College Hall 外觀、Fisher Fine Arts Library 外觀。", en: "Locust Walk, College Hall exterior, and Fisher Fine Arts Library exterior." },
+      { time: "中午", icon: "food", zh: "University City 午餐。", en: "Lunch in University City." },
+      { time: "下午", icon: "museum", zh: "Philadelphia Museum of Art 外觀、Rocky Steps、Schuylkill River。", en: "Philadelphia Museum of Art exterior, Rocky Steps, and Schuylkill River." },
+      { time: "傍晚", icon: "map", zh: "Rittenhouse Square 或 Reading Terminal Market 二選一，視體力決定。", en: "Choose either Rittenhouse Square or Reading Terminal Market depending on energy." },
+      { time: "晚上", icon: "hotel", zh: "早回 4211 Suites，準備隔天 DC。", en: "Return early to 4211 Suites and prepare for DC." },
+    ],
+    avoid: [
+      { zh: "不要同日硬塞 Independence Hall、Liberty Bell、Old City，除非刪掉 Art Museum 或 Rittenhouse。", en: "Do not force Independence Hall, Liberty Bell, or Old City unless Art Museum or Rittenhouse is removed." },
+      { zh: "不要晚睡。隔天是全程最高強度日。", en: "Do not sleep late. The next day is the highest intensity day." },
+    ],
+    maps: [
+      { label: { zh: "4211 Suites", en: "4211 Suites" }, url: mapSearch(addresses.phillyHotel) },
+      { label: { zh: "UPenn Locust Walk", en: "UPenn Locust Walk" }, url: mapSearch("Locust Walk University of Pennsylvania Philadelphia PA") },
+      { label: { zh: "College Hall", en: "College Hall" }, url: mapSearch("College Hall University of Pennsylvania Philadelphia PA") },
+      { label: { zh: "Philadelphia Museum of Art", en: "Philadelphia Museum of Art" }, url: mapSearch("Philadelphia Museum of Art Philadelphia PA") },
+      { label: { zh: "Rittenhouse Square", en: "Rittenhouse Square" }, url: mapSearch("Rittenhouse Square Philadelphia PA") },
+      { label: { zh: "Reading Terminal Market", en: "Reading Terminal Market" }, url: mapSearch("Reading Terminal Market Philadelphia PA") },
+    ],
+  },
+  {
+    id: "d0504",
+    filter: "dc",
+    date: { zh: "5/4 星期一", en: "Mon May 4" },
+    city: { zh: "費城至華盛頓特區往返", en: "Philadelphia to Washington, DC round trip" },
+    title: { zh: "DC 開車一日遊保守版", en: "Conservative DC driving day" },
+    intensity: { zh: "全程最高", en: "Highest" },
+    status: { zh: "只做核心線", en: "Core route only" },
+    theme: {
+      zh: "尊重開車想法，但這天真正累的是開車、停車、步行與回程高速疊加。DC 內只停一次車，只走 National Mall 核心線。",
+      en: "Respect the driving preference, but the real burden is the combination of driving, parking, walking, and the return drive. Park once and cover only the National Mall core route.",
+    },
+    steps: [
+      { time: "06:30", icon: "coffee", zh: "起床與簡單早餐。", en: "Wake up and simple breakfast." },
+      { time: "07:00", icon: "car", zh: "從費城出發。", en: "Depart Philadelphia." },
+      { time: "10:00 至 10:30", icon: "parking", zh: "抵達 DC，停在 National Mall、L'Enfant Plaza 或 Reagan Building 附近固定車庫。", en: "Arrive in DC and use one fixed garage near National Mall, L'Enfant Plaza, or Reagan Building." },
+      { time: "10:30 至 12:00", icon: "landmark", zh: "U.S. Capitol 外觀與 National Mall 東段。", en: "U.S. Capitol exterior and National Mall east side." },
+      { time: "12:00 至 13:00", icon: "food", zh: "午餐與休息。", en: "Lunch and rest." },
+      { time: "13:00 至 15:30", icon: "route", zh: "Washington Monument 外觀、WWII Memorial、Reflecting Pool、Lincoln Memorial。", en: "Washington Monument exterior, WWII Memorial, Reflecting Pool, and Lincoln Memorial." },
+      { time: "15:30 至 16:30", icon: "coffee", zh: "咖啡休息或短暫 Smithsonian。博物館不是主目標。", en: "Coffee rest or a brief Smithsonian stop. The museum is not the main objective." },
+      { time: "17:00", icon: "car", zh: "離開 DC。", en: "Leave DC." },
+      { time: "20:00 至 21:00", icon: "hotel", zh: "回費城，住宿附近簡單晚餐。", en: "Return to Philadelphia and eat near lodging." },
+    ],
+    avoid: [
+      { zh: "不去 Georgetown。", en: "Do not go to Georgetown." },
+      { zh: "不去 Arlington Cemetery。", en: "Do not go to Arlington Cemetery." },
+      { zh: "不繞白宮。", en: "Do not detour to the White House." },
+      { zh: "不換多個停車點。", en: "Do not use multiple parking locations." },
+      { zh: "不把 12,000 步上限用滿。", en: "Do not use the full 12,000-step limit." },
+    ],
+    maps: [
+      { label: { zh: "4211 Suites 至 National Mall", en: "4211 Suites to National Mall" }, url: mapDirections(addresses.phillyHotel, addresses.nationalMall) },
+      { label: { zh: "National Mall", en: "National Mall" }, url: mapSearch(addresses.nationalMall) },
+      { label: { zh: "L'Enfant Plaza 停車搜尋", en: "L'Enfant Plaza parking search" }, url: mapSearch("parking near L'Enfant Plaza Washington DC") },
+      { label: { zh: "Ronald Reagan Building 停車", en: "Ronald Reagan Building parking" }, url: mapSearch("Ronald Reagan Building parking Washington DC") },
+      { label: { zh: "Lincoln Memorial", en: "Lincoln Memorial" }, url: mapSearch("Lincoln Memorial Washington DC") },
+    ],
+  },
+  {
+    id: "d0505",
+    filter: "transport",
+    date: { zh: "5/5 星期二", en: "Tue May 5" },
+    city: { zh: "費城至紐約，Eugene 另回波士頓", en: "Philadelphia to New York, Eugene separately returns to Boston" },
+    title: { zh: "還車、Amtrak 與紐約交接日", en: "Car return, Amtrak, and New York handoff" },
+    intensity: { zh: "中", en: "Medium" },
+    status: { zh: "操作安全優先", en: "Operational safety first" },
+    theme: {
+      zh: "這天的目標不是觀光，而是行李、還車、車站等候、上車、紐約入住與 Eugene 回波士頓的安全交接。",
+      en: "The objective is not sightseeing. It is luggage handling, car return, station waiting, boarding, New York check-in, and Eugene's safe return to Boston.",
+    },
+    steps: [
+      { time: "09:00", icon: "luggage", zh: "4211 Suites 退房，全員與行李上車。", en: "Check out from 4211 Suites. Everyone and all luggage get in the car." },
+      { time: "09:15", icon: "train", zh: "先到 30th Street Station，放下媽媽、妹妹與大件行李。", en: "First go to 30th Street Station and drop mother, sister, and large luggage." },
+      { time: "09:15 至 09:30", icon: "pin", zh: "約定固定等候點，例如 Amtrak 出發看板下方。確認手機網路可用。", en: "Set a fixed waiting point, such as under the Amtrak departure board. Confirm phone data works." },
+      { time: "09:30", icon: "car", zh: "Eugene 單獨開車至 Avis J5D Convention Center Parking。", en: "Eugene drives alone to Avis J5D Convention Center Parking." },
+      { time: "09:45 至 10:15", icon: "shield", zh: "還車，確認油量、里程、損傷紀錄、e-Toll 與收據。", en: "Return the car. Confirm fuel, mileage, damage record, e-Toll, and receipt." },
+      { time: "10:15 至 10:35", icon: "car", zh: "Uber 回 30th Street Station。", en: "Uber back to 30th Street Station." },
+      { time: "11:15 之後", icon: "train", zh: "搭 Amtrak 至 New York Penn Station 或 Moynihan Train Hall。不要買太早班次。", en: "Take Amtrak to New York Penn Station or Moynihan Train Hall. Do not buy a too-early train." },
+      { time: "下午", icon: "users", zh: "Eugene 應陪她們抵達紐約住宿並完成入住，再自己回波士頓。", en: "Eugene should help them reach and check into the New York lodging before returning to Boston." },
+      { time: "晚上", icon: "food", zh: "她們只在飯店附近吃簡單晚餐，不排遠景點。", en: "They should eat near the hotel only. No distant sightseeing." },
+    ],
+    avoid: [
+      { zh: "不要從費城找 LIRR。", en: "Do not look for LIRR from Philadelphia." },
+      { zh: "不要全家拖行李去 J5D。", en: "Do not drag all luggage to J5D." },
+      { zh: "不要讓她們在沒有網路與地址備份下單獨留在紐約。", en: "Do not leave them in New York without phone data and address backups." },
+    ],
+    maps: [
+      { label: { zh: "4211 Suites 至 30th Street Station", en: "4211 Suites to 30th Street Station" }, url: mapDirections(addresses.phillyHotel, addresses.station30) },
+      { label: { zh: "30th Street Station", en: "30th Street Station" }, url: mapSearch(addresses.station30) },
+      { label: { zh: "Avis J5D", en: "Avis J5D" }, url: mapSearch(addresses.avisJ5D) },
+      { label: { zh: "30th Street Station 至 Avis J5D", en: "30th Street Station to Avis J5D" }, url: mapDirections(addresses.station30, addresses.avisJ5D) },
+      { label: { zh: "New York Penn Station", en: "New York Penn Station" }, url: mapSearch(addresses.nyPenn) },
+    ],
+  },
+  {
+    id: "d0505ny",
+    filter: "nyc",
+    date: { zh: "5/5 至 5/11", en: "May 5 to May 11" },
+    city: { zh: "紐約", en: "New York" },
+    title: { zh: "紐約模組化行程", en: "Modular New York plan" },
+    intensity: { zh: "視住宿而定", en: "Depends on lodging" },
+    status: { zh: "等待住宿與航班資訊", en: "Hotel and flight pending" },
+    theme: {
+      zh: "目前缺紐約住宿地址與 5/11 航班資訊，因此不能做精準逐時版。先用地理模組，等地址確認後再排序。",
+      en: "The New York hotel address and May 11 flight details are still missing, so an exact hourly plan is not safe. Use geographic modules first and sort after lodging is confirmed.",
+    },
+    steps: [
+      { time: "模組 A", icon: "building", zh: "Midtown：Times Square、Bryant Park、New York Public Library、Grand Central、Fifth Avenue、Rockefeller Center、Top of the Rock。", en: "Midtown: Times Square, Bryant Park, New York Public Library, Grand Central, Fifth Avenue, Rockefeller Center, Top of the Rock." },
+      { time: "模組 B", icon: "landmark", zh: "Lower Manhattan：Wall Street、9/11 Memorial、Oculus、Battery Park、Staten Island Ferry 遠看自由女神。", en: "Lower Manhattan: Wall Street, 9/11 Memorial, Oculus, Battery Park, Staten Island Ferry for distant Statue of Liberty view." },
+      { time: "模組 C", icon: "museum", zh: "Central Park 與一間博物館：The Met 或 American Museum of Natural History 二選一。", en: "Central Park and one museum: The Met or American Museum of Natural History." },
+      { time: "模組 D", icon: "route", zh: "Brooklyn：DUMBO、Brooklyn Bridge Park、可選 Brooklyn Bridge 步行，步數較高。", en: "Brooklyn: DUMBO, Brooklyn Bridge Park, optional Brooklyn Bridge walk. Higher walking load." },
+      { time: "模組 E", icon: "bag", zh: "SoHo 與 Chelsea：SoHo、Chelsea Market、High Line。", en: "SoHo and Chelsea: SoHo, Chelsea Market, High Line." },
+      { time: "模組 F", icon: "luggage", zh: "緩衝日：購物、伴手禮、洗衣、整理行李、天氣備案。", en: "Buffer day: shopping, souvenirs, laundry, packing, and weather backup." },
+      { time: "5/11", icon: "plane", zh: "離境日需依機場與航班時間重排。國際線應保守抓提早抵達機場。", en: "Departure day must be rebuilt after airport and flight time are known. For international flights, use conservative airport timing." },
+    ],
+    avoid: [
+      { zh: "不要一天混排 Brooklyn、Lower Manhattan 與 Midtown。", en: "Do not mix Brooklyn, Lower Manhattan, and Midtown in one day." },
+      { zh: "不要假設每個地鐵站都有電梯。", en: "Do not assume every subway station has elevators." },
+      { zh: "不要在 5/11 早上才決定機場交通。", en: "Do not decide airport transportation on the morning of May 11." },
+    ],
+    maps: [
+      { label: { zh: "New York Penn Station", en: "New York Penn Station" }, url: mapSearch(addresses.nyPenn) },
+      { label: { zh: "Times Square", en: "Times Square" }, url: mapSearch("Times Square New York NY") },
+      { label: { zh: "New York Public Library", en: "New York Public Library" }, url: mapSearch("New York Public Library Bryant Park") },
+      { label: { zh: "Grand Central Terminal", en: "Grand Central Terminal" }, url: mapSearch("Grand Central Terminal New York NY") },
+      { label: { zh: "The Met", en: "The Met" }, url: mapSearch("Metropolitan Museum of Art New York NY") },
+      { label: { zh: "DUMBO", en: "DUMBO" }, url: mapSearch("DUMBO Brooklyn NY") },
+      { label: { zh: "Chelsea Market", en: "Chelsea Market" }, url: mapSearch("Chelsea Market New York NY") },
+    ],
+  },
+];
+
+const transportCards = [
+  {
+    icon: "car",
+    title: { zh: "Boston 取車優先順序", en: "Boston pickup priority" },
+    status: { zh: "先市中心，後 BOS", en: "City first, BOS second" },
+    body: {
+      zh: "人在 The Revolution Hotel，應先試 Back Bay Station Garage 或其他市中心 Avis 至 J5D。只有市中心點無法異地還車、價格明顯高、車型不足、營業時間不合，才退回 BOS Logan。",
+      en: "Since the family is at The Revolution Hotel, first test Back Bay Station Garage or another city Avis to J5D. Use BOS Logan only if city pickup fails on one-way return, price, vehicle class, or opening time.",
+    },
+  },
+  {
+    icon: "alert",
+    title: { zh: "目前截圖報價問題", en: "Issue with current screenshot quote" },
+    status: { zh: "12:00 取車太晚", en: "12:00 pickup too late" },
+    body: {
+      zh: "截圖顯示 5/2 中午 12:00 在 Back Bay 取車、5/5 中午 12:00 在 J5D 還車，車輛本體約 247.07 美元，但加購項目約 265.41 美元，總額約 572.63 美元。時間不適合 American Dream 版，且加購項目需重看。",
+      en: "The screenshot shows May 2 12:00 PM pickup at Back Bay and May 5 12:00 PM return at J5D. Vehicle rate is about $247.07, add-ons about $265.41, total about $572.63. The timing does not work for the American Dream plan, and add-ons need review.",
+    },
+  },
+  {
+    icon: "parking",
+    title: { zh: "費城還車點", en: "Philadelphia return point" },
+    status: { zh: "J5D 優先", en: "J5D preferred" },
+    body: {
+      zh: "Avis PH4 30th Street Station 已關閉，不可用。J5D 位於 Convention Center Parking，車輛現場停放，同點歸還，且不提供 after-hours return。",
+      en: "Avis PH4 at 30th Street Station is closed and unusable. J5D is inside Convention Center Parking, vehicles are on site, returns are same as pickup, and after-hours return is not available.",
+    },
+  },
+  {
+    icon: "credit",
+    title: { zh: "保險與加購", en: "Insurance and add-ons" },
+    status: { zh: "不能盲刪", en: "Do not delete blindly" },
+    body: {
+      zh: "信用卡租車保障通常偏向車損，不一定涵蓋第三方責任。LDW 可否刪除取決於信用卡條款。ALI 若沒有其他責任險來源，需謹慎保留。Additional Driver 若只有 Eugene 開可刪。PAI、PEP、RSN 視既有保險與安心需求調整。",
+      en: "Credit card rental coverage often focuses on vehicle damage and may not cover third-party liability. LDW depends on credit card terms. ALI should be considered carefully if there is no other liability coverage. Remove Additional Driver if only Eugene drives. PAI, PEP, and RSN depend on existing insurance and comfort level.",
+    },
+  },
+  {
+    icon: "dollar",
+    title: { zh: "Toll pass", en: "Toll pass" },
+    status: { zh: "櫃檯確認", en: "Confirm at counter" },
+    body: {
+      zh: "5/2 與 5/4 會經過多個電子收費區。需在 Avis 櫃檯確認 standard e-Toll 與 e-Toll Unlimited 的實際價格。若主要只有兩天產生 toll，standard e-Toll 可能較合理，但以現場條款為準。",
+      en: "May 2 and May 4 cross multiple electronic toll zones. Confirm standard e-Toll versus e-Toll Unlimited at the Avis counter. If tolls mainly occur on two days, standard e-Toll may be more reasonable, but use the actual counter terms.",
+    },
+  },
+  {
+    icon: "train",
+    title: { zh: "費城至紐約鐵路", en: "Philadelphia to New York rail" },
+    status: { zh: "Amtrak 或 NJ Transit", en: "Amtrak or NJ Transit" },
+    body: {
+      zh: "LIRR 是紐約市與長島方向的鐵路，不從費城出發。可以跟媽媽說：鐵路方向是對的，但那段不是 LIRR，而是 Amtrak 或 NJ Transit 到 Penn Station。",
+      en: "LIRR serves New York City and Long Island, not Philadelphia. The family-facing explanation: the rail idea is correct, but the Philadelphia to New York segment is Amtrak or NJ Transit to Penn Station, not LIRR.",
+    },
+  },
+];
+
+const riskGroups = [
+  {
+    icon: "hotel",
+    title: { zh: "4211 Suites 停車", en: "4211 Suites parking" },
+    items: [
+      { zh: "確認 5/2 至 5/5 是否可連續停車。", en: "Confirm parking availability from May 2 to May 5." },
+      { zh: "確認每日費用與是否需預約。", en: "Confirm nightly rate and whether reservation is required." },
+      { zh: "確認 5/4 車開去 DC 當天是否仍計停車費。", en: "Confirm whether May 4 still counts as a parking day when the car leaves for DC." },
+    ],
+  },
+  {
+    icon: "bag",
+    title: { zh: "American Dream", en: "American Dream" },
+    items: [
+      { zh: "只作午餐與限時購物，不作完整景點。", en: "Use only for lunch and controlled shopping, not as a full attraction." },
+      { zh: "停車不是完全免費，需預留停車費。", en: "Parking is not fully free, so budget parking cost." },
+      { zh: "New Jersey 多數服飾與鞋類免銷售稅，但毛皮、配件、運動或保護裝備等例外。", en: "Most New Jersey clothing and footwear are sales tax exempt, but fur, accessories, sports equipment, and protective equipment are exceptions." },
+      { zh: "精品配件、珠寶、手錶、包款不應假設免稅。", en: "Do not assume luxury accessories, jewelry, watches, or bags are tax exempt." },
+    ],
+  },
+  {
+    icon: "shield",
+    title: { zh: "畢業典禮安檢", en: "Ceremony security" },
+    items: [
+      { zh: "Leader Bank Pavilion 與 Fenway 均需注意 12 × 12 × 6 英寸包包限制。", en: "Both Leader Bank Pavilion and Fenway require attention to the 12 × 12 × 6 inch bag limit." },
+      { zh: "可攜 1 瓶未開封 16 oz 清水。", en: "One sealed 16 oz water bottle is allowed." },
+      { zh: "所有人需接受安檢，違規可能被拒入場或要求離場。", en: "All attendees are subject to security screening. Noncompliance may lead to denial of entry or removal." },
+      { zh: "包包過大時需寄放、退回車上，或直接無法入場。", en: "Oversized bags may need checking, return to vehicle, or may block entry." },
+    ],
+  },
+  {
+    icon: "users",
+    title: { zh: "紐約交接", en: "New York handoff" },
+    items: [
+      { zh: "紐約住宿地址仍缺，無法做精準日程排序。", en: "New York lodging address is still missing, so exact sequencing is not possible." },
+      { zh: "5/11 機場與航班時間仍缺。", en: "May 11 airport and flight time are still missing." },
+      { zh: "Eugene 離開前，需確認 eSIM、飯店地址、Uber 路線、緊急聯絡與離境交通。", en: "Before Eugene leaves, confirm eSIM, hotel address, Uber route, emergency contacts, and departure transportation." },
+      { zh: "紐約第一晚不安排遠距離景點。", en: "Do not schedule distant sightseeing on the first New York evening." },
+    ],
+  },
+];
+
+const mapDirectory = [
+  { group: { zh: "住宿", en: "Lodging" }, links: [
+    { label: { zh: "The Revolution Hotel", en: "The Revolution Hotel" }, url: mapSearch(addresses.bostonHotel), note: { zh: "波士頓住宿核心", en: "Boston base" } },
+    { label: { zh: "4211 Suites", en: "4211 Suites" }, url: mapSearch(addresses.phillyHotel), note: { zh: "費城住宿與停車待確認", en: "Philadelphia lodging and parking pending" } },
+    { label: { zh: "紐約飯店", en: "New York hotel" }, url: mapSearch("New York Penn Station hotels"), note: { zh: "尚未提供，暫以 Penn Station 為參考", en: "Not provided, Penn Station used as placeholder" } },
+  ]},
+  { group: { zh: "畢業典禮", en: "Commencement" }, links: [
+    { label: { zh: "Fenway Park", en: "Fenway Park" }, url: mapSearch(addresses.fenway), note: { zh: "4/29 大典", en: "Apr 29 commencement" } },
+    { label: { zh: "Gate B / Van Ness Street", en: "Gate B / Van Ness Street" }, url: mapSearch("Fenway Park Gate B Van Ness Street Boston MA"), note: { zh: "畢業生報到", en: "Graduate arrival" } },
+    { label: { zh: "Leader Bank Pavilion", en: "Leader Bank Pavilion" }, url: mapSearch(addresses.leader), note: { zh: "4/30 DMSB 典禮", en: "Apr 30 DMSB celebration" } },
+  ]},
+  { group: { zh: "餐廳與補給", en: "Food and supplies" }, links: [
+    { label: { zh: "Tatte Tremont 附近", en: "Tatte near Tremont" }, url: mapSearch("Tatte Bakery Cafe Tremont Boston MA"), note: { zh: "早餐或輕食", en: "Breakfast or light meal" } },
+    { label: { zh: "Chipotle Park Plaza", en: "Chipotle Park Plaza" }, url: mapSearch("Chipotle 8 Park Plaza Boston MA"), note: { zh: "抵達日晚餐候選", en: "Arrival day dinner option" } },
+    { label: { zh: "The Daily Catch North End", en: "The Daily Catch North End" }, url: mapSearch("The Daily Catch North End 323 Hanover St Boston MA"), note: { zh: "現金與先到先坐", en: "Cash and first come, first serve" } },
+    { label: { zh: "Mike's Pastry", en: "Mike's Pastry" }, url: mapSearch("Mike's Pastry 300 Hanover St Boston MA"), note: { zh: "North End 搭配", en: "Pair with North End" } },
+    { label: { zh: "James Hook & Co", en: "James Hook & Co" }, url: mapSearch("James Hook & Co 440 Atlantic Ave Boston MA"), note: { zh: "水岸午餐", en: "Waterfront lunch" } },
+    { label: { zh: "Trader Joe's Back Bay", en: "Trader Joe's Back Bay" }, url: mapSearch("Trader Joe's 500 Boylston St Boston MA"), note: { zh: "有體力再去", en: "Only if energy remains" } },
+  ]},
+  { group: { zh: "租車、車站與城市移動", en: "Rental, rail, and intercity" }, links: [
+    { label: { zh: "Avis Back Bay", en: "Avis Back Bay" }, url: mapSearch(addresses.backBayAvis), note: { zh: "優先試算", en: "First pricing test" } },
+    { label: { zh: "Avis BOS Logan 備案", en: "Avis BOS Logan backup" }, url: mapSearch(addresses.loganAvis), note: { zh: "車型或價格不佳時才用", en: "Use if city pickup fails" } },
+    { label: { zh: "American Dream", en: "American Dream" }, url: mapSearch(addresses.americanDream), note: { zh: "5/2 限時停靠", en: "May 2 controlled stop" } },
+    { label: { zh: "Avis J5D", en: "Avis J5D" }, url: mapSearch(addresses.avisJ5D), note: { zh: "費城還車", en: "Philadelphia return" } },
+    { label: { zh: "30th Street Station", en: "30th Street Station" }, url: mapSearch(addresses.station30), note: { zh: "Amtrak 至紐約", en: "Amtrak to New York" } },
+    { label: { zh: "New York Penn Station", en: "New York Penn Station" }, url: mapSearch(addresses.nyPenn), note: { zh: "紐約抵達點", en: "New York arrival point" } },
+  ]},
+];
+
+const sourceCards = [
+  {
+    label: { zh: "Northeastern Graduate Commencement", en: "Northeastern Graduate Commencement" },
+    kind: { zh: "官方典禮資料", en: "Official ceremony information" },
+    url: "https://commencement.northeastern.edu/events/graduate-ceremony-at-fenway/",
+    summary: { zh: "確認 4/29、Fenway Park、10:00 AM、8:00 入場、Gate B、Gates A/D/E、8:45 procession、90 至 120 分鐘、最多 6 張來賓票。", en: "Confirms Apr 29, Fenway Park, 10:00 AM, 8:00 arrival, Gate B, Gates A/D/E, 8:45 procession, 90 to 120 minutes, and up to 6 guest tickets." },
+  },
+  {
+    label: { zh: "Northeastern College Celebrations", en: "Northeastern College Celebrations" },
+    kind: { zh: "官方學院典禮資料", en: "Official college celebration information" },
+    url: "https://commencement.northeastern.edu/events/college-celebrations/",
+    summary: { zh: "確認 D’Amore-McKim Graduate Celebration 為 4/30 6:00 PM，Leader Bank Pavilion。畢業生提前 90 分鐘，來賓提前 60 分鐘。", en: "Confirms D'Amore-McKim Graduate Celebration on Apr 30 at 6:00 PM at Leader Bank Pavilion. Graduates arrive 90 minutes early, guests 60 minutes early." },
+  },
+  {
+    label: { zh: "Northeastern Venues and Travel", en: "Northeastern Venues and Travel" },
+    kind: { zh: "場館與安檢", en: "Venue and security" },
+    url: "https://commencement.northeastern.edu/venues-and-travel-information/",
+    summary: { zh: "確認 Leader Bank Pavilion 地址、非 Leader Bank Seaport branch、無現場停車、Silver Line 距離、包包尺寸、Bag Check 與禁止攜帶物。", en: "Confirms Leader Bank Pavilion address, not Leader Bank Seaport branch, no on-site parking, Silver Line distance, bag size, Bag Check, and prohibited items." },
+  },
+  {
+    label: { zh: "Avis J5D", en: "Avis J5D" },
+    kind: { zh: "租車還車點", en: "Rental return point" },
+    url: "https://www.avis.com/en/locations/nam/us/pa/philadelphia/j5d",
+    summary: { zh: "確認 J5D 櫃檯位於 Convention Center Parking，車輛現場，同點歸還，且沒有 after-hours return。", en: "Confirms J5D counter is inside Convention Center Parking, vehicles are on site, returns are same as pickup, and after-hours return is unavailable." },
+  },
+  {
+    label: { zh: "Avis Boston Back Bay", en: "Avis Boston Back Bay" },
+    kind: { zh: "市中心取車點", en: "City pickup point" },
+    url: "https://www.avis.com/en/locations/nam/us/ma/boston/bo4",
+    summary: { zh: "確認 Back Bay 取車點位於 Back Bay Train Station 上方停車場。是否適合仍取決於實際日期、時間、車型、異地還車費。", en: "Confirms the Back Bay location is inside the garage over Back Bay Train Station. Suitability still depends on actual date, time, vehicle class, and one-way fee." },
+  },
+  {
+    label: { zh: "Avis BOS Logan", en: "Avis BOS Logan" },
+    kind: { zh: "機場備案", en: "Airport backup" },
+    url: "https://www.avis.com/en/locations/nam/us/ma/boston/bos",
+    summary: { zh: "確認 BOS Avis 位於 15 Transportation Way，24 小時營業。若市中心點不理想，可作備案。", en: "Confirms BOS Avis is at 15 Transportation Way and open 24 hours. Use as backup if city pickup is not viable." },
+  },
+  {
+    label: { zh: "American Dream Parking", en: "American Dream Parking" },
+    kind: { zh: "停車資訊", en: "Parking information" },
+    url: "https://www.americandream.com/parking",
+    summary: { zh: "確認 American Dream 停車不是完全免費，需把停車費納入預算。", en: "Confirms American Dream parking is not fully free, so budget for parking." },
+  },
+  {
+    label: { zh: "New Jersey Sales Tax Guide", en: "New Jersey Sales Tax Guide" },
+    kind: { zh: "服飾鞋類稅務", en: "Clothing and footwear tax" },
+    url: "https://www.nj.gov/treasury/taxation/pdf/pubs/sales/su4.pdf",
+    summary: { zh: "確認服飾與鞋類通常免 New Jersey Sales Tax，但毛皮、配件、運動或保護裝備等例外。", en: "Confirms clothing and footwear are generally exempt from New Jersey Sales Tax, with exceptions such as fur clothing, accessories, sports equipment, and protective equipment." },
+  },
+  {
+    label: { zh: "Harvard Art Museums", en: "Harvard Art Museums" },
+    kind: { zh: "博物館時間", en: "Museum hours" },
+    url: "https://harvardartmuseums.org/policies/hours-closings",
+    summary: { zh: "確認 Harvard Art Museums 週二至週日 10:00 AM 至 5:00 PM 開放。", en: "Confirms Harvard Art Museums are open Tuesday through Sunday, 10:00 AM to 5:00 PM." },
+  },
+  {
+    label: { zh: "Harvard Museum of Natural History", en: "Harvard Museum of Natural History" },
+    kind: { zh: "博物館時間", en: "Museum hours" },
+    url: "https://www.hmnh.harvard.edu/plan-your-visit",
+    summary: { zh: "確認 Harvard Museum of Natural History 每日 9:00 AM 至 5:00 PM 開放。", en: "Confirms Harvard Museum of Natural History is open daily from 9:00 AM to 5:00 PM." },
+  },
+  {
+    label: { zh: "USS Constitution", en: "USS Constitution" },
+    kind: { zh: "船艦參觀時間", en: "Ship visiting hours" },
+    url: "https://www.navy.mil/USS-Constitution/Hours-Visitor-Info/",
+    summary: { zh: "確認 USS Constitution 一般為週三至週日開放，需出發前再看當日異動。", en: "Confirms USS Constitution is generally open Wednesday through Sunday, but same-day changes should be checked before departure." },
+  },
+  {
+    label: { zh: "The Daily Catch North End", en: "The Daily Catch North End" },
+    kind: { zh: "餐廳資訊", en: "Restaurant information" },
+    url: "https://thedailycatch.com/location/north-end/",
+    summary: { zh: "確認 North End 店為 first come, first serve，付款為 Gift Cards 與 Cash Only。", en: "Confirms the North End location is first come, first serve, with payment by gift cards and cash only." },
+  },
+];
+
+const sections = [
+  { key: "all", icon: Menu },
+  { key: "boston", icon: MapPin },
+  { key: "ceremonies", icon: GraduationCap },
+  { key: "transport", icon: Car },
+  { key: "philly", icon: Landmark },
+  { key: "dc", icon: Flag },
+  { key: "nyc", icon: Train },
+  { key: "risks", icon: ShieldCheck },
+  { key: "maps", icon: Map },
+  { key: "sources", icon: Info },
+];
+
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
 }
 
-export default function App() {
-  const [lang, setLang] = useState("en");
-  const [darkMode, setDarkMode] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
-  const [focusIdx, setFocusIdx] = useState(-1);
-  const [promptCopied, setPromptCopied] = useState(false);
-  const switcherRef = useRef(null);
-  const listRef = useRef(null);
+function tx(value, lang) {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  return value[lang] || value.zh || value.en || "";
+}
 
-  useEffect(() => {
-    setLang(detectInitialLang());
-    const stored = localStorage.getItem("aiweb-theme");
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    setDarkMode(stored ? stored === "dark" : prefersDark);
-  }, []);
+function iconOf(name, className = "h-4 w-4") {
+  const Icon = ICONS[name] || Info;
+  return <Icon className={className} />;
+}
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
-      m.setAttribute("content", darkMode ? "#1A1816" : "#FCFAF2");
-    });
-  }, [darkMode]);
+function toneClass(tone) {
+  const map = {
+    red: "border-red-200 bg-red-50 text-red-900",
+    amber: "border-amber-200 bg-amber-50 text-amber-900",
+    blue: "border-[#c7d7df] bg-[#edf5f7] text-[#214a57]",
+    plum: "border-[#e3c7d7] bg-[#fbedf4] text-[#622954]",
+    slate: "border-slate-200 bg-slate-50 text-slate-800",
+    green: "border-emerald-200 bg-emerald-50 text-emerald-900",
+  };
+  return map[tone] || map.slate;
+}
 
-  useEffect(() => {
-    if (localStorage.getItem("aiweb-theme")) return;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e) => setDarkMode(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+function intensityClass(value) {
+  const text = String(value).toLowerCase();
+  if (text.includes("最高") || text.includes("highest")) return "border-red-200 bg-red-50 text-red-900";
+  if (text.includes("高") || text.includes("high")) return "border-orange-200 bg-orange-50 text-orange-900";
+  if (text.includes("中") || text.includes("medium")) return "border-amber-200 bg-amber-50 text-amber-900";
+  return "border-emerald-200 bg-emerald-50 text-emerald-900";
+}
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      window.localStorage.setItem("aiweb-lang", lang);
-    } catch (_) {
-      // ignore storage errors
-    }
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = HTML_LANG[lang] || "en";
-      document.documentElement.dir = RTL_LANGS.has(lang) ? "rtl" : "ltr";
-    }
-  }, [lang]);
-
-  useEffect(() => {
-    if (langOpen) {
-      setFocusIdx(LANGUAGES.findIndex((l) => l.code === lang));
-    }
-  }, [langOpen]);
-
-  useEffect(() => {
-    if (!langOpen || focusIdx < 0) return;
-    const list = listRef.current;
-    if (!list) return;
-    const items = list.querySelectorAll("[role=option]");
-    if (items[focusIdx]) items[focusIdx].scrollIntoView({ block: "nearest" });
-  }, [focusIdx, langOpen]);
-
-  const handleSwitcherKey = useCallback(
-    (e) => {
-      if (!langOpen) {
-        if (e.key === "ArrowUp" || e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setLangOpen(true);
-        }
-        return;
-      }
-      switch (e.key) {
-        case "ArrowDown":
-          e.preventDefault();
-          setFocusIdx((i) => (i + 1) % LANGUAGES.length);
-          break;
-        case "ArrowUp":
-          e.preventDefault();
-          setFocusIdx((i) => (i - 1 + LANGUAGES.length) % LANGUAGES.length);
-          break;
-        case "Enter":
-        case " ":
-          e.preventDefault();
-          if (focusIdx >= 0) {
-            setLang(LANGUAGES[focusIdx].code);
-            setLangOpen(false);
-          }
-          break;
-        case "Escape":
-          e.preventDefault();
-          setLangOpen(false);
-          break;
-      }
-    },
-    [langOpen, focusIdx],
-  );
-
-  useEffect(() => {
-    if (!langOpen) return;
-    function onClickAway(e) {
-      if (switcherRef.current && !switcherRef.current.contains(e.target)) {
-        setLangOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", onClickAway);
-    return () => {
-      document.removeEventListener("mousedown", onClickAway);
-    };
-  }, [langOpen]);
-
-  const t = translations[lang];
-  const currentLang = LANGUAGES.find((l) => l.code === lang) || LANGUAGES[0];
-
+function BrandMark({ label, tone = "blue" }) {
+  const color = tone === "plum" ? "bg-[#622954]" : tone === "gold" ? "bg-[#8a6d2f]" : "bg-[#2E5C6E]";
   return (
-    <div className="min-h-screen bg-[var(--lp-bg)] text-[var(--lp-body)] antialiased">
-      <main className="mx-auto max-w-6xl px-4 py-5 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
-        {/* Hero */}
-        <motion.section
-          variants={fadeUp}
-          initial="hidden"
-          animate="visible"
-          className="overflow-hidden rounded-[2rem] border border-[var(--lp-border)] bg-[image:var(--lp-hero-grad)] shadow-[0_18px_70px_rgba(var(--lp-shadow-rgb),0.08)]"
-        >
-          <div className="grid gap-6 px-5 py-6 sm:gap-8 sm:px-8 sm:py-9 lg:grid-cols-[1.15fr_0.85fr] lg:gap-10 lg:px-10 lg:py-12">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.85)] px-3 py-1.5 text-xs font-medium text-[var(--lp-subtle)]">
-                <Anchor className="h-3.5 w-3.5 text-[var(--lp-accent)]" />
-                {t.badge}
+    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-[11px] font-black tracking-tight text-white shadow-sm", color)}>
+      {label}
+    </div>
+  );
+}
+
+function MapButton({ href, children, variant = "outline" }) {
+  return (
+    <Button asChild variant={variant} size="sm" className="h-8 max-w-full rounded-xl px-3 text-xs">
+      <a href={href} target="_blank" rel="noreferrer" className="min-w-0 truncate">
+        <span className="inline-flex min-w-0 items-center gap-1.5">
+          <span className="truncate">{children}</span>
+          <ExternalLink className="h-3.5 w-3.5 shrink-0" />
+        </span>
+      </a>
+    </Button>
+  );
+}
+
+function SectionTitle({ eyebrow, title, children }) {
+  return (
+    <div className="mb-4 min-w-0 md:mb-5">
+      {eyebrow ? <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#8a6d2f]">{eyebrow}</p> : null}
+      <h2 className="mt-1 text-2xl font-semibold tracking-tight text-[#1f2933] md:text-3xl">{title}</h2>
+      {children ? <p className="mt-2 max-w-5xl text-sm leading-6 text-slate-700 md:text-[15px]">{children}</p> : null}
+    </div>
+  );
+}
+
+function RouteDiagram({ lang }) {
+  const t = uiText[lang];
+  return (
+    <Card className="overflow-hidden border-[#d9ccb4] bg-white/85 shadow-sm">
+      <CardHeader className="border-b border-[#eadfcb] bg-[#fffaf0] pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg text-[#1f2933] md:text-xl">
+          <Route className="h-5 w-5 text-[#2E5C6E]" /> {t.routeMap}
+        </CardTitle>
+        <p className="text-sm leading-6 text-slate-600">{t.routeMapNote}</p>
+      </CardHeader>
+      <CardContent className="p-4 md:p-5">
+        <div className="grid gap-3 md:grid-cols-5 md:items-stretch">
+          {routeNodes.map((node, index) => (
+            <React.Fragment key={node.id}>
+              <div className="relative min-w-0 rounded-2xl border border-[#d9ccb4] bg-[#fcfaf2] p-4 shadow-sm">
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#2E5C6E] text-white">
+                      {iconOf(node.icon, "h-4 w-4")}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-[#1f2933]">{tx(node.label, lang)}</p>
+                      <p className="text-xs text-[#8a6d2f]">{node.date}</p>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs leading-5 text-slate-600 md:text-[13px]">{tx(node.note, lang)}</p>
               </div>
+              {index < routeNodes.length - 1 ? (
+                <div className="hidden items-center justify-center md:flex">
+                  <ArrowRight className="h-5 w-5 text-[#8a6d2f]" />
+                </div>
+              ) : null}
+            </React.Fragment>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
-              <h1 className="mt-6 max-w-3xl text-[2rem] font-semibold leading-[1.15] tracking-tight text-[var(--lp-heading)] sm:text-5xl lg:text-[3.5rem]">
-                {t.heroTitle[0]}
-                <br />
-                {t.heroTitle[1]}
-              </h1>
-
-              <p className="mt-5 max-w-xl text-[0.938rem] leading-7 text-[var(--lp-text)] sm:text-base sm:leading-8">
-                {t.heroSubtitle}
-              </p>
-
-              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <a
-                  href="https://github.com/EugeneYip/aiweb"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--lp-cta-bg)] px-5 py-3 text-sm font-medium text-[var(--lp-cta-fg)] shadow-sm transition-all hover:bg-[var(--lp-cta-hover)] hover:shadow-md"
-                >
-                  {t.ctaPrimary}
-                  <ArrowUpRight className="h-4 w-4" />
-                </a>
-                <a
-                  href={t.readmeUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-[var(--lp-border-mid)] bg-[rgba(var(--lp-surface-rgb),0.80)] px-5 py-3 text-sm font-medium text-[var(--lp-body)] transition-all hover:bg-[var(--lp-surface-solid)] hover:border-[var(--lp-border-hover)]"
-                >
-                  {t.ctaSecondary}
-                </a>
+function StickySummary({ lang }) {
+  const t = uiText[lang];
+  return (
+    <div className="sticky top-0 z-30 border-b border-[#d9ccb4] bg-[#fcfaf2]/95 backdrop-blur supports-[backdrop-filter]:bg-[#fcfaf2]/85">
+      <div className="mx-auto max-w-7xl px-3 py-2 md:px-6">
+        <div className="flex gap-2 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible md:pb-0">
+          {stickyItems.map((item, index) => (
+            <div key={index} className={cn("min-w-[280px] rounded-2xl border px-3 py-2 text-xs leading-5 md:min-w-0", toneClass(item.tone))}>
+              <div className="mb-1 flex items-center gap-1.5 font-semibold">
+                {iconOf(item.icon, "h-3.5 w-3.5 shrink-0")}
+                <span>{t.stickyTitle}</span>
               </div>
+              <p>{tx(item, lang)}</p>
             </div>
-
-            <div className="rounded-[1.75rem] border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.80)] p-4 sm:p-5 lg:p-6">
-              <div className="flex items-center justify-between border-b border-[var(--lp-divider)] pb-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.18em] text-[var(--lp-muted)]">{t.includedLabel}</p>
-                  <h2 className="mt-1.5 text-lg font-semibold text-[var(--lp-heading)]">{t.includedTitle}</h2>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--lp-raised)] text-[var(--lp-subtle)]">
-                  <Globe className="h-5 w-5" />
-                </div>
-              </div>
-
-              <ul className="mt-4 space-y-2">
-                {t.includes.map((item) => (
-                  <li key={item} className="flex items-center gap-3 rounded-xl bg-[var(--lp-bg)] px-3.5 py-2.5 transition-colors hover:bg-[var(--lp-raised)]">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--lp-accent)]" />
-                    <span className="text-sm font-medium text-[var(--lp-heading)]">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </motion.section>
-
-        {/* How It Works */}
-        <motion.section
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="mt-6 rounded-[2rem] border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.65)] px-5 py-6 shadow-[0_8px_30px_rgba(var(--lp-shadow-rgb),0.04)] sm:mt-8 sm:px-8 sm:py-9 lg:px-10"
-        >
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--lp-muted)]">{t.howItWorksLabel}</p>
-            <h2 className="mt-2.5 text-2xl font-semibold tracking-tight text-[var(--lp-heading)] sm:text-3xl">
-              {t.howItWorksTitle}
-            </h2>
-            <p className="mt-3 text-[0.938rem] leading-7 text-[var(--lp-text)] sm:text-base">
-              {t.howItWorksSubtitle}
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-4 sm:mt-8 lg:grid-cols-3">
-            {t.steps.map((step, idx) => (
-              <motion.div
-                key={step.number}
-                variants={fadeUp}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-40px" }}
-                className="relative overflow-hidden rounded-2xl border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.80)] p-5 shadow-[0_8px_30px_rgba(var(--lp-shadow-rgb),0.05)] transition-all hover:shadow-[0_12px_40px_rgba(var(--lp-shadow-rgb),0.1)] hover:border-[var(--lp-border-hover)]"
-              >
-                <span className="pointer-events-none absolute end-3 top-1 select-none font-mono text-6xl font-bold text-[var(--lp-watermark)]">
-                  {step.number}
-                </span>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--lp-raised)] text-[var(--lp-subtle)]">
-                  {STEP_ICONS[idx]}
-                </div>
-                <h3 className="mt-4 text-base font-semibold text-[var(--lp-heading)] sm:text-lg">{step.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-[var(--lp-text)]">{step.body}</p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
-
-        {/* Prompt Template */}
-        <motion.section
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="mt-6 rounded-[2rem] border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.65)] px-5 py-6 shadow-[0_8px_30px_rgba(var(--lp-shadow-rgb),0.04)] sm:mt-8 sm:px-8 sm:py-9 lg:px-10"
-        >
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--lp-muted)]">{t.promptLabel}</p>
-            <p className="mt-2.5 text-[0.938rem] leading-7 text-[var(--lp-text)] sm:text-base">
-              {t.promptHint}
-            </p>
-          </div>
-
-          <div className="relative mt-5 rounded-xl border border-[var(--lp-border)] bg-[var(--lp-bg)] p-4 sm:p-5">
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(t.promptTemplate).then(() => {
-                  setPromptCopied(true);
-                  setTimeout(() => setPromptCopied(false), 2000);
-                });
-              }}
-              className="absolute end-3 top-3 inline-flex items-center gap-1.5 rounded-lg border border-[var(--lp-border-mid)] bg-[rgba(var(--lp-surface-rgb),0.85)] px-3 py-1.5 text-xs font-medium text-[var(--lp-subtle)] transition-all hover:bg-[var(--lp-surface-solid)] hover:border-[var(--lp-border-hover)]"
-            >
-              {promptCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              {promptCopied ? t.promptCopied : t.promptCopy}
-            </button>
-            <pre className="whitespace-pre-wrap break-words font-mono text-xs leading-6 text-[var(--lp-text)] sm:text-sm sm:leading-7 pe-20">{t.promptTemplate}</pre>
-          </div>
-        </motion.section>
-
-        {/* Files You'll Change */}
-        <motion.section
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="mt-6 rounded-[2rem] border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.65)] px-5 py-6 shadow-[0_8px_30px_rgba(var(--lp-shadow-rgb),0.04)] sm:mt-8 sm:px-8 sm:py-9 lg:px-10"
-        >
-          <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--lp-muted)]">{t.filesLabel}</p>
-            <h2 className="mt-2.5 text-2xl font-semibold tracking-tight text-[var(--lp-heading)] sm:text-3xl">
-              {t.filesTitle}
-            </h2>
-            <p className="mt-3 text-[0.938rem] leading-7 text-[var(--lp-text)] sm:text-base">
-              {t.filesSubtitle}
-            </p>
-          </div>
-
-          <div className="mt-6 grid gap-4 sm:mt-8 lg:grid-cols-3">
-            {t.files.map((file) => (
-              <div
-                key={file.name}
-                className={`relative overflow-hidden rounded-2xl border p-5 transition-all ${
-                  file.required
-                    ? "border-[var(--lp-border-accent)] bg-[rgba(var(--lp-surface-rgb),0.90)] shadow-[0_8px_30px_rgba(var(--lp-shadow-rgb),0.06)] hover:shadow-[0_12px_40px_rgba(var(--lp-shadow-rgb),0.1)]"
-                    : "border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.60)] hover:bg-[rgba(var(--lp-surface-rgb),0.80)] hover:border-[var(--lp-border-hover)]"
-                }`}
-              >
-                {file.required && (
-                  <div className="absolute inset-x-0 top-0 h-[3px] bg-[var(--lp-accent-bar)]" />
-                )}
-                <div className="flex items-center justify-between gap-2">
-                  <code className="rounded-lg bg-[var(--lp-raised)] px-2.5 py-1 font-mono text-xs font-medium text-[var(--lp-heading)]">
-                    {file.name}
-                  </code>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                      file.required
-                        ? "bg-[var(--lp-accent-soft)] text-[var(--lp-accent)]"
-                        : "bg-[var(--lp-border-tag)] text-[var(--lp-dim)]"
-                    }`}
-                  >
-                    {file.tag}
-                  </span>
-                </div>
-                <p className="mt-3 text-sm leading-6 text-[var(--lp-text)]">{file.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-5 flex items-start gap-3 rounded-xl border border-[var(--lp-border-tip)] border-s-[3px] border-s-[var(--lp-accent-tint-soft)] bg-[var(--lp-hover)] px-4 py-3.5">
-            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-[var(--lp-accent)]" />
-            <p className="text-sm leading-6 text-[var(--lp-text)]">
-              <span className="font-semibold text-[var(--lp-heading)]">{t.tipLabel}</span>
-              {" — "}
-              {t.tipText}{" "}
-              <code className="rounded bg-[var(--lp-raised)] px-1.5 py-0.5 font-mono text-xs text-[var(--lp-heading)]">
-                {t.tipCommand}
-              </code>{" "}
-              {t.tipAfter}
-            </p>
-          </div>
-        </motion.section>
-
-        <motion.footer
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-40px" }}
-          className="mt-10 pb-24 text-center text-sm text-[var(--lp-muted)]"
-        >
-          <Anchor className="mx-auto mb-2.5 h-4 w-4 text-[var(--lp-footer-icon)]" />
-          {t.footerLine1} <br className="sm:hidden" />
-          {t.footerLine2}
-        </motion.footer>
-      </main>
-
-      {/* Controls */}
-      <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 sm:bottom-6 sm:right-6">
-        {/* Theme toggle */}
-        <button
-          type="button"
-          onClick={() => {
-            const next = !darkMode;
-            setDarkMode(next);
-            localStorage.setItem("aiweb-theme", next ? "dark" : "light");
-          }}
-          aria-label={darkMode ? "Light mode" : "Dark mode"}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.90)] text-[var(--lp-subtle)] shadow-[0_10px_30px_rgba(var(--lp-shadow-rgb),0.12)] backdrop-blur-sm transition hover:bg-[var(--lp-surface-solid)]"
-        >
-          {darkMode ? <Sun className="h-[1.125rem] w-[1.125rem]" /> : <Moon className="h-[1.125rem] w-[1.125rem]" />}
-        </button>
-
-        {/* Language switcher */}
-        <div ref={switcherRef} className="relative" onKeyDown={handleSwitcherKey}>
-          {langOpen && (
-            <div
-              ref={listRef}
-              role="listbox"
-              aria-label={t.langLabel}
-              aria-activedescendant={focusIdx >= 0 ? `lang-opt-${LANGUAGES[focusIdx].code}` : undefined}
-              className="absolute bottom-[calc(100%+0.625rem)] right-0 min-w-[9.5rem] max-h-[min(20rem,60vh)] overflow-y-auto rounded-2xl border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.95)] shadow-[0_18px_50px_rgba(var(--lp-shadow-rgb),0.15)] backdrop-blur-sm"
-            >
-              {LANGUAGES.map((l, i) => {
-                const active = l.code === lang;
-                const focused = i === focusIdx;
-                return (
-                  <button
-                    key={l.code}
-                    id={`lang-opt-${l.code}`}
-                    type="button"
-                    role="option"
-                    aria-selected={active}
-                    onMouseEnter={() => setFocusIdx(i)}
-                    onClick={() => {
-                      setLang(l.code);
-                      setLangOpen(false);
-                    }}
-                    className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition ${
-                      active
-                        ? "bg-[var(--lp-raised)] font-semibold text-[var(--lp-heading)]"
-                        : focused
-                          ? "bg-[var(--lp-hover)] text-[var(--lp-heading)]"
-                          : "text-[var(--lp-text)] hover:bg-[var(--lp-bg)]"
-                    }${focused ? " ring-1 ring-inset ring-[var(--lp-ring)]" : ""}`}
-                  >
-                    <span className="w-4 font-mono text-[11px] text-[var(--lp-hint)]">{l.short}</span>
-                    <span>{l.label}</span>
-                    {active && <CheckCircle2 className="ml-auto h-4 w-4 text-[var(--lp-accent)]" />}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => setLangOpen((v) => !v)}
-            aria-label={t.langLabel}
-            aria-expanded={langOpen}
-            aria-haspopup="listbox"
-            className="flex h-11 items-center gap-2 rounded-full border border-[var(--lp-border)] bg-[rgba(var(--lp-surface-rgb),0.90)] px-3.5 text-[var(--lp-subtle)] shadow-[0_10px_30px_rgba(var(--lp-shadow-rgb),0.12)] backdrop-blur-sm transition hover:bg-[var(--lp-surface-solid)]"
-          >
-            <Globe className="h-4.5 w-4.5" />
-            <span className="font-mono text-xs font-semibold tracking-wider text-[var(--lp-subtle)]">
-              {currentLang.short}
-            </span>
-          </button>
+          ))}
         </div>
       </div>
     </div>
   );
 }
+
+function CeremonyCard({ event, lang }) {
+  const t = uiText[lang];
+  return (
+    <Card className="overflow-hidden border-[#d9ccb4] bg-white/90 shadow-sm">
+      <CardHeader className="border-b border-[#eadfcb] bg-[#fffaf0] p-4 md:p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div className="flex min-w-0 gap-3">
+            <BrandMark label={event.logo} tone={event.tone} />
+            <div className="min-w-0">
+              <Badge className="mb-2 rounded-full bg-[#2E5C6E] text-white hover:bg-[#2E5C6E]">{t.ceremonyDetails}</Badge>
+              <CardTitle className="break-words text-xl leading-tight text-[#1f2933] md:text-2xl">{tx(event.title, lang)}</CardTitle>
+              <p className="mt-2 text-sm leading-6 text-slate-700">{tx(event.date, lang)} · {tx(event.time, lang)}</p>
+              <p className="text-sm leading-6 text-slate-700">{tx(event.venue, lang)} · {event.address}</p>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {event.maps.map((m) => <MapButton key={tx(m.label, lang)} href={m.url}>{tx(m.label, lang)}</MapButton>)}
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-4 md:p-5">
+        <div className="grid gap-4 lg:grid-cols-[1.2fr_1.2fr_1.1fr]">
+          <InfoList title={lang === "zh" ? "畢業生" : "Graduate"} icon="graduation" items={event.graduate} lang={lang} />
+          <InfoList title={lang === "zh" ? "來賓" : "Guests"} icon="users" items={event.guests} lang={lang} />
+          <InfoList title={lang === "zh" ? "規則與提醒" : "Rules and reminders"} icon="shield" items={event.rules} lang={lang} warning />
+        </div>
+        <div className="mt-4 grid gap-3 rounded-2xl border border-[#eadfcb] bg-[#fcfaf2] p-3 text-sm leading-6 text-slate-700 md:grid-cols-2">
+          <div className="flex gap-2"><Clock className="mt-1 h-4 w-4 shrink-0 text-[#8a6d2f]" /><span>{tx(event.duration, lang)}</span></div>
+          <div className="flex gap-2"><Umbrella className="mt-1 h-4 w-4 shrink-0 text-[#8a6d2f]" /><span>{tx(event.weather, lang)}</span></div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function InfoList({ title, icon, items, lang, warning = false }) {
+  return (
+    <div className="min-w-0 rounded-2xl border border-[#eadfcb] bg-white p-4">
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#1f2933]">
+        {iconOf(icon, "h-4 w-4 text-[#2E5C6E]")}
+        {title}
+      </h3>
+      <ul className="space-y-2 text-sm leading-6 text-slate-700">
+        {items.map((item, index) => (
+          <li key={index} className="flex min-w-0 gap-2">
+            {warning ? <AlertTriangle className="mt-1 h-4 w-4 shrink-0 text-amber-700" /> : <CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-700" />}
+            <span className="min-w-0 break-words">{tx(item, lang)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function DayCard({ day, lang }) {
+  const t = uiText[lang];
+  const [openMaps, setOpenMaps] = useState(false);
+  return (
+    <Card className="overflow-hidden border-[#d9ccb4] bg-white/90 shadow-sm">
+      <CardHeader className="border-b border-[#eadfcb] bg-white p-4 md:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <div className="mb-2 flex flex-wrap items-center gap-2">
+              <Badge className="rounded-full bg-[#1f2933] text-white hover:bg-[#1f2933]">{tx(day.date, lang)}</Badge>
+              <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-[#fcfaf2] text-[#8a6d2f]">{tx(day.city, lang)}</Badge>
+              <span className={cn("rounded-full border px-2.5 py-0.5 text-xs font-semibold", intensityClass(tx(day.intensity, lang)))}>{t.intensity}: {tx(day.intensity, lang)}</span>
+              <span className="rounded-full border border-[#c7d7df] bg-[#edf5f7] px-2.5 py-0.5 text-xs font-semibold text-[#214a57]">{tx(day.status, lang)}</span>
+            </div>
+            <CardTitle className="break-words text-xl leading-tight text-[#1f2933] md:text-2xl">{tx(day.title, lang)}</CardTitle>
+            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-700 md:text-[15px]"><strong>{t.theme}: </strong>{tx(day.theme, lang)}</p>
+          </div>
+          <div className="flex shrink-0 flex-wrap gap-2">
+            {day.maps.slice(0, 2).map((m) => <MapButton key={tx(m.label, lang)} href={m.url}>{tx(m.label, lang)}</MapButton>)}
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">
+        <div className="divide-y divide-[#f0e7d7]">
+          {day.steps.map((step, index) => (
+            <div key={index} className="grid gap-2 px-4 py-3 md:grid-cols-[150px_1fr] md:gap-4 md:px-5">
+              <div className="flex min-w-0 items-center gap-2 text-sm font-semibold text-[#8a6d2f]">
+                {iconOf(step.icon, "h-4 w-4 shrink-0")}
+                <span className="break-words">{step.time}</span>
+              </div>
+              <p className="min-w-0 break-words text-sm leading-6 text-slate-800 md:text-[15px]">{tx(step, lang)}</p>
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-0 border-t border-[#eadfcb] md:grid-cols-[1fr_1fr]">
+          <div className="border-b border-[#eadfcb] bg-[#fff7ed] p-4 md:border-b-0 md:border-r">
+            <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold text-amber-900"><AlertTriangle className="h-4 w-4" />{t.avoid}</h4>
+            <ul className="space-y-1.5 text-sm leading-6 text-amber-950">
+              {day.avoid.map((item, index) => (
+                <li key={index} className="flex gap-2"><XCircle className="mt-1 h-3.5 w-3.5 shrink-0" /><span className="break-words">{tx(item, lang)}</span></li>
+              ))}
+            </ul>
+          </div>
+          <div className="bg-[#f8fbfc] p-4">
+            <button type="button" onClick={() => setOpenMaps((v) => !v)} className="mb-2 flex w-full items-center justify-between gap-3 text-left text-sm font-semibold text-[#214a57]">
+              <span className="flex items-center gap-2"><MapPin className="h-4 w-4" />{t.mapLinks}</span>
+              {openMaps ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+            </button>
+            <div className={cn("flex flex-wrap gap-2", !openMaps && "max-h-[78px] overflow-hidden")}> 
+              {day.maps.map((m) => <MapButton key={tx(m.label, lang)} href={m.url}>{tx(m.label, lang)}</MapButton>)}
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TransportCard({ item, lang }) {
+  return (
+    <Card className="border-[#d9ccb4] bg-white/90 shadow-sm">
+      <CardContent className="p-4 md:p-5">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[#edf5f7] text-[#2E5C6E]">
+            {iconOf(item.icon, "h-5 w-5")}
+          </div>
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="break-words text-base font-semibold text-[#1f2933]">{tx(item.title, lang)}</h3>
+              <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-[#fcfaf2] text-[#8a6d2f]">{tx(item.status, lang)}</Badge>
+            </div>
+            <p className="mt-2 break-words text-sm leading-6 text-slate-700">{tx(item.body, lang)}</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RiskCard({ group, lang }) {
+  return (
+    <Card className="border-[#d9ccb4] bg-white/90 shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg text-[#1f2933]">
+          {iconOf(group.icon, "h-5 w-5 text-[#2E5C6E]")}
+          {tx(group.title, lang)}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="pt-0">
+        <ul className="space-y-2 text-sm leading-6 text-slate-700">
+          {group.items.map((item, index) => (
+            <li key={index} className="flex gap-2"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-700" /><span className="break-words">{tx(item, lang)}</span></li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
+  );
+}
+
+function MapDirectory({ lang }) {
+  const t = uiText[lang];
+  return (
+    <div className="grid gap-5">
+      {mapDirectory.map((group) => (
+        <Card key={tx(group.group, lang)} className="border-[#d9ccb4] bg-white/90 shadow-sm">
+          <CardHeader className="border-b border-[#eadfcb] bg-[#fffaf0] py-4">
+            <CardTitle className="text-lg text-[#1f2933]">{tx(group.group, lang)}</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-3 p-4 md:grid-cols-2 lg:grid-cols-3">
+            {group.links.map((link) => (
+              <div key={tx(link.label, lang)} className="min-w-0 rounded-2xl border border-[#eadfcb] bg-white p-3">
+                <p className="truncate text-sm font-semibold text-[#1f2933]">{tx(link.label, lang)}</p>
+                <p className="mt-1 min-h-[40px] text-xs leading-5 text-slate-600">{tx(link.note, lang)}</p>
+                <div className="mt-3"><MapButton href={link.url}>{t.openMap}</MapButton></div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function SourceDirectory({ lang }) {
+  const t = uiText[lang];
+  return (
+    <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      {sourceCards.map((source) => (
+        <Card key={tx(source.label, lang)} className="border-[#d9ccb4] bg-white/90 shadow-sm">
+          <CardContent className="p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <Badge variant="outline" className="mb-2 rounded-full border-[#d9ccb4] bg-[#fcfaf2] text-[#8a6d2f]">{tx(source.kind, lang)}</Badge>
+                <h3 className="break-words text-base font-semibold text-[#1f2933]">{tx(source.label, lang)}</h3>
+              </div>
+              <Info className="h-5 w-5 shrink-0 text-[#2E5C6E]" />
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-700">{tx(source.summary, lang)}</p>
+            <div className="mt-4"><MapButton href={source.url}>{t.openSource}</MapButton></div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function FilterBar({ lang, filter, setFilter, search, setSearch }) {
+  const t = uiText[lang];
+  return (
+    <div className="border-b border-[#d9ccb4] bg-[#fcfaf2]">
+      <div className="mx-auto flex max-w-7xl flex-col gap-3 px-3 py-3 md:flex-row md:items-center md:justify-between md:px-6">
+        <div className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible md:pb-0">
+          {sections.map((section) => {
+            const Icon = section.icon;
+            return (
+              <button
+                type="button"
+                key={section.key}
+                onClick={() => setFilter(section.key)}
+                className={cn(
+                  "inline-flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                  filter === section.key
+                    ? "border-[#2E5C6E] bg-[#2E5C6E] text-white"
+                    : "border-[#d9ccb4] bg-white text-[#1f2933] hover:bg-[#fffaf0]"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                {t[section.key]}
+              </button>
+            );
+          })}
+        </div>
+        <div className="relative w-full md:max-w-sm">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t.searchPlaceholder}
+            className="h-10 w-full rounded-2xl border border-[#d9ccb4] bg-white pl-9 pr-3 text-sm outline-none ring-[#2E5C6E]/15 placeholder:text-slate-400 focus:ring-4"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [lang, setLang] = useState("zh");
+  const [filter, setFilter] = useState("all");
+  const [search, setSearch] = useState("");
+  const t = uiText[lang];
+
+  const visibleDays = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return dailyPlans.filter((day) => {
+      const matchesFilter = filter === "all" || day.filter === filter || (filter === "boston" && day.filter === "ceremonies" ? false : false);
+      const text = [
+        tx(day.date, lang),
+        tx(day.city, lang),
+        tx(day.title, lang),
+        tx(day.status, lang),
+        tx(day.theme, lang),
+        ...day.steps.map((s) => `${s.time} ${tx(s, lang)}`),
+        ...day.avoid.map((a) => tx(a, lang)),
+      ].join(" ").toLowerCase();
+      return matchesFilter && (!q || text.includes(q));
+    });
+  }, [filter, search, lang]);
+
+  const showDays = filter === "all" || ["boston", "ceremonies", "transport", "philly", "dc", "nyc"].includes(filter);
+
+  return (
+    <main className={cn("min-h-screen bg-[#FCFAF2] text-slate-900", lang === "zh" ? "font-serif" : "font-serif")}>
+      <section className="overflow-hidden border-b border-[#d9ccb4] bg-[radial-gradient(circle_at_10%_10%,#fff5d6,transparent_36%),linear-gradient(180deg,#FCFAF2,#f7efdf)]">
+        <div className="mx-auto max-w-7xl px-3 py-7 md:px-6 md:py-10 lg:py-12">
+          <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+            <div className="min-w-0">
+              <div className="mb-4 flex flex-wrap gap-2">
+                <Badge className="rounded-full bg-[#2E5C6E] text-white hover:bg-[#2E5C6E]">{t.readerMode}</Badge>
+                <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-white/75 text-[#8a6d2f]">Boston · Philadelphia · DC · New York</Badge>
+                <Badge variant="outline" className="rounded-full border-[#d9ccb4] bg-white/75 text-[#8a6d2f]">4/26 至 5/11</Badge>
+              </div>
+              <h1 className="max-w-5xl break-words text-4xl font-semibold leading-tight tracking-tight text-[#1f2933] md:text-5xl lg:text-6xl">{t.docTitle}</h1>
+              <p className="mt-4 max-w-4xl text-base leading-7 text-slate-700 md:text-lg">{t.subtitle}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600">{t.defaultNote}</p>
+              <div className="mt-5 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  { icon: "graduation", zh: "畢業典禮不可壓線", en: "Ceremonies cannot be rushed" },
+                  { icon: "car", zh: "取車需要提早", en: "Pickup must be earlier" },
+                  { icon: "parking", zh: "PH4 已關閉", en: "PH4 is closed" },
+                  { icon: "train", zh: "費城至紐約不是 LIRR", en: "Philadelphia to New York is not LIRR" },
+                ].map((item) => (
+                  <div key={item.en} className="flex items-center gap-2 rounded-2xl border border-[#d9ccb4] bg-white/75 px-3 py-2 text-sm text-[#1f2933] shadow-sm">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#edf5f7] text-[#2E5C6E]">
+                      {iconOf(item.icon, "h-4 w-4")}
+                    </div>
+                    <span className="min-w-0 break-words font-semibold">{tx(item, lang)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <Card className="border-[#d9ccb4] bg-white/85 shadow-sm">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg text-[#1f2933]"><ShieldCheck className="h-5 w-5 text-[#2E5C6E]" />{t.completeCheck}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3 text-sm leading-6 text-slate-700">
+                <p>{lang === "zh" ? "本版已納入畢業典禮、票券與入場時間、包包限制、住宿基準點、Boston 取車修正、Avis J5D 還車、American Dream、UPenn、DC 開車日與 New York 未定資訊。" : "This version includes ceremony logistics, ticket and arrival timing, bag restrictions, lodging bases, Boston pickup correction, Avis J5D return, American Dream, UPenn, DC driving day, and New York pending details."}</p>
+                <p>{lang === "zh" ? "仍缺的不是行程邏輯，而是紐約住宿地址、5/11 航班資訊、Avis 實際早取車報價、4211 Suites 停車費。" : "What remains missing is not itinerary logic. It is the New York hotel address, May 11 flight details, the actual early-pickup Avis quote, and the 4211 Suites parking fee."}</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      <StickySummary lang={lang} />
+      <FilterBar lang={lang} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} />
+
+      <div className="mx-auto max-w-7xl px-3 py-6 md:px-6 md:py-8">
+        {(filter === "all" || filter === "transport") && <div className="mb-8"><RouteDiagram lang={lang} /></div>}
+
+        {(filter === "all" || filter === "ceremonies") && (
+          <section className="mb-9">
+            <SectionTitle eyebrow={lang === "zh" ? "固定不可動日程" : "Fixed schedule"} title={t.ceremonyDetails}>
+              {lang === "zh" ? "兩場典禮是全程優先級最高的安排。任何觀光、餐廳與交通都不能壓縮入場時間。" : "The two ceremonies are the highest-priority fixed commitments. Sightseeing, dining, and transportation must not compress arrival time."}
+            </SectionTitle>
+            <div className="grid gap-5">
+              {ceremonies.map((event) => <CeremonyCard key={event.key} event={event} lang={lang} />)}
+            </div>
+          </section>
+        )}
+
+        {showDays && (
+          <section className="mb-9">
+            <SectionTitle eyebrow={lang === "zh" ? "逐日執行版" : "Daily execution plan"} title={t.dayPlan}>
+              {lang === "zh" ? "每一天只保留一個主要地理群，避免跨區亂跑。長途飛行、畢業典禮、長途駕駛後都刻意降低強度。" : "Each day keeps one primary geographic cluster. Intensity is deliberately reduced after long flights, ceremonies, and long driving days."}
+            </SectionTitle>
+            <div className="grid gap-5">
+              {visibleDays.map((day) => <DayCard key={day.id} day={day} lang={lang} />)}
+              {visibleDays.length === 0 ? <Card className="border-[#d9ccb4] bg-white p-5 text-sm text-slate-700">{lang === "zh" ? "沒有符合搜尋條件的行程。" : "No matching itinerary item found."}</Card> : null}
+            </div>
+          </section>
+        )}
+
+        {(filter === "all" || filter === "transport") && (
+          <section className="mb-9">
+            <SectionTitle eyebrow={lang === "zh" ? "操作邏輯" : "Operating logic"} title={t.transportLogic}>
+              {lang === "zh" ? "這些決策比多排一個景點更重要。大部分風險來自取車時間、還車點、保險、toll、行李與車站交接。" : "These decisions matter more than adding another attraction. Most risk comes from pickup time, return location, insurance, tolls, luggage, and station handoff."}
+            </SectionTitle>
+            <div className="grid gap-4 md:grid-cols-2">
+              {transportCards.map((item) => <TransportCard key={tx(item.title, lang)} item={item} lang={lang} />)}
+            </div>
+          </section>
+        )}
+
+        {(filter === "all" || filter === "risks") && (
+          <section className="mb-9">
+            <SectionTitle eyebrow={lang === "zh" ? "除錯與風險" : "Debug and risk control"} title={t.riskBoard}>
+              {lang === "zh" ? "此區保留尚未定案與容易出錯的事項。讀者端版本不假裝所有資訊已完成。" : "This section preserves pending and failure-prone items. The reader-facing version does not pretend everything is final."}
+            </SectionTitle>
+            <div className="grid gap-4 md:grid-cols-2">
+              {riskGroups.map((group) => <RiskCard key={tx(group.title, lang)} group={group} lang={lang} />)}
+            </div>
+          </section>
+        )}
+
+        {(filter === "all" || filter === "maps") && (
+          <section className="mb-9">
+            <SectionTitle eyebrow={lang === "zh" ? "地點索引" : "Location index"} title={t.mapDirectory}>
+              {lang === "zh" ? "所有重要地點集中於此，避免臨時搜尋造成錯誤導航。" : "All important locations are centralized here to reduce last-minute navigation errors."}
+            </SectionTitle>
+            <MapDirectory lang={lang} />
+          </section>
+        )}
+
+        {(filter === "all" || filter === "sources") && (
+          <section className="mb-9">
+            <SectionTitle eyebrow={lang === "zh" ? "資訊依據" : "Information basis"} title={t.sourceDirectory}>
+              {lang === "zh" ? "此頁將可查證來源集中列出。仍會隨官方頁面更新而變動，出發前應再查一次。" : "This page centralizes verifiable sources. Details can still change, so check official pages again before departure."}
+            </SectionTitle>
+            <SourceDirectory lang={lang} />
+          </section>
+        )}
+
+        <section className="rounded-3xl border border-[#d9ccb4] bg-[#1f2933] p-5 text-white shadow-sm md:p-7">
+          <div className="grid gap-5 md:grid-cols-[1fr_1fr] md:items-start">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#d9c28c]">{lang === "zh" ? "最終原則" : "Final principle"}</p>
+              <h2 className="mt-2 text-2xl font-semibold leading-tight md:text-3xl">
+                {lang === "zh" ? "先保護畢業典禮，再保護家人的城市交接。" : "Protect the ceremonies first, then protect the family handoff."}
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-slate-200">
+                {lang === "zh" ? "波士頓是品質最高的主段，因為 Eugene 同行且畢業典禮固定。費城與 DC 要務實，紐約需等待住宿與航班資訊後再精排。" : "Boston is the highest-value segment because Eugene is present and the ceremonies are fixed. Philadelphia and DC should remain practical. New York should be sequenced after hotel and flight details are known."}
+              </p>
+            </div>
+            <div className="grid gap-2 text-sm leading-6 text-slate-100">
+              {[
+                { zh: "5/2 若保留 American Dream，不用中午取車。", en: "If American Dream stays on May 2, do not use a noon pickup." },
+                { zh: "費城還車不用 PH4，改用已驗證的 J5D 或其他可用分點。", en: "Do not use PH4 for Philadelphia return. Use verified J5D or another active location." },
+                { zh: "費城至紐約不用 LIRR，使用 Amtrak 或 NJ Transit。", en: "Philadelphia to New York is not LIRR. Use Amtrak or NJ Transit." },
+                { zh: "DC 只做核心線，不能把城市當完整深度旅遊日。", en: "DC should be a core route only, not a full deep-travel day." },
+              ].map((item) => (
+                <div key={tx(item, lang)} className="flex gap-2"><CheckCircle2 className="mt-1 h-4 w-4 shrink-0 text-emerald-300" /><span>{tx(item, lang)}</span></div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <button
+        type="button"
+        onClick={() => setLang((current) => (current === "zh" ? "en" : "zh"))}
+        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full border border-[#d9ccb4] bg-[#1f2933]/95 px-4 py-3 text-sm font-semibold text-white shadow-xl backdrop-blur transition hover:bg-[#2E5C6E] md:bottom-6 md:right-6"
+        aria-label="Toggle language"
+      >
+        <Languages className="h-4 w-4" />
+        {lang === "zh" ? t.switchToEnglish : t.switchToChinese}
+      </button>
+    </main>
+  );
+}
+
+export default App;
