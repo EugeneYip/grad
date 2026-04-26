@@ -124,28 +124,6 @@ const dirLink = (origin, destination, mode = "driving") =>
 // SVG LOGO + ILLUSTRATION COMPONENTS (poster-style)
 // =============================================================================
 
-const HuskyMark = ({ className = "h-16 w-16" }) => (
-  <svg viewBox="0 0 120 120" className={className} aria-hidden="true">
-    <defs>
-      <radialGradient id="huskyGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stopColor={C.bgWarm} />
-        <stop offset="100%" stopColor={C.bg} />
-      </radialGradient>
-    </defs>
-    <circle cx="60" cy="60" r="56" fill="url(#huskyGlow)" stroke="currentColor" strokeWidth="1.2" />
-    <circle cx="60" cy="60" r="50" fill="none" stroke="currentColor" strokeWidth="0.5" opacity="0.4" />
-    <text x="60" y="22" textAnchor="middle" fontFamily="Georgia, serif" fontSize="7.5" fill="currentColor" letterSpacing="2.4">NORTHEASTERN</text>
-    <path d="M 32 56 Q 38 46 44 52 Q 48 44 54 50 Q 58 42 64 50 Q 68 44 74 52 Q 82 46 86 58 L 88 70 Q 80 80 60 82 Q 40 80 32 70 Z" fill="currentColor" opacity="0.92" />
-    <ellipse cx="48" cy="62" rx="2" ry="2.5" fill={C.bg} />
-    <ellipse cx="72" cy="62" rx="2" ry="2.5" fill={C.bg} />
-    <path d="M 56 70 Q 60 73 64 70" stroke={C.bg} strokeWidth="1.2" fill="none" />
-    <text x="60" y="105" textAnchor="middle" fontFamily="Georgia, serif" fontSize="7" fill="currentColor" letterSpacing="3.2">UNIVERSITY</text>
-    <line x1="44" y1="98" x2="50" y2="98" stroke="currentColor" strokeWidth="0.8" />
-    <text x="60" y="100" textAnchor="middle" fontFamily="Georgia, serif" fontSize="5.5" fill="currentColor" letterSpacing="1.5">1898</text>
-    <line x1="70" y1="98" x2="76" y2="98" stroke="currentColor" strokeWidth="0.8" />
-  </svg>
-);
-
 const SkylineWatermark = ({ className = "" }) => (
   <svg viewBox="0 0 200 240" className={className} aria-hidden="true" preserveAspectRatio="xMaxYMin meet">
     <g fill="none" stroke="currentColor" strokeWidth="0.6">
@@ -237,25 +215,9 @@ const meta = {
   segments: [
     { city: "Boston", cityZh: "波士頓", iconKey: "boston", dateRange: bi("4/26 至 5/2", "April 26 to May 2"), nights: bi("六晚", "6 nights"), theme: bi("畢業典禮主軸", "Graduation week"), color: C.navy },
     { city: "Philadelphia", cityZh: "費城", iconKey: "philly", dateRange: bi("5/2 至 5/5", "May 2 to May 5"), nights: bi("三晚", "3 nights"), theme: bi("含 DC 一日往返", "With DC day trip"), color: C.teal },
-    { city: "New York", cityZh: "紐約", iconKey: "ny", dateRange: bi("5/5 至 5/11", "May 5 to May 11"), nights: bi("六晚", "6 nights"), theme: bi("家庭自由行段落", "Self-guided family segment"), color: C.plum },
+    { city: "New York", cityZh: "紐約", iconKey: "ny", dateRange: bi("5/5 至 5/11", "May 5 to May 11"), nights: bi("六晚", "6 nights"), theme: bi("自由行段落", "Self-guided segment"), color: C.plum },
   ],
 };
-
-// Quick alert pills shown in hero (GPT-inspired but with our content)
-const quickPills = [
-  { iconKey: "graduation", title: bi("畢業典禮不可壓線", "Ceremonies cannot be rushed") },
-  { iconKey: "car", title: bi("Avis 取車提早至上午 7:00", "Avis pickup moved to 7:00 AM") },
-  { iconKey: "parking", title: bi("Avis PH4 已永久關閉", "Avis PH4 is permanently closed") },
-  { iconKey: "train", title: bi("費城至紐約是 Amtrak，不是 LIRR", "Philadelphia to NYC is Amtrak, not LIRR") },
-];
-
-// Sticky summary items (always visible while scrolling)
-const stickyItems = [
-  { tone: "navy", iconKey: "graduation", title: bi("典禮日", "Ceremony"), body: bi("4/29 Fenway 10:00、4/30 Leader Bank 18:00", "April 29 Fenway 10 AM, April 30 Leader Bank 6 PM") },
-  { tone: "gold", iconKey: "car", title: bi("租車", "Car"), body: bi("BO4 取車 5/2 07:00，J5D 還車 5/5 10:00", "Pickup BO4 May 2 at 7 AM, return J5D May 5 at 10 AM") },
-  { tone: "teal", iconKey: "luggage", title: bi("包包", "Bag"), body: bi("Leader Bank Pavilion 限 12×12×6 英寸", "Leader Bank Pavilion limit 12×12×6 inches") },
-  { tone: "plum", iconKey: "credit", title: bi("現金", "Cash"), body: bi("The Daily Catch 只收現金", "The Daily Catch is cash only") },
-];
 
 // Trip route nodes for RouteDiagram
 const routeNodes = [
@@ -672,15 +634,10 @@ const days = [
       { time: "18:30 - 19:30", activity: bi("Chipotle Park Plaza 輕鬆晚餐", "Casual dinner at Chipotle Park Plaza") },
       { time: "20:00", activity: bi("回飯店早睡", "Back to hotel for an early night") },
     ],
-    avoid: [
-      bi("Newbury Street 購物", "Shopping on Newbury Street"),
-      bi("Trader Joe's 採買", "Trader Joe's grocery run"),
-      bi("Freedom Trail 任何一段", "Any portion of the Freedom Trail"),
-      bi("Harvard 與博物館", "Harvard or museums"),
-    ],
     notes: [
       bi("連續紅眼飛行超過 24 小時，跨 12 小時時差，當天硬走會拖累整週體力。", "After 24 hours of red-eye flights and a 12-hour time-zone shift, pushing through today undermines the entire week."),
       bi("若飯店可提早辦理入住就立即進房；不能就在大廳休息。", "Take the room as soon as it is ready; otherwise rest in the lobby."),
+      bi("今天刻意把 Newbury Street 購物、Trader Joe's 採買、Freedom Trail、Harvard 等需要長距離步行的活動往後排。", "Newbury Street shopping, Trader Joe's, the Freedom Trail, and Harvard are deliberately moved to later days to conserve energy."),
     ],
     locations: [
       { name: bi("Logan International Airport", "Logan International Airport"), addr: "1 Harborside Dr, Boston, MA 02128" },
@@ -776,7 +733,7 @@ const days = [
       { time: "06:30", activity: bi("起床、早餐，最後一次確認票券、cap、gown、hood、alumni pin", "Wake up, breakfast, final check on tickets, cap, gown, hood, alumni pin") },
       { time: "07:10", activity: bi("Uber 從 The Revolution Hotel 出發，預估 15 分鐘", "Uber from The Revolution Hotel; about 15 minutes") },
       { time: "07:30", activity: bi("畢業生於 Gate B（Van Ness Street）報到", "Graduate reports at Gate B on Van Ness Street") },
-      { time: "07:30", activity: bi("家屬於 Gates A、D、E 排隊", "Family lines up at Gates A, D, or E") },
+      { time: "07:30", activity: bi("於 Gates A、D、E 排隊", "Line up at Gates A, D, or E") },
       { time: "08:00", activity: bi("雙方依序入場", "Both parties enter") },
       { time: "08:45", activity: bi("Procession 開始", "Procession begins") },
       { time: "10:00", activity: bi("典禮正式開始", "Ceremony begins") },
@@ -808,13 +765,13 @@ const days = [
       { time: "14:00 - 15:30", activity: bi("回飯店休息、整理服裝", "Return to hotel; rest and dress") },
       { time: "16:00", activity: bi("搭 Uber 出發 Seaport（避開 Silver Line 高峰擁擠）", "Uber to Seaport (avoid Silver Line congestion)") },
       { time: "16:30", activity: bi("畢業生於 Harborwalk 入口報到", "Graduate reports at Harborwalk entrance") },
-      { time: "17:00", activity: bi("家屬於主入口入場", "Family enters via Main Entrance") },
+      { time: "17:00", activity: bi("於主入口入場", "Enter via Main Entrance") },
       { time: "18:00", activity: bi("典禮開始（戶外帳棚場地）", "Ceremony begins under the open tent") },
       { time: bi("20:00 後", "After 8 PM"), activity: bi("依體力於 Seaport 簡單晚餐或直接回飯店", "Light dinner in Seaport or return to hotel based on energy") },
     ],
     warnings: [
       { title: bi("攜帶外套", "Bring a jacket"), body: bi("Leader Bank Pavilion 為戶外帳棚，4 月底 Seaport 晚上會有海風。", "Leader Bank Pavilion is an open tent venue. Seaport gets breezy on April evenings.") },
-      { title: bi("不可再入場（no re-entry）", "No re-entry"), body: bi("家屬進場後不可再外出，請事先處理洗手間與飲水。", "Once inside, family cannot exit and re-enter. Use the restroom and drink water beforehand.") },
+      { title: bi("不可再入場（no re-entry）", "No re-entry"), body: bi("進場後不可再外出，請事先處理洗手間與飲水。", "Once inside, you cannot exit and re-enter. Use the restroom and drink water beforehand.") },
     ],
     locations: [
       { name: bi("Leader Bank Pavilion", "Leader Bank Pavilion"), addr: "290 Northern Ave, Boston, MA 02210" },
@@ -861,7 +818,7 @@ const days = [
     cityKey: "transit",
     city: bi("波士頓 → 費城", "Boston → Philadelphia"),
     title: bi("American Dream 與跨州移動", "American Dream stop & interstate drive"),
-    subtitle: bi("整日由您主開，紐澤西免稅服飾採買", "Solo driver day; tax-free clothing stop in New Jersey"),
+    subtitle: bi("整日由 Eugene 主開，紐澤西免稅服飾採買", "Eugene drives the full day; tax-free clothing stop in New Jersey"),
     icon: Car,
     intensity: "high",
     timeline: [
@@ -944,7 +901,7 @@ const days = [
     cityKey: "dc",
     city: bi("DC 一日往返", "DC Day Trip"),
     title: bi("華盛頓特區一日遊", "Washington, DC day trip"),
-    subtitle: bi("全程最高體力日，您必須主開", "Highest-intensity day; you must drive"),
+    subtitle: bi("全程最高體力日，由 Eugene 主開", "Highest-intensity day; Eugene drives"),
     icon: Landmark,
     intensity: "peak",
     timeline: [
@@ -994,21 +951,21 @@ const days = [
     weekday: { zh: "週二", en: "Tue" },
     cityKey: "transit",
     city: bi("費城 → 紐約", "Philadelphia → New York"),
-    title: bi("還車、鐵路進城、您回波士頓", "Drop-off, train to NYC, your return to Boston"),
+    title: bi("還車、鐵路進城、Eugene 回波士頓", "Drop-off, train to NYC, Eugene returns to Boston"),
     subtitle: bi("交接日，最重要的一天", "Handover day; the most important transition"),
     icon: Train,
     intensity: "mid",
     timeline: [
       { time: "09:00", activity: bi("4211 Suites 退房，全家上車", "Check out of 4211 Suites; everyone in the car") },
-      { time: "09:15", activity: bi("抵達 30th Street Station，卸下家屬與行李", "Arrive at 30th Street Station; drop off family and luggage") },
-      { time: "09:15 - 09:30", activity: bi("家屬於大廳候車區（有座位、冷氣、洗手間）", "Family waits in the main hall (seating, air conditioning, restrooms)") },
-      { time: "09:30 - 09:45", activity: bi("您單獨開車至 J5D（1324 Arch St），1.2 英里、7 分鐘", "Drive solo to J5D (1324 Arch St), 1.2 miles, 7 minutes") },
+      { time: "09:15", activity: bi("抵達 30th Street Station，於上下車區卸下行李", "Arrive at 30th Street Station; unload luggage at the drop-off zone") },
+      { time: "09:15 - 09:30", activity: bi("於大廳候車區（有座位、冷氣、洗手間）", "Wait in the main hall (seating, air conditioning, restrooms)") },
+      { time: "09:30 - 09:45", activity: bi("Eugene 單獨開車至 J5D（1324 Arch St），1.2 英里、7 分鐘", "Eugene drives solo to J5D (1324 Arch St), 1.2 miles, 7 minutes") },
       { time: "09:45 - 10:15", activity: bi("J5D 還車手續：油表、里程、損傷確認", "J5D drop-off: fuel level, mileage, damage check") },
       { time: "10:15 - 10:30", activity: bi("Uber 從 J5D 回 30th Street Station，約 12 至 18 美元", "Uber from J5D back to 30th Street Station, $12 to $18") },
       { time: "11:00 - 12:00", activity: bi("全員搭 Amtrak Northeast Regional 至 New York Penn Station", "Whole party boards Amtrak Northeast Regional to New York Penn Station") },
-      { time: bi("下午", "Afternoon"), activity: bi("陪家屬到紐約飯店辦理入住", "Accompany family to the New York hotel for check-in") },
-      { time: bi("傍晚", "Evening"), activity: bi("您搭 Amtrak 回波士頓", "You take Amtrak back to Boston") },
-      { time: bi("晚上", "Night"), activity: bi("家屬於飯店附近輕鬆晚餐，不排遠景點", "Family has dinner near the hotel; no further sightseeing") },
+      { time: bi("下午", "Afternoon"), activity: bi("到紐約飯店辦理入住", "Check in at the New York hotel") },
+      { time: bi("傍晚", "Evening"), activity: bi("Eugene 搭 Amtrak 回波士頓", "Eugene takes Amtrak back to Boston") },
+      { time: bi("晚上", "Night"), activity: bi("飯店附近輕鬆晚餐，不排遠景點", "Dinner near the hotel; no further sightseeing") },
     ],
     warnings: [
       { title: bi("LIRR 名稱誤解", "LIRR confusion"), body: bi("Long Island Rail Road 不開到費城。費城至紐約是 Amtrak Northeast Regional，到 Penn Station 或 Moynihan Train Hall。", "LIRR does not run to Philadelphia. The Philadelphia to New York leg is Amtrak Northeast Regional, terminating at Penn Station / Moynihan Train Hall.") },
@@ -1214,7 +1171,7 @@ const avisStrategy = {
     hours: bi("週一至週五 07:00 至 19:00；週六、日 08:00 至 13:00", "Mon to Fri 7 AM to 7 PM; Sat to Sun 8 AM to 1 PM"),
     note: bi("不提供 after-hours returns，必須於營業時間內歸還。", "No after-hours returns. Must return during business hours."),
     dropoffTime: bi("5/5 上午 10:00", "May 5, 10:00 AM"),
-    flow: bi("先送家屬到 30th Street Station 卸下行李，您單獨開車至 J5D 還車（1.2 英里），再 Uber 回車站（12 至 18 美元）。", "Drop family and luggage at 30th Street Station first. Drive solo to J5D (1.2 miles) to return the car, then Uber back to the station ($12 to $18)."),
+    flow: bi("先到 30th Street Station 卸下行李，Eugene 單獨開車至 J5D 還車（1.2 英里），再 Uber 回車站（12 至 18 美元）。", "Unload luggage at 30th Street Station first. Eugene drives solo to J5D (1.2 miles) to return the car, then Ubers back to the station ($12 to $18)."),
   },
   closed: {
     code: "PH4",
@@ -1225,7 +1182,7 @@ const avisStrategy = {
   insurance: {
     keep: [
       { name: "E-Toll Unlimited", price: bi("每日 14.99 美元", "$14.99 per day"), reason: bi("Boston 至 DC 過路費密集，被動 toll-by-plate 每筆手續費 9.95 美元，數學上 Unlimited 較便宜。", "Tolls between Boston and DC are heavy. Passive toll-by-plate adds $9.95 per occurrence; Unlimited wins on the math.") },
-      { name: bi("Additional Driver", "Additional Driver"), price: bi("整租期 33.15 美元", "$33.15 per rental"), reason: bi("若家屬可能接手駕駛則加；若全程您主開可省。", "Add this if family may take the wheel. Skip if you drive the entire trip.") },
+      { name: bi("Additional Driver", "Additional Driver"), price: bi("整租期 33.15 美元", "$33.15 per rental"), reason: bi("若行程中可能由其他人接手駕駛則加；若全程由 Eugene 主開可省。", "Add this if anyone else may take the wheel. Skip if Eugene drives the entire trip.") },
     ],
     skip: [
       { name: "Cover The Car (LDW)", price: bi("79.02 美元", "$79.02"), reason: bi("若信用卡 Primary CDW 涵蓋，這項與其重複。Chase Sapphire Preferred／Reserve、Capital One Venture X、Amex Premium Car Rental 多為 primary。", "Most likely duplicates a Primary CDW from cards like Chase Sapphire Preferred/Reserve, Capital One Venture X, or Amex Premium Car Rental.") },
@@ -1240,7 +1197,7 @@ const avisStrategy = {
 
 const dining = [
   { name: "Tatte Bakery & Café", typeZh: "早餐／早午餐", typeEn: "Breakfast / brunch", addr: "70 Charles St, Boston, MA 02114", suggestedZh: "4/26、4/29、4/30、5/1 早餐", suggestedEn: "Breakfast on Apr 26, 29, 30, May 1", icon: Coffee },
-  { name: "Chipotle Park Plaza", typeZh: "美式快餐（家屬未體驗過）", typeEn: "American fast casual (new to the family)", addr: "8 Park Plz, Boston, MA 02116", suggestedZh: "4/26 晚餐輕食", suggestedEn: "Light dinner on Apr 26", icon: Utensils },
+  { name: "Chipotle Park Plaza", typeZh: "美式快餐", typeEn: "American fast casual", addr: "8 Park Plz, Boston, MA 02116", suggestedZh: "4/26 晚餐輕食", suggestedEn: "Light dinner on Apr 26", icon: Utensils },
   { name: "The Daily Catch (North End)", typeZh: "義式海鮮（現金）", typeEn: "Italian seafood (cash only)", addr: "323 Hanover St, Boston, MA 02113", suggestedZh: "4/27 晚餐", suggestedEn: "Dinner on Apr 27", icon: Anchor, warningZh: "現金 only，不接受訂位", warningEn: "Cash only; no reservations" },
   { name: "Mike's Pastry", typeZh: "甜點", typeEn: "Pastries", addr: "300 Hanover St, Boston, MA 02113", suggestedZh: "4/27 或 5/1 晚上", suggestedEn: "Evening of Apr 27 or May 1", icon: Coffee },
   { name: "James Hook & Co", typeZh: "海鮮、龍蝦堡", typeEn: "Seafood, lobster rolls", addr: "440 Atlantic Ave, Boston, MA 02210", suggestedZh: "5/1 午餐", suggestedEn: "Lunch on May 1", icon: Anchor, warningZh: "週五營業至 17:00", warningEn: "Friday hours until 5 PM" },
@@ -1265,7 +1222,7 @@ const preTripChecklist = [
       bi("購買並啟用美國 eSIM（Airalo、Holafly 或 Nomad）", "Purchase and activate a US eSIM (Airalo, Holafly, or Nomad)"),
       bi("確認萬國轉接器（Type G 轉 Type A／B）", "Confirm a Type G to Type A/B universal adapter"),
       bi("檢查家中所有電器是否雙電壓", "Check that all personal electronics are dual voltage"),
-      bi("Tassel 系統內預先轉發畢業典禮票券給家屬", "Forward graduation tickets to family through Tassel"),
+      bi("畢業典禮票券由 Eugene 透過 Tassel 系統預先轉發", "Eugene forwards graduation tickets in advance through Tassel"),
       bi("下載 Uber、Google Maps、Amtrak、OpenTable App", "Install Uber, Google Maps, Amtrak, and OpenTable apps"),
     ],
   },
@@ -1390,57 +1347,6 @@ function IntensityBadge({ level, lang }) {
       <span className="inline-block w-1.5 h-1.5 rounded-full" style={{ background: tone.text }} />
       {t(labels[level], lang)}
     </span>
-  );
-}
-
-function QuickPill({ pill, lang }) {
-  const Icon = ICON_MAP[pill.iconKey] || Info;
-  return (
-    <div
-      className="flex items-center gap-2 rounded-xl border px-3 py-2 text-sm shadow-sm"
-      style={{ background: "rgba(255,255,255,0.78)", borderColor: C.tan, color: C.ink }}
-    >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ background: C.tealSoft, color: C.teal }}>
-        <Icon className="h-4 w-4" />
-      </div>
-      <span className="min-w-0 break-words font-semibold leading-snug">{t(pill.title, lang)}</span>
-    </div>
-  );
-}
-
-function StickyAlertBar({ lang }) {
-  const tones = {
-    navy: { bg: C.navy, text: "#ffffff", icon: C.goldSoft, accent: C.goldSoft },
-    gold: { bg: C.bgWarm, text: C.ink, icon: C.gold, accent: C.gold, border: C.tanLight },
-    teal: { bg: C.tealSoft, text: C.ink, icon: C.teal, accent: C.teal, border: "#c7d7df" },
-    plum: { bg: C.plumSoft, text: C.ink, icon: C.plum, accent: C.plum, border: "#e3c7d7" },
-  };
-  return (
-    <div className="sticky top-0 z-40 backdrop-blur-md border-b" style={{ background: "rgba(252,250,242,0.92)", borderColor: C.tan }}>
-      <div className="max-w-6xl mx-auto px-3 sm:px-5 py-2">
-        <div className="flex gap-2 overflow-x-auto pb-1 md:grid md:grid-cols-4 md:overflow-visible md:pb-0 md:gap-3">
-          {stickyItems.map((item, i) => {
-            const tone = tones[item.tone];
-            const Icon = ICON_MAP[item.iconKey] || Info;
-            return (
-              <div
-                key={i}
-                className="min-w-[260px] md:min-w-0 rounded-xl border px-3 py-2 leading-snug"
-                style={{ background: tone.bg, color: tone.text, borderColor: tone.border || tone.bg }}
-              >
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <Icon className="h-3.5 w-3.5 shrink-0" style={{ color: tone.icon }} />
-                  <span className="text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase" style={{ color: tone.accent }}>
-                    {t(item.title, lang)}
-                  </span>
-                </div>
-                <p className="text-[12px] sm:text-[13px]">{t(item.body, lang)}</p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -1832,7 +1738,7 @@ function DayCard({ day, lang }) {
               <AccordionTrigger className="hover:no-underline py-2.5 sm:py-3">
                 <div className="flex items-center gap-2 text-[13px] sm:text-sm font-semibold" style={{ color: C.ink }}>
                   <Shield className="h-4 w-4 flex-shrink-0" style={{ color: C.gold }} />
-                  <span>{lang === "zh" ? "本日原則" : "Day Rules"}</span>
+                  <span>{lang === "zh" ? "今日要點" : "Day Notes"}</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-3">
@@ -1841,27 +1747,6 @@ function DayCard({ day, lang }) {
                     <li key={i} className="flex gap-2" style={{ color: C.body }}>
                       <CheckCircle2 className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: C.teal }} />
                       <span className="leading-relaxed">{t(r, lang)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </AccordionContent>
-            </AccordionItem>
-          )}
-
-          {day.avoid && (
-            <AccordionItem value="avoid" className="border-b" style={{ borderColor: C.tanSoft }}>
-              <AccordionTrigger className="hover:no-underline py-2.5 sm:py-3">
-                <div className="flex items-center gap-2 text-[13px] sm:text-sm font-semibold" style={{ color: C.ink }}>
-                  <XCircle className="h-4 w-4 flex-shrink-0" style={{ color: "#a8531e" }} />
-                  <span>{lang === "zh" ? "本日不排" : "Skip Today"}</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-3">
-                <ul className="space-y-1.5 text-[13px] sm:text-sm">
-                  {day.avoid.map((a, i) => (
-                    <li key={i} className="flex gap-2" style={{ color: C.body }}>
-                      <span className="mt-0.5 flex-shrink-0" style={{ color: "#a8531e" }}>×</span>
-                      <span className="leading-relaxed">{t(a, lang)}</span>
                     </li>
                   ))}
                 </ul>
@@ -2062,53 +1947,40 @@ export default function App() {
         </div>
 
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 lg:py-16">
-          <div className="grid lg:grid-cols-[auto_1fr] gap-6 lg:gap-10 items-start">
-            <div className="flex-shrink-0" style={{ color: C.navy }}>
-              <HuskyMark className="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28" />
+          <div className="min-w-0 max-w-3xl">
+            <div className="flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.25em] mb-3 font-semibold" style={{ color: C.gold }}>
+              <span className="w-6 h-px" style={{ background: C.gold, opacity: 0.5 }} />
+              <span>Northeastern · Class of 2026</span>
+              <span className="w-6 h-px" style={{ background: C.gold, opacity: 0.5 }} />
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.25em] mb-3 font-semibold" style={{ color: C.gold }}>
-                <span className="w-6 h-px" style={{ background: C.gold, opacity: 0.5 }} />
-                <span>Northeastern · Class of 2026</span>
-                <span className="w-6 h-px" style={{ background: C.gold, opacity: 0.5 }} />
+            <h1
+              className="text-3xl sm:text-5xl lg:text-[58px] font-semibold leading-[1.1] tracking-tight"
+              style={{ fontFamily: '"PingFang TC", Georgia, "Times New Roman", serif', color: C.navy }}
+            >
+              {t(meta.title, lang)}
+            </h1>
+            <p className="text-base sm:text-lg lg:text-xl font-light mt-3 leading-relaxed" style={{ color: C.body }}>
+              {t(meta.subtitle, lang)}
+            </p>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-xs sm:text-sm" style={{ color: C.body }}>
+              <div className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4" style={{ color: C.gold }} />
+                <span>{meta.dates}</span>
               </div>
-              <h1
-                className="text-3xl sm:text-5xl lg:text-[58px] font-semibold leading-[1.1] tracking-tight"
-                style={{ fontFamily: '"PingFang TC", Georgia, "Times New Roman", serif', color: C.navy }}
-              >
-                {t(meta.title, lang)}
-              </h1>
-              <p className="text-base sm:text-lg lg:text-xl font-light mt-3 leading-relaxed" style={{ color: C.body }}>
-                {t(meta.subtitle, lang)}
-              </p>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-5 text-xs sm:text-sm" style={{ color: C.body }}>
-                <div className="flex items-center gap-1.5">
-                  <Calendar className="h-4 w-4" style={{ color: C.gold }} />
-                  <span>{meta.dates}</span>
-                </div>
-                <div className="hidden sm:block w-px h-4" style={{ background: C.tan }} />
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4" style={{ color: C.gold }} />
-                  <span>Boston · Philadelphia · DC · New York</span>
-                </div>
-                <div className="hidden sm:block w-px h-4" style={{ background: C.tan }} />
-                <div className="flex items-center gap-1.5">
-                  <Users className="h-4 w-4" style={{ color: C.gold }} />
-                  <span>{t(meta.travelers, lang)}</span>
-                </div>
+              <div className="hidden sm:block w-px h-4" style={{ background: C.tan }} />
+              <div className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" style={{ color: C.gold }} />
+                <span>Boston · Philadelphia · DC · New York</span>
               </div>
-
-              {/* Quick alert pills */}
-              <div className="mt-6 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                {quickPills.map((pill, i) => <QuickPill key={i} pill={pill} lang={lang} />)}
+              <div className="hidden sm:block w-px h-4" style={{ background: C.tan }} />
+              <div className="flex items-center gap-1.5">
+                <Users className="h-4 w-4" style={{ color: C.gold }} />
+                <span>{t(meta.travelers, lang)}</span>
               </div>
             </div>
           </div>
         </div>
       </header>
-
-      {/* STICKY ALERT BAR */}
-      <StickyAlertBar lang={lang} />
 
       {/* TAB NAVIGATION */}
       <div className="border-b" style={{ borderColor: C.tan, background: "#ffffff" }}>
@@ -2276,7 +2148,7 @@ export default function App() {
                 <SectionTitle
                   eyebrow={bi("第三段", "Segment Three")}
                   title={bi("紐約 · 5/5 至 5/11", "New York · May 5 to May 11")}
-                  subtitle={bi("家屬自由行段。每日只做一個區域，待住宿地點確認後排序。", "Self-guided family segment. One area per day. Sequence finalizes after the hotel is confirmed.")}
+                  subtitle={bi("自由行段。每日只做一個區域，待住宿地點確認後排序。", "Self-guided segment. One area per day. Sequence finalizes after the hotel is confirmed.")}
                   lang={lang}
                 />
                 <Alert style={{ background: C.bgWarm, borderColor: C.tan }}>
