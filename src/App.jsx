@@ -622,12 +622,13 @@ const days = [
       legs: [
         { code: "BR872", route: "HKG → TPE", time: "4/25 19:40 → 21:30" },
         { code: "BR026", route: "TPE → SEA", time: "4/25 23:40 → 19:30" },
-        { code: "AS536", route: "SEA → BOS", time: "4/25 22:45 → 4/26 07:12+1" },
+        { code: "AS536", route: "SEA → BOS", time: "4/25 22:45 → 4/26 07:12+1", terminal: bi("Terminal B 抵達，行李提領於 Level 1", "Terminal B arrival, baggage claim on Level 1") },
       ],
     },
     timeline: [
-      { time: "07:12", activity: bi("抵達 Logan Airport，AS536 班機降落", "Arrive at Logan Airport, AS536") },
-      { time: "08:30 - 09:30", activity: bi("領取行李，Uber 至 The Revolution Hotel", "Collect baggage, Uber to The Revolution Hotel") },
+      { time: "07:12", activity: bi("AS536 於 Logan Terminal B 降落", "AS536 lands at Logan Terminal B") },
+      { time: "07:20 - 08:30", activity: bi("Eugene 於 Terminal B Level 1 行李提領區外接機", "Eugene meets the family outside Terminal B Level 1 baggage claim") },
+      { time: "08:30 - 09:30", activity: bi("Uber 從 Terminal B Departures 上層上車前往 The Revolution Hotel", "Uber from Terminal B Departures (upper level) to The Revolution Hotel") },
       { time: "09:30 - 11:00", activity: bi("飯店寄放行李，於附近 Tatte 享用早午餐", "Drop bags at hotel; brunch at nearby Tatte") },
       { time: "11:00 - 14:00", activity: bi("Public Garden 緩步散步，時間不超過一小時；其餘時間於飯店大廳休息", "Light stroll through the Public Garden, no more than an hour; rest in hotel lobby otherwise") },
       { time: "15:00", activity: bi("辦理入住，立即補眠兩至三小時", "Check in and nap two to three hours") },
@@ -739,7 +740,7 @@ const days = [
       { time: "10:00", activity: bi("典禮正式開始", "Ceremony begins") },
       { time: "12:00 - 13:00", activity: bi("典禮結束，於 Fenway 附近用餐（Tasty Burger Fenway 或 Citizen Public House）", "Ceremony ends; lunch near Fenway (Tasty Burger Fenway or Citizen Public House)") },
       { time: bi("下午", "Afternoon"), activity: bi("回飯店休息", "Rest at the hotel") },
-      { time: bi("晚上", "Evening"), activity: bi("Back Bay 或南端正式一點晚餐慶祝", "Celebratory dinner in Back Bay or South End") },
+      { time: bi("晚上", "Evening"), activity: bi("Back Bay 或南端晚餐", "Dinner in Back Bay or South End") },
     ],
     locations: [
       { name: bi("Fenway Park", "Fenway Park"), addr: "4 Jersey St, Boston, MA 02215" },
@@ -1153,6 +1154,38 @@ const hotels = [
   },
 ];
 
+const transitCards = [
+  {
+    city: bi("波士頓 MBTA", "Boston MBTA"),
+    system: "CharlieCard / CharlieCard Tap",
+    singleRide: "$2.40",
+    dayPass: bi("$11.50（含一日無限次）", "$11.50 (one-day unlimited)"),
+    tapToPay: bi("支援 Apple Pay、Google Pay 與感應式信用卡", "Apple Pay, Google Pay, and contactless credit cards supported"),
+    fareCap: null,
+    recommendation: bi(
+      "六天波士頓段地鐵使用次數不多，直接用 Apple Pay 或感應式信用卡刷閘門即可，不需要購買實體 CharlieCard。若搭乘超過五次以上才考慮買日票或週票。",
+      "MBTA usage during the six Boston days will be light. Tap Apple Pay or a contactless card directly at the gate. No physical CharlieCard needed. Consider a day or week pass only if rides exceed five per day."
+    ),
+    color: C.teal,
+  },
+  {
+    city: bi("紐約 MTA", "New York MTA"),
+    system: "OMNY",
+    singleRide: "$2.90",
+    dayPass: bi("無一日票（採週上限）", "No day pass (uses weekly cap)"),
+    tapToPay: bi("OMNY 直接感應 Apple Pay、Google Pay、感應式信用卡", "OMNY accepts Apple Pay, Google Pay, and contactless credit cards"),
+    fareCap: bi(
+      "同一張卡在一週內（週一至週日）刷滿 12 次後，當週剩餘車程免費（約折合 $34.80 上限）",
+      "After 12 rides on the same card in one week (Mon to Sun), all additional rides that week are free (effective cap of about $34.80)"
+    ),
+    recommendation: bi(
+      "建議全程使用 OMNY tap-to-pay，不需要購買實體 MetroCard。家屬與 Eugene 應使用各自的卡片或裝置感應，週上限以單一裝置計算。連續搭六天地鐵時這項上限會自動觸發。",
+      "Use OMNY tap-to-pay throughout; no physical MetroCard needed. Each person should tap with their own card or device since the weekly cap is calculated per device. The cap will automatically trigger across six days of subway use."
+    ),
+    color: C.plum,
+  },
+];
+
 const avisStrategy = {
   pickup: {
     code: "BO4",
@@ -1374,14 +1407,14 @@ function RouteDiagram({ lang }) {
         </p>
       </CardHeader>
       <CardContent className="p-4 md:p-5">
-        <div className="grid gap-3 md:grid-cols-9 md:items-stretch">
+        <div className="flex flex-col md:flex-row md:items-stretch gap-3">
           {routeNodes.map((node, idx) => {
             const tone = toneFor(node.tone);
             const Icon = ICON_MAP[node.iconKey] || Info;
             return (
               <React.Fragment key={node.id}>
                 <div
-                  className="md:col-span-1 relative min-w-0 rounded-2xl border p-4 shadow-sm"
+                  className="flex-1 min-w-0 rounded-2xl border p-4 shadow-sm"
                   style={{ borderColor: C.tan, background: C.bgWarm }}
                 >
                   <div className="flex items-center gap-2.5 mb-2">
@@ -1389,14 +1422,14 @@ function RouteDiagram({ lang }) {
                       <Icon className="h-4 w-4" />
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold" style={{ color: C.ink }}>{t(node.label, lang)}</p>
-                      <p className="text-[11px]" style={{ color: C.gold }}>{node.date}</p>
+                      <p className="text-sm font-semibold leading-tight" style={{ color: C.ink }}>{t(node.label, lang)}</p>
+                      <p className="text-[11px] mt-0.5" style={{ color: C.gold }}>{node.date}</p>
                     </div>
                   </div>
                   <p className="text-[12px] leading-5" style={{ color: C.body }}>{t(node.note, lang)}</p>
                 </div>
                 {idx < routeNodes.length - 1 && (
-                  <div className="hidden md:flex md:col-span-1 items-center justify-center">
+                  <div className="hidden md:flex items-center justify-center flex-shrink-0 px-1">
                     <ArrowRight className="h-5 w-5" style={{ color: C.gold }} />
                   </div>
                 )}
@@ -1628,14 +1661,22 @@ function DayCard({ day, lang }) {
               <Plane className="h-4 w-4" />
               {lang === "zh" ? "航班資訊" : "Flight Information"}
             </div>
-            <div className="space-y-1.5 text-xs">
+            <div className="space-y-2 text-xs">
               {day.flightInfo.legs.map((leg, i) => (
-                <div key={i} className="grid grid-cols-[68px_1fr] sm:grid-cols-[80px_120px_1fr] gap-2 sm:gap-3 items-center">
-                  <Badge variant="outline" className="bg-white border font-mono text-[10px] sm:text-xs justify-center" style={{ borderColor: "#c7d7df", color: "#214a57" }}>
-                    {leg.code}
-                  </Badge>
-                  <span className="text-[11px] sm:text-xs" style={{ color: C.body }}>{leg.route}</span>
-                  <span className="text-[10px] sm:text-xs col-span-2 sm:col-span-1" style={{ color: C.mute }}>{leg.time}</span>
+                <div key={i}>
+                  <div className="grid grid-cols-[68px_1fr] sm:grid-cols-[80px_120px_1fr] gap-2 sm:gap-3 items-center">
+                    <Badge variant="outline" className="bg-white border font-mono text-[10px] sm:text-xs justify-center" style={{ borderColor: "#c7d7df", color: "#214a57" }}>
+                      {leg.code}
+                    </Badge>
+                    <span className="text-[11px] sm:text-xs" style={{ color: C.body }}>{leg.route}</span>
+                    <span className="text-[10px] sm:text-xs col-span-2 sm:col-span-1" style={{ color: C.mute }}>{leg.time}</span>
+                  </div>
+                  {leg.terminal && (
+                    <div className="ml-0 sm:ml-[92px] mt-1 text-[11px] sm:text-xs flex items-center gap-1.5 font-medium" style={{ color: "#214a57" }}>
+                      <MapPin className="h-3 w-3" />
+                      <span>{t(leg.terminal, lang)}</span>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -1972,11 +2013,6 @@ export default function App() {
                 <MapPin className="h-4 w-4" style={{ color: C.gold }} />
                 <span>Boston · Philadelphia · DC · New York</span>
               </div>
-              <div className="hidden sm:block w-px h-4" style={{ background: C.tan }} />
-              <div className="flex items-center gap-1.5">
-                <Users className="h-4 w-4" style={{ color: C.gold }} />
-                <span>{t(meta.travelers, lang)}</span>
-              </div>
             </div>
           </div>
         </div>
@@ -2104,7 +2140,6 @@ export default function App() {
                 <SectionTitle
                   eyebrow={bi("不可動的固定日程", "Fixed Schedule")}
                   title={bi("兩場畢業典禮詳情", "Two Commencement Ceremonies")}
-                  subtitle={bi("兩場典禮為全程最高優先級，所有觀光、餐廳、交通安排皆不可壓縮入場時間。", "These two ceremonies hold the highest priority. No sightseeing, dining, or transit decision should compress arrival time.")}
                   lang={lang}
                 />
                 {ceremonies.map((c) => <CeremonyCard key={c.id} ceremony={c} lang={lang} />)}
@@ -2168,6 +2203,68 @@ export default function App() {
             {/* LOGISTICS TAB */}
             <TabsContent value="logistics" className="mt-0">
               <div className="py-8 sm:py-12 space-y-10 sm:space-y-14 max-w-6xl mx-auto px-3 sm:px-4">
+                <div>
+                  <SectionTitle
+                    eyebrow={bi("住宿", "Accommodations")}
+                    title={bi("三段住宿安排", "Three Lodging Segments")}
+                    lang={lang}
+                  />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+                    {hotels.map((h, i) => {
+                      const cityIcons = ["boston", "philly", "ny"];
+                      return (
+                        <Card key={i} className="overflow-hidden" style={{ borderColor: C.tan, background: "#ffffff" }}>
+                          <CardHeader className="pb-3 border-b" style={{ borderColor: C.tanLight, background: C.bgWarm }}>
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-center gap-2 text-[10px] sm:text-xs uppercase tracking-[0.18em] font-semibold mb-1" style={{ color: C.gold }}>
+                                  <span>{lang === "zh" ? `第 ${i + 1} 段` : `Segment ${i + 1}`}</span>
+                                  {h.pending && (
+                                    <Badge variant="outline" className="text-[10px] font-normal" style={{ background: C.tanSoft, color: C.gold, borderColor: C.tan }}>
+                                      {lang === "zh" ? "待提供" : "TBC"}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <CardTitle className="text-base sm:text-lg leading-tight" style={{ color: C.navy, fontFamily: 'Georgia, "PingFang TC", serif' }}>
+                                  {t(h.name, lang)}
+                                </CardTitle>
+                                <CardDescription className="mt-1 text-[12px]" style={{ color: C.mute }}>
+                                  {t(h.nights, lang)}
+                                </CardDescription>
+                              </div>
+                              <div className="flex-shrink-0" style={{ color: C.navy, opacity: 0.55 }}>
+                                <CityIcon city={cityIcons[i]} className="h-8 w-8" />
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="pt-4 space-y-3 text-[13px] sm:text-sm">
+                            <div>
+                              <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold mb-1" style={{ color: C.mute }}>
+                                {lang === "zh" ? "地址" : "Address"}
+                              </div>
+                              <div className="break-words leading-snug" style={{ color: C.ink }}>{t(h.addr, lang)}</div>
+                              {!h.pending && (
+                                <div className="mt-2"><MapButton addr={t(h.addr, lang)} lang={lang} /></div>
+                              )}
+                            </div>
+                            {h.rating && (
+                              <div className="flex items-baseline gap-2">
+                                <span className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>
+                                  {lang === "zh" ? "評分" : "Rating"}
+                                </span>
+                                <span className="font-mono text-sm font-semibold" style={{ color: C.gold }}>{h.rating}</span>
+                              </div>
+                            )}
+                            <div className="text-[12px] sm:text-[13px] italic leading-relaxed pt-1 border-t" style={{ color: C.body, borderColor: C.tanSoft }}>
+                              {t(h.note, lang)}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div>
                   <SectionTitle
                     eyebrow={bi("租車", "Car Rental")}
@@ -2255,26 +2352,6 @@ export default function App() {
                       </CardContent>
                     </Card>
                   </div>
-
-                  <Card className="mt-4 sm:mt-5" style={{ borderColor: "#e6a3a3", background: "#ffffff", overflow: "hidden" }}>
-                    <CardHeader className="pb-3 border-b" style={{ background: "#f7d9d9", borderColor: "#e6a3a3" }}>
-                      <div className="flex items-start justify-between gap-3">
-                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ color: "#8a1e1e", fontFamily: '"PingFang TC", Georgia, serif' }}>
-                          <XCircle className="h-5 w-5" />
-                          {lang === "zh" ? "已關閉，不可使用" : "Closed, Do Not Use"}
-                        </CardTitle>
-                        <Badge variant="outline" className="font-mono line-through" style={{ background: "#ffffff", borderColor: "#e6a3a3", color: "#8a1e1e" }}>{avisStrategy.closed.code}</Badge>
-                      </div>
-                      <CardDescription className="mt-1" style={{ color: "#8a1e1e" }}>
-                        {avisStrategy.closed.name}
-                        <span className="mx-2 opacity-50">·</span>
-                        {t(avisStrategy.closed.status, lang)}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-4">
-                      <p className="text-[13px] sm:text-sm leading-relaxed" style={{ color: C.body }}>{t(avisStrategy.closed.note, lang)}</p>
-                    </CardContent>
-                  </Card>
                 </div>
 
                 <div>
@@ -2327,6 +2404,73 @@ export default function App() {
                         ))}
                       </CardContent>
                     </Card>
+                  </div>
+                </div>
+
+                <div>
+                  <SectionTitle
+                    eyebrow={bi("城市內交通", "City Transit")}
+                    title={bi("交通卡與付款方式", "Transit Cards & Payment")}
+                    subtitle={bi("波士頓 MBTA 與紐約 MTA 兩套系統皆已支援感應式付款，多數情況下不需要購買實體交通卡。", "MBTA in Boston and MTA in New York both support contactless payment. In most cases, a physical transit card is not necessary.")}
+                    lang={lang}
+                  />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+                    {transitCards.map((card, i) => (
+                      <Card key={i} className="overflow-hidden" style={{ borderColor: C.tan, background: "#ffffff" }}>
+                        <CardHeader className="pb-3 border-b" style={{ borderColor: C.tanLight, background: C.bgWarm }}>
+                          <div className="flex items-start gap-3">
+                            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" style={{ background: card.color, color: "#ffffff" }}>
+                              <Bus className="h-5 w-5" />
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <CardTitle className="text-base sm:text-lg leading-tight" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
+                                {t(card.city, lang)}
+                              </CardTitle>
+                              <div className="text-[12px] sm:text-sm mt-0.5 font-mono" style={{ color: card.color }}>
+                                {card.system}
+                              </div>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="pt-4 space-y-3 text-[13px] sm:text-sm">
+                          <div className="grid grid-cols-2 gap-3 pb-3 border-b" style={{ borderColor: C.tanSoft }}>
+                            <div>
+                              <div className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: C.mute }}>
+                                {lang === "zh" ? "單程" : "Single ride"}
+                              </div>
+                              <div className="font-mono text-base font-semibold mt-0.5" style={{ color: C.navy }}>{card.singleRide}</div>
+                            </div>
+                            <div>
+                              <div className="text-[10px] uppercase tracking-wider font-semibold" style={{ color: C.mute }}>
+                                {lang === "zh" ? "日票" : "Day pass"}
+                              </div>
+                              <div className="text-[12px] sm:text-[13px] font-medium mt-0.5" style={{ color: C.body }}>{t(card.dayPass, lang)}</div>
+                            </div>
+                          </div>
+                          <div>
+                            <div className="text-[10px] uppercase tracking-wider font-semibold mb-1" style={{ color: C.mute }}>
+                              {lang === "zh" ? "感應付款" : "Tap-to-pay"}
+                            </div>
+                            <div className="text-[12px] sm:text-[13px] leading-relaxed" style={{ color: C.body }}>{t(card.tapToPay, lang)}</div>
+                          </div>
+                          {card.fareCap && (
+                            <div className="rounded-md p-2.5 border" style={{ background: C.bgWarm, borderColor: C.tanLight }}>
+                              <div className="text-[10px] uppercase tracking-wider font-semibold mb-1" style={{ color: C.gold }}>
+                                {lang === "zh" ? "週上限" : "Weekly cap"}
+                              </div>
+                              <div className="text-[12px] sm:text-[13px] leading-relaxed" style={{ color: C.body }}>{t(card.fareCap, lang)}</div>
+                            </div>
+                          )}
+                          <div className="pt-3 border-t" style={{ borderColor: C.tanSoft }}>
+                            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider font-semibold mb-1.5" style={{ color: card.color }}>
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              <span>{lang === "zh" ? "建議" : "Recommendation"}</span>
+                            </div>
+                            <div className="text-[12px] sm:text-[13px] leading-relaxed" style={{ color: C.body }}>{t(card.recommendation, lang)}</div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 </div>
               </div>
