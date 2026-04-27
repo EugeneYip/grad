@@ -403,7 +403,7 @@ const practicalInfo = [
       { label: bi("香港駐紐約經貿辦事處", "HKETO New York"), value: "(212) 752-3320" },
       { label: bi("外交部旅外國人急難救助專線", "Taiwan MOFA Global Hotline"), value: "011-800-0885-0885" },
       { label: bi("Amtrak 客服", "Amtrak"), value: "1-800-USA-RAIL" },
-      { label: bi("Avis 取車點 BO4", "Avis BO4 pickup"), value: "(617) 534-1404" },
+      { label: bi("Enterprise 客服", "Enterprise Customer Service"), value: "1-855-266-9565" },
     ],
   },
 ];
@@ -851,9 +851,9 @@ const days = [
     intensity: "high",
     timeline: [
       { time: "08:30", activity: bi("退房，行李集中於飯店大廳", "Check out; gather luggage in the lobby") },
-      { time: "08:45", activity: bi("Uber 從 The Revolution Hotel 至 100 Clarendon St，約 3 分鐘", "Uber from The Revolution Hotel to 100 Clarendon St, about 3 minutes") },
-      { time: "09:00", activity: bi("Avis Boston Back Bay Station Garage（BO4）取車", "Pick up at Avis Boston Back Bay Station Garage (BO4)") },
-      { time: "09:30", activity: bi("出發，從 Back Bay 直接上 I-90 W（Mass Pike）西行", "Depart, enter I-90 West (Mass Pike) directly from Back Bay") },
+      { time: "08:45", activity: bi("Uber 從 The Revolution Hotel 至 Boston Revere Hotel（200 Stuart St）取車櫃檯，車程約 3 分鐘", "Uber from The Revolution Hotel to the Enterprise pickup at the Boston Revere Hotel (200 Stuart St); about 3 minutes") },
+      { time: "09:00", activity: bi("Enterprise（Boston Revere Hotel，5、6 樓）取車", "Pick up at Enterprise (Boston Revere Hotel, 5th & 6th Floor)") },
+      { time: "09:30", activity: bi("出發，從 Theatre District 上 I-90 W（Mass Pike）西行", "Depart, enter I-90 West (Mass Pike) from the Theatre District") },
       { time: "13:30", activity: bi("抵達 American Dream，車程約 4 小時", "Arrive at American Dream after about 4 hours of driving") },
       { time: "13:30 - 14:30", activity: bi("商場內用餐（Yard House 或 Shake Shack 等）", "Lunch in the mall (Yard House, Shake Shack, or similar)") },
       { time: "14:30 - 17:00", activity: bi("購物時段，免稅服飾類最划算；最晚 17:00 離開", "Shopping; clothing flagships are the best value; depart by 5:00 PM at the latest") },
@@ -883,7 +883,7 @@ const days = [
       { title: bi("Royal Buffet 提早預訂或致電確認", "Confirm Royal Buffet ahead of time"), body: bi("週六晚餐時段熱門，建議當天下午先以電話確認可入座時間，避免久候。", "Saturday dinner is busy; call ahead during the afternoon to confirm seating to avoid waits.") },
     ],
     locations: [
-      { name: bi("Avis Boston Back Bay Station Garage（BO4）", "Avis Boston Back Bay Station Garage (BO4)"), addr: "100 Clarendon St, Boston, MA 02116", url: "https://maps.app.goo.gl/AxawRXqMk218nM318" },
+      { name: bi("Enterprise（Boston Revere Hotel）取車點", "Enterprise pickup (Boston Revere Hotel)"), addr: "200 Stuart St, 5th & 6th Floor, Boston, MA 02116", url: "https://maps.app.goo.gl/FKqELTuYxA8iJ1Sy8" },
       { name: bi("American Dream", "American Dream"), addr: "1 American Dream Way, East Rutherford, NJ 07073", url: "https://maps.app.goo.gl/TLGKBW3TUsU6es3U8" },
       { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
       { name: bi("Royal Buffet & Grill", "Royal Buffet & Grill"), addr: "2743 S 3rd St, Philadelphia, PA 19148", url: "https://maps.app.goo.gl/LbNZ64fYvAYbiFdJ9" },
@@ -900,11 +900,11 @@ const days = [
     icon: GraduationCap,
     intensity: "mid",
     timeline: [
-      { time: "08:30 - 09:30", activity: bi("4211 Suites 享用早餐，整理行李於房內，無需退房", "Breakfast at 4211 Suites; organize luggage in the room (no checkout today)") },
-      { time: "09:30 - 09:45", activity: bi("Eugene 單獨開車至 J5D（1324 Arch St），約 1.2 英里、7 分鐘", "Eugene drives solo to J5D (1324 Arch St), about 1.2 miles, 7 minutes") },
-      { time: "09:45 - 10:15", activity: bi("J5D 還車手續：油表、里程、損傷確認", "J5D drop-off: fuel level, mileage, damage check") },
-      { time: "10:15 - 10:30", activity: bi("Uber 從 J5D 回 4211 Suites，約 12 至 18 美元", "Uber from J5D back to 4211 Suites, $12 to $18") },
-      { time: "11:00", activity: bi("步行至 UPenn 校園，從 4211 Chestnut 即達", "Walk to the UPenn campus from 4211 Chestnut") },
+      { time: "08:00 - 08:30", activity: bi("4211 Suites 享用早餐，整理行李於房內，無需退房", "Breakfast at 4211 Suites; organize luggage in the room (no checkout today)") },
+      { time: "08:30", activity: bi("Eugene 單獨開車至 30th Street Station 還車（約 1 英里、5 分鐘）", "Eugene drives solo to 30th Street Station for the return (about 1 mile, 5 minutes)") },
+      { time: "09:00", activity: bi("Enterprise 30th Street Station 還車", "Return at Enterprise 30th Street Station") },
+      { time: "09:15 - 09:30", activity: bi("Uber 從 30th Street Station 回 4211 Suites，約 12 至 15 美元", "Uber from 30th Street Station back to 4211 Suites, $12 to $15") },
+      { time: "10:30", activity: bi("步行至 UPenn 校園，從 4211 Chestnut 即達", "Walk to the UPenn campus from 4211 Chestnut") },
       { time: bi("上午至中午", "Late morning"), activity: bi("Locust Walk、College Hall 外觀、Fisher Fine Arts Library 外觀", "Locust Walk, College Hall facade, Fisher Fine Arts Library facade") },
       { time: "12:30", activity: bi("University City 用餐", "Lunch in University City") },
       { time: "14:00 - 17:00", activity: bi("Philadelphia Museum of Art 外觀、Rocky Steps、Schuylkill River 河岸", "Philadelphia Museum of Art facade, Rocky Steps, Schuylkill River") },
@@ -913,13 +913,14 @@ const days = [
     ],
     notes: [
       bi("此次費城段只租車一天，5/3 上午就還車。費城市內景點集中，步行加 Uber 已足夠。", "The car rental for the Philadelphia segment is only one day; return it on the morning of May 3. Downtown sights are walkable, and Uber covers the rest."),
+      bi("還車地點即 30th Street Station 本體，動線單純；交完車鑰匙即進入車站，5/5 也將從同一車站搭 SEPTA 出發。", "The return location is 30th Street Station itself, so the workflow is simple: hand over the keys and walk into the station. The same station serves the SEPTA departure on May 5."),
       bi("若特別想看自由鐘，可從 Reading Terminal Market 步行 10 分鐘到 Liberty Bell 外觀（不入內）。", "For Liberty Bell fans, the bell is a 10-minute walk from Reading Terminal Market; view the exterior only."),
     ],
     warnings: [
-      { title: bi("J5D 營業時間", "J5D hours"), body: bi("週日營業 08:00 至 13:00，請務必於上午前還車。", "Sunday hours are 8 AM to 1 PM. Return the car during this window.") },
+      { title: bi("還車時間 9:00", "Return at 9:00"), body: bi("Enterprise 預訂時段為 5/3（週日）上午 9:00；建議 8:50 抵達櫃檯，預留少量緩衝。", "The Enterprise reservation is set for Sunday May 3 at 9:00 AM; arrive at the counter by 8:50 to leave a small buffer.") },
     ],
     locations: [
-      { name: bi("Avis Convention Center Parking（J5D）", "Avis Convention Center Parking (J5D)"), addr: "1324 Arch St, Philadelphia, PA 19107", url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA" },
+      { name: bi("Enterprise（30th Street Station）還車點", "Enterprise return (30th Street Station)"), addr: "2955 Market St, 30th Station, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/Hjfz7R3C44YZLJEn6" },
       { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
       { name: bi("UPenn · Locust Walk", "UPenn · Locust Walk"), addr: "Locust Walk, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/sCkV7SbviTESNY8QA" },
       { name: bi("College Hall", "College Hall"), addr: "3451 Walnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/PAoFbQGmAE7YKPhV9" },
@@ -1056,11 +1057,12 @@ const days = [
       { time: bi("上午", "Morning"), activity: bi("Wall Street、9/11 Memorial、Oculus", "Wall Street, 9/11 Memorial, Oculus") },
       { time: bi("中午", "Midday"), activity: bi("中午步行至 Lower East Side，Katz's Delicatessen 經典煙燻牛肉，或 Russ & Daughters 煙燻鮭魚 bagel", "Walk to Lower East Side for lunch: Katz's Delicatessen for classic pastrami, or Russ & Daughters for smoked salmon bagels") },
       { time: bi("下午", "Afternoon"), activity: bi("Battery Park、搭免費 Staten Island Ferry 遠望自由女神", "Battery Park; take the free Staten Island Ferry for distant Statue of Liberty views") },
-      { time: bi("傍晚", "Evening"), activity: bi("依體力進 Chinatown 或 SoHo", "Chinatown or SoHo, energy permitting") },
+      { time: bi("傍晚", "Evening"), activity: bi("依體力進 Chinatown 或 SoHo；想吃中式可至波記 Bo Ky 享用粵式麵食", "Chinatown or SoHo as energy allows; for Cantonese noodles, head to Bo Ky in Chinatown") },
     ],
     notes: [
       bi("這是步數較高的一天，建議放在中段，不要 Day 1 也不要最後一天。", "This is a high-step day. Place it mid-trip, not Day 1 or the final day."),
       bi("Katz's 與 Russ & Daughters 都是 Lower East Side 經典；前者偏熱餐、後者偏 brunch 風格，擇一即可。", "Katz's and Russ & Daughters are both Lower East Side classics; Katz's leans hot meals, Russ & Daughters leans brunch. Pick one."),
+      bi("波記 Bo Ky 位於 Bayard Street 中國城核心，粵式湯麵與滷味是媽媽的口袋名單。", "Bo Ky sits in the heart of Manhattan Chinatown on Bayard Street; the Cantonese noodle soups and braised dishes are on Mom's list."),
     ],
     locations: [
       { name: bi("9/11 Memorial 與 Museum", "9/11 Memorial & Museum"), addr: "180 Greenwich St, New York, NY 10007", url: "https://maps.app.goo.gl/cX9hdHnKn5vct2Tk7" },
@@ -1069,6 +1071,7 @@ const days = [
       { name: bi("Wall Street", "Wall Street"), addr: "Wall St, New York, NY 10005", url: "https://maps.app.goo.gl/vTocq87zFgUiymSy7" },
       { name: bi("Katz's Delicatessen", "Katz's Delicatessen"), addr: "205 E Houston St, New York, NY 10002", url: "https://maps.app.goo.gl/RZgNjrJeeSMVLj6J6" },
       { name: bi("Russ & Daughters", "Russ & Daughters"), addr: "179 E Houston St, New York, NY 10002", url: "https://maps.app.goo.gl/crz6yXafjtJnQp667" },
+      { name: bi("波記 Bo Ky", "Bo Ky"), addr: "80 Bayard St, New York, NY 10013", url: "https://maps.app.goo.gl/sDiVdtC141Z6az6K9" },
       { name: bi("Battery Park", "Battery Park"), addr: "Battery Pl, New York, NY 10004", url: "https://maps.app.goo.gl/c92TmjUdwjSzPeBC8" },
       { name: bi("Staten Island Ferry · Whitehall Terminal", "Staten Island Ferry · Whitehall Terminal"), addr: "4 Whitehall St, New York, NY 10004", url: "https://maps.app.goo.gl/bdsHbm3xHC3Carwy5" },
     ],
@@ -1153,15 +1156,16 @@ const days = [
     cityKey: "ny",
     city: bi("紐約 → 香港", "New York → Hong Kong"),
     title: bi("離境日", "Departure"),
-    subtitle: bi("依航班時間，待確認", "Pending flight details"),
+    subtitle: bi("航班時間與機場代碼仍待確認", "Flight time and airport code still to be confirmed"),
     icon: Plane,
     intensity: "mid",
+    pendingInfo: true,
     notes: [
       bi("依機場（JFK／EWR／LGA）與航班時間決定起床時間。", "Wake-up time depends on the airport (JFK / EWR / LGA) and flight."),
       bi("國際線建議起飛前 3 小時抵達機場。", "International flights: arrive 3 hours before departure."),
-      bi("曼哈頓至 JFK：Uber 60 至 90 分鐘，AirTrain 加 LIRR 約 60 分鐘。", "Manhattan to JFK: Uber 60 to 90 minutes, or AirTrain plus LIRR about 60 minutes."),
-      bi("曼哈頓至 EWR：Uber 45 至 75 分鐘，NJ Transit 約 45 分鐘。", "Manhattan to EWR: Uber 45 to 75 minutes, or NJ Transit about 45 minutes."),
-      bi("曼哈頓至 LGA：Uber 30 至 60 分鐘。", "Manhattan to LGA: Uber 30 to 60 minutes."),
+      bi("法拉盛至 JFK：Uber 約 25 至 45 分鐘；亦可搭 7 號線至 Jackson Hts–Roosevelt Av 站轉 E 線到 Sutphin Blvd–Archer Av 接 AirTrain，全程約 60 分鐘。", "Flushing to JFK: Uber about 25 to 45 minutes; alternatively, take the 7 line to Jackson Hts–Roosevelt Av, transfer to the E line to Sutphin Blvd–Archer Av, then board AirTrain (about 60 minutes total)."),
+      bi("法拉盛至 LGA：Uber 約 20 至 35 分鐘，距離最近。", "Flushing to LGA: Uber about 20 to 35 minutes; this is the closest of the three airports."),
+      bi("法拉盛至 EWR：Uber 約 50 至 80 分鐘；亦可搭 7 號線進曼哈頓 Penn Station 後轉 NJ Transit 至 Newark Airport Station，再接 AirTrain，全程約 90 分鐘。", "Flushing to EWR: Uber about 50 to 80 minutes; or take the 7 line to Penn Station, transfer to NJ Transit to Newark Airport Station, then AirTrain (about 90 minutes total)."),
     ],
     locations: [],
   },
@@ -1177,7 +1181,7 @@ const hotels = [
     nights: bi("4/26 至 5/2，六晚", "April 26 to May 2, 6 nights"),
     addr: "40 Berkeley St, Boston, MA 02116",
     url: "https://maps.app.goo.gl/YtDhXZ63mXTHbp576",
-    note: bi("位於 Back Bay 與南端交界，距離 Avis BO4 取車點 0.4 英里。", "On the Back Bay / South End border, 0.4 miles from Avis BO4 pickup."),
+    note: bi("位於 Back Bay 與南端交界，距離 Theatre District 的 Enterprise 取車點約 0.4 英里。", "On the Back Bay / South End border, about 0.4 miles from the Enterprise pickup in the Theatre District."),
   },
   {
     name: "4211 Suites",
@@ -1228,41 +1232,39 @@ const transitCards = [
   },
 ];
 
-const avisStrategy = {
+const rentalStrategy = {
+  vendor: "Enterprise",
+  confirmation: "1693056036",
   pickup: {
-    code: "BO4",
-    name: "Boston Back Bay Station Garage",
-    addr: "100 Clarendon St (Parking Garage), Boston, MA 02116",
-    url: "https://maps.app.goo.gl/AxawRXqMk218nM318",
-    phone: "(617) 534-1404",
-    hours: bi("週一至週日 24 小時", "Open 24 hours, all days"),
-    distFromHotel: bi("距 The Revolution Hotel 0.4 英里，步行 8 分鐘，Uber 約 3 分鐘 8 至 10 美元", "0.4 miles from The Revolution Hotel; 8-minute walk or 3-minute Uber at $8 to $10"),
-    advantage: bi("與 Logan Airport 同樣 24 小時營業，但省去 Uber 至機場的時間與車資（25 至 35 美元），且 Mass Pike 入口僅 3 分鐘車程。", "Same 24-hour access as Logan Airport, but saves the $25 to $35 Uber to the airport and reaches the Mass Pike on-ramp in 3 minutes."),
-    pickupTime: bi("5/2 上午 9:00", "May 2, 9:00 AM"),
+    name: bi("Boston Revere Hotel（Enterprise 取車點）", "Boston Revere Hotel (Enterprise pickup)"),
+    addr: "200 Stuart St, 5th & 6th Floor, Boston, MA 02116",
+    url: "https://maps.app.goo.gl/FKqELTuYxA8iJ1Sy8",
+    hours: bi("以櫃檯時段為準（取車時間 09:00）", "Counter hours apply (pickup at 9:00 AM)"),
+    distFromHotel: bi("距 The Revolution Hotel 約 0.4 英里、步行 8 分鐘，或短程 Uber 約 8 至 10 美元。", "About 0.4 miles from The Revolution Hotel; an 8-minute walk or a short Uber at $8 to $10."),
+    advantage: bi("位於 Theatre District，鄰近 I-90（Mass Pike）入口，從 Back Bay 出發只需數分鐘上路。", "Located in the Theatre District, just minutes from the I-90 (Mass Pike) on-ramp out of Back Bay."),
+    pickupTime: bi("5/2（週六）上午 9:00", "Saturday May 2, 9:00 AM"),
   },
   dropoff: {
-    code: "J5D",
-    name: "PHL Convention Center Parking",
-    addr: "1324 Arch Street, Philadelphia, PA 19107",
-    url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA",
-    hours: bi("週一至週五 07:00 至 19:00；週六、日 08:00 至 13:00", "Mon to Fri 7 AM to 7 PM; Sat to Sun 8 AM to 1 PM"),
-    note: bi("不提供 after-hours returns，必須於營業時間內歸還。", "No after-hours returns. Must return during business hours."),
-    dropoffTime: bi("5/3 上午 10:00", "May 3, 10:00 AM"),
-    flow: bi("Eugene 單獨從 4211 Suites 開車至 J5D 還車（1.2 英里、約 7 分鐘），再 Uber 回 4211 Suites（12 至 18 美元）。費城段只租車一天。", "Eugene drives solo from 4211 Suites to J5D (1.2 miles, about 7 minutes) to return the car, then Ubers back to 4211 Suites ($12 to $18). The Philadelphia segment uses the car for one day only."),
+    name: bi("Philadelphia 30th Street Station（Enterprise 還車點）", "Philadelphia 30th Street Station (Enterprise return)"),
+    addr: "2955 Market St, 30th Station, Philadelphia, PA 19104",
+    url: "https://maps.app.goo.gl/Hjfz7R3C44YZLJEn6",
+    hours: bi("以櫃檯時段為準（還車時間 09:00）", "Counter hours apply (return at 9:00 AM)"),
+    note: bi("還車地點即為 30th Street Station，動線單純，下車後即可進入車站準備搭乘 SEPTA 或休息。", "The return is at 30th Street Station itself; after handover, you can walk straight into the station for SEPTA or to rest."),
+    dropoffTime: bi("5/3（週日）上午 9:00", "Sunday May 3, 9:00 AM"),
+    flow: bi("Eugene 單獨從 4211 Suites 開車至 30th Street Station 還車（約 1 英里、5 分鐘），辦完手續即可走進車站，再 Uber 回 4211 Suites（約 12 至 15 美元）。費城段只租車一天。", "Eugene drives solo from 4211 Suites to 30th Street Station for the return (about 1 mile, 5 minutes); after handover, walk into the station, then Uber back to 4211 Suites ($12 to $15). The Philadelphia segment uses the car for one day only."),
   },
   insurance: {
     keep: [
-      { name: "E-Toll Unlimited", price: bi("每日 14.99 美元", "$14.99 per day"), reason: bi("Mass Pike 與紐澤西 Turnpike 過路費密集，被動 toll-by-plate 每筆手續費 9.95 美元，數學上 Unlimited 較便宜。", "Tolls on the Mass Pike and New Jersey Turnpike add up; passive toll-by-plate adds $9.95 per occurrence, so Unlimited wins on the math.") },
-      { name: bi("Additional Driver", "Additional Driver"), price: bi("整租期 33.15 美元", "$33.15 per rental"), reason: bi("若行程中可能由其他人接手駕駛則加；若全程由 Eugene 主開可省。", "Add this if anyone else may take the wheel. Skip if Eugene drives the entire trip.") },
+      { name: bi("Toll Pass（過路費套件）", "Toll Pass"), price: bi("依 Enterprise 方案計費", "Per Enterprise plan"), reason: bi("Mass Pike 與紐澤西 Turnpike 過路費密集，被動 toll-by-plate 每筆手續費較高，Toll Pass 整體較划算。", "Mass Pike and New Jersey Turnpike tolls add up; passive toll-by-plate adds high per-occurrence fees, so Toll Pass tends to win on the math.") },
+      { name: bi("Additional Driver", "Additional Driver"), price: bi("依 Enterprise 計費", "Per Enterprise pricing"), reason: bi("若行程中可能由其他人接手駕駛則加；若全程由 Eugene 主開可省。", "Add this if anyone else may take the wheel. Skip if Eugene drives the entire trip.") },
     ],
     skip: [
-      { name: "Cover The Car (LDW)", price: bi("79.02 美元", "$79.02"), reason: bi("若信用卡 Primary CDW 涵蓋，這項與其重複。Chase Sapphire Preferred／Reserve、Capital One Venture X、Amex Premium Car Rental 多為 primary。", "Most likely duplicates a Primary CDW from cards like Chase Sapphire Preferred/Reserve, Capital One Venture X, or Amex Premium Car Rental.") },
-      { name: "Cover My Liability (ALI)", price: bi("55.50 美元", "$55.50"), reason: bi("美國強制 liability 已含；若有 umbrella policy 多餘。", "Statutory US liability is already included. Redundant if you carry an umbrella policy.") },
-      { name: "Cover Myself (PAI)", price: bi("21.00 美元", "$21.00"), reason: bi("個人意外險，與旅遊險或醫療險重複。", "Personal accident coverage; overlaps with travel or medical insurance.") },
-      { name: "Cover My Belongings (PEP)", price: bi("8.85 美元", "$8.85"), reason: bi("家中租屋或房屋保險通常已涵蓋 off-premise 物品。", "Renter's or homeowner's insurance typically covers off-premise belongings.") },
-      { name: "Extended Roadside Assistance", price: bi("22.92 美元", "$22.92"), reason: bi("基本租約已含基本拖車。", "Basic roadside is already included in the rental.") },
+      { name: bi("Damage Waiver（DW／LDW）", "Damage Waiver (DW / LDW)"), price: bi("每日約 30 至 50 美元", "Roughly $30 to $50 per day"), reason: bi("若信用卡 Primary CDW 涵蓋，這項與其重複。Chase Sapphire Preferred／Reserve、Capital One Venture X、Amex Premium Car Rental 多為 primary。", "Likely duplicates Primary CDW from cards like Chase Sapphire Preferred/Reserve, Capital One Venture X, or Amex Premium Car Rental.") },
+      { name: bi("Supplemental Liability Protection（SLP）", "Supplemental Liability Protection (SLP)"), price: bi("每日約 15 至 18 美元", "Roughly $15 to $18 per day"), reason: bi("美國強制 liability 已含於租約；若另有 umbrella policy 多餘。", "Statutory US liability is already included in the rental. Redundant if an umbrella policy is in place.") },
+      { name: bi("Personal Accident & Personal Effects（PAI／PEC）", "Personal Accident & Personal Effects (PAI / PEC)"), price: bi("每日約 5 至 10 美元", "Roughly $5 to $10 per day"), reason: bi("與旅遊險、醫療險、租屋或房屋保險的隨身物品條款重複。", "Overlaps with travel and medical insurance, plus the off-premise belongings clause in renter's or homeowner's insurance.") },
+      { name: bi("Roadside Assistance Protection（RAP）", "Roadside Assistance Protection (RAP)"), price: bi("每日約 6 至 9 美元", "Roughly $6 to $9 per day"), reason: bi("基本租約已含基本拖車與緊急協助。", "Basic roadside support is already included in the rental.") },
     ],
-    potentialSavings: bi("約 187 美元", "About $187"),
+    note: bi("實際金額以 Enterprise 取車櫃檯顯示為準。Eugene 主要付款信用卡的 Primary CDW 為基礎判斷依據。", "Final amounts depend on what Enterprise displays at pickup. Eugene's primary credit card with Primary CDW is the baseline."),
   },
 };
 
@@ -1281,6 +1283,7 @@ const dining = [
   { name: "LOS TACOS No.1 (Chelsea Market)", typeZh: "墨西哥小食", typeEn: "Mexican tacos", addr: "75 9th Ave, New York, NY 10011", suggestedZh: "5/10 Chelsea Market 午餐", suggestedEn: "Lunch on May 10 at Chelsea Market", icon: Utensils, url: "https://maps.app.goo.gl/MaeWG1h5XJnixs1WA" },
   { name: "Hamburger America", typeZh: "經典美式漢堡", typeEn: "Classic American burgers", addr: "51 MacDougal St, New York, NY 10012", suggestedZh: "5/10 SoHo 散步", suggestedEn: "May 10 SoHo stroll", icon: Utensils, url: "https://maps.app.goo.gl/CbAmSeBjg7epGg7H9" },
   { name: "Junior's Restaurant", typeZh: "紐約經典芝士蛋糕", typeEn: "Iconic New York cheesecake", addr: "Brooklyn 與 Times Square 分店", addrEn: "Brooklyn and Times Square locations", suggestedZh: "5/9 Brooklyn 或 5/6 中城", suggestedEn: "May 9 Brooklyn or May 6 Midtown", icon: Coffee, url: "https://maps.app.goo.gl/vNBMGXJK62qgkgeM7" },
+  { name: "波記 Bo Ky", typeZh: "曼哈頓中國城粵式麵食", typeEn: "Cantonese noodles, Manhattan Chinatown", addr: "80 Bayard St, New York, NY 10013", suggestedZh: "5/7 下曼哈頓晚餐替代選項", suggestedEn: "Dinner alternative on May 7 (Lower Manhattan)", icon: Utensils, url: "https://maps.app.goo.gl/sDiVdtC141Z6az6K9" },
 ];
 
 const checklist = [
@@ -1301,12 +1304,13 @@ const checklist = [
     id: "vehicle",
     iconKey: "car",
     title: bi("車輛與駕駛", "Vehicle"),
-    note: bi("Avis 取車與還車兩端時間皆為硬性約定。", "Both Avis pickup and return times are firm."),
+    note: bi("Enterprise 取車與還車兩端時間皆為硬性約定。", "Both Enterprise pickup and return times are firm."),
     items: [
-      bi("5/2 上午 9:00 於 Avis BO4 取車（Boston Back Bay Station Garage，100 Clarendon St）。", "May 2 at 9:00 AM, pick up at Avis BO4 (Boston Back Bay Station Garage, 100 Clarendon St)."),
-      bi("5/3 上午 10:00 於 Avis J5D 還車（1324 Arch St，週日營業 08:00 至 13:00，不接受 after-hours）。", "May 3 at 10:00 AM, return at Avis J5D (1324 Arch St; Sunday hours 8 AM to 1 PM; no after-hours)."),
-      bi("Avis 訂單保留 E-Toll Unlimited；Mass Pike 與紐澤西 Turnpike 沿線過路費密集。", "Keep E-Toll Unlimited on the Avis booking; the Mass Pike and New Jersey Turnpike have heavy tolls."),
-      bi("信用卡 Primary CDW 為基礎判斷依據，已決定可省去 LDW 等加購保險。", "Primary CDW from the credit card is the baseline; the supplemental LDW etc. can be declined."),
+      bi("Enterprise 確認號碼：1693056036；Eugene 主要付款信用卡為 Primary CDW 基礎。", "Enterprise confirmation number: 1693056036; Eugene's primary credit card with Primary CDW is the baseline."),
+      bi("5/2（週六）上午 9:00 於 Boston Revere Hotel（200 Stuart St，5、6 樓）取車。", "Saturday May 2 at 9:00 AM, pick up at the Boston Revere Hotel (200 Stuart St, 5th & 6th Floor)."),
+      bi("5/3（週日）上午 9:00 於 Philadelphia 30th Street Station（2955 Market St）還車。", "Sunday May 3 at 9:00 AM, return at Philadelphia 30th Street Station (2955 Market St)."),
+      bi("Enterprise 訂單接受 Toll Pass；Mass Pike 與紐澤西 Turnpike 沿線過路費密集。", "Accept Toll Pass on the Enterprise booking; the Mass Pike and New Jersey Turnpike have heavy tolls."),
+      bi("到櫃檯前已決定婉拒 LDW、SLP、PAI／PEC、RAP 等加購保險（信用卡 Primary CDW 已涵蓋）。", "LDW, SLP, PAI/PEC, and RAP add-ons are pre-decided as decline (the credit card's Primary CDW already covers the gap)."),
       bi("國際駕照與護照副本上車前帶在身上。", "Carry the international driving permit and a copy of the passport before pickup."),
     ],
   },
@@ -2091,7 +2095,7 @@ export default function App() {
               <div className="hidden sm:block w-px h-4" style={{ background: C.tan }} />
               <div className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4" style={{ color: C.gold }} />
-                <span>Boston · Philadelphia · DC · New York</span>
+                <span>Boston · Philadelphia · New York</span>
               </div>
             </div>
           </div>
@@ -2223,7 +2227,7 @@ export default function App() {
                       <div className="text-[13px] sm:text-sm">
                         {[
                           [bi("波士頓市內", "Within Boston"), bi("Uber 與 MBTA", "Uber + MBTA")],
-                          [bi("波士頓 → 費城", "Boston → Philly"), bi("Avis 自駕（5/2 取車、5/3 還車）", "Avis self-drive (pick up May 2, return May 3)")],
+                          [bi("波士頓 → 費城", "Boston → Philly"), bi("Enterprise 自駕（5/2 取車、5/3 還車）", "Enterprise self-drive (pick up May 2, return May 3)")],
                           [bi("費城市內", "Within Philly"), bi("步行加 Uber", "Walking + Uber")],
                           [bi("費城 → 紐約", "Philly → NYC"), bi("SEPTA Trenton Line + NJ Transit", "SEPTA Trenton Line + NJ Transit")],
                           [bi("紐約市內", "Within NYC"), bi("Subway（OMNY 感應）加 Uber", "Subway (OMNY tap-to-pay) + Uber")],
@@ -2374,86 +2378,94 @@ export default function App() {
                 <div>
                   <SectionTitle
                     eyebrow={bi("租車", "Car Rental")}
-                    title={bi("Avis 取車與還車", "Avis Pickup & Drop-off")}
-                    subtitle={bi("Boston Back Bay 取車，Philadelphia Convention Center 還車。", "Pickup at Boston Back Bay, drop-off at Philadelphia Convention Center.")}
+                    title={bi("Enterprise 取車與還車", "Enterprise Pickup & Drop-off")}
+                    subtitle={bi("Boston Revere Hotel 取車，Philadelphia 30th Street Station 還車，租期一日。", "Pick up at the Boston Revere Hotel, return at Philadelphia 30th Street Station; one-day rental.")}
                     lang={lang}
                   />
+
+                  <div className="rounded-xl border p-4 mb-4 sm:mb-5 flex items-center gap-3" style={{ borderColor: C.tan, background: C.bgWarm }}>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg" style={{ background: "#1e6e3a", color: "#ffffff" }}>
+                      <Car className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <span className="text-sm sm:text-base font-semibold" style={{ color: C.navy, fontFamily: 'Georgia, "PingFang TC", serif' }}>
+                          {rentalStrategy.vendor}
+                        </span>
+                        <span className="text-[11px] sm:text-xs" style={{ color: C.mute }}>
+                          {lang === "zh" ? "確認號碼" : "Confirmation Number"}
+                        </span>
+                        <span className="font-mono text-[12px] sm:text-sm font-semibold" style={{ color: C.gold }}>
+                          {rentalStrategy.confirmation}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
                     <Card style={{ borderColor: "#c0dfca", background: "#ffffff", overflow: "hidden" }}>
                       <CardHeader className="pb-3 border-b" style={{ background: "#e7f3eb", borderColor: "#c0dfca" }}>
-                        <div className="flex items-start justify-between gap-3">
-                          <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
-                            <CheckCircle2 className="h-5 w-5" style={{ color: "#1e6e3a" }} />
-                            {lang === "zh" ? "取車地點" : "Pickup"}
-                          </CardTitle>
-                          <Badge className="font-mono" style={{ background: "#1e6e3a", color: "#ffffff" }}>{avisStrategy.pickup.code}</Badge>
-                        </div>
-                        <CardDescription className="mt-1" style={{ color: C.body }}>{avisStrategy.pickup.name}</CardDescription>
+                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
+                          <CheckCircle2 className="h-5 w-5" style={{ color: "#1e6e3a" }} />
+                          {lang === "zh" ? "取車地點" : "Pickup"}
+                        </CardTitle>
+                        <CardDescription className="mt-1" style={{ color: C.body }}>{t(rentalStrategy.pickup.name, lang)}</CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4 space-y-3 text-[13px] sm:text-sm">
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "地址" : "Address"}</div>
-                          <div className="break-words" style={{ color: C.ink }}>{avisStrategy.pickup.addr}</div>
-                          <div className="mt-1"><MapButton addr={avisStrategy.pickup.addr} url={avisStrategy.pickup.url} lang={lang} /></div>
+                          <div className="break-words" style={{ color: C.ink }}>{rentalStrategy.pickup.addr}</div>
+                          <div className="mt-1"><MapButton addr={rentalStrategy.pickup.addr} url={rentalStrategy.pickup.url} lang={lang} /></div>
                         </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "電話" : "Phone"}</div>
-                            <div className="font-mono text-xs" style={{ color: C.ink }}>{avisStrategy.pickup.phone}</div>
-                          </div>
-                          <div>
-                            <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "營業時間" : "Hours"}</div>
-                            <div className="text-xs" style={{ color: C.ink }}>{t(avisStrategy.pickup.hours, lang)}</div>
-                          </div>
+                        <div>
+                          <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "營業時間" : "Hours"}</div>
+                          <div className="text-xs" style={{ color: C.ink }}>{t(rentalStrategy.pickup.hours, lang)}</div>
                         </div>
                         <Separator style={{ background: C.tanLight }} />
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "距離飯店" : "From hotel"}</div>
-                          <div className="text-xs leading-relaxed mt-0.5" style={{ color: C.body }}>{t(avisStrategy.pickup.distFromHotel, lang)}</div>
+                          <div className="text-xs leading-relaxed mt-0.5" style={{ color: C.body }}>{t(rentalStrategy.pickup.distFromHotel, lang)}</div>
                         </div>
                         <div>
-                          <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "建議取車時間" : "Pickup time"}</div>
-                          <div className="font-mono text-base font-semibold mt-0.5" style={{ color: "#1e6e3a" }}>{t(avisStrategy.pickup.pickupTime, lang)}</div>
+                          <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "取車時間" : "Pickup time"}</div>
+                          <div className="font-mono text-base font-semibold mt-0.5" style={{ color: "#1e6e3a" }}>{t(rentalStrategy.pickup.pickupTime, lang)}</div>
                         </div>
                         <div className="text-[11px] sm:text-xs italic rounded-md p-2.5 mt-2 leading-relaxed border" style={{ background: C.bgWarm, color: C.body, borderColor: C.tanLight }}>
-                          {t(avisStrategy.pickup.advantage, lang)}
+                          {t(rentalStrategy.pickup.advantage, lang)}
                         </div>
                       </CardContent>
                     </Card>
 
                     <Card style={{ borderColor: "#c0dfca", background: "#ffffff", overflow: "hidden" }}>
                       <CardHeader className="pb-3 border-b" style={{ background: "#e7f3eb", borderColor: "#c0dfca" }}>
-                        <div className="flex items-start justify-between gap-3">
-                          <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
-                            <CheckCircle2 className="h-5 w-5" style={{ color: "#1e6e3a" }} />
-                            {lang === "zh" ? "還車地點" : "Drop-off"}
-                          </CardTitle>
-                          <Badge className="font-mono" style={{ background: "#1e6e3a", color: "#ffffff" }}>{avisStrategy.dropoff.code}</Badge>
-                        </div>
-                        <CardDescription className="mt-1" style={{ color: C.body }}>{avisStrategy.dropoff.name}</CardDescription>
+                        <CardTitle className="flex items-center gap-2 text-base sm:text-lg" style={{ color: C.navy, fontFamily: '"PingFang TC", Georgia, serif' }}>
+                          <CheckCircle2 className="h-5 w-5" style={{ color: "#1e6e3a" }} />
+                          {lang === "zh" ? "還車地點" : "Drop-off"}
+                        </CardTitle>
+                        <CardDescription className="mt-1" style={{ color: C.body }}>{t(rentalStrategy.dropoff.name, lang)}</CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4 space-y-3 text-[13px] sm:text-sm">
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "地址" : "Address"}</div>
-                          <div className="break-words" style={{ color: C.ink }}>{avisStrategy.dropoff.addr}</div>
-                          <div className="mt-1"><MapButton addr={avisStrategy.dropoff.addr} url={avisStrategy.dropoff.url} lang={lang} /></div>
+                          <div className="break-words" style={{ color: C.ink }}>{rentalStrategy.dropoff.addr}</div>
+                          <div className="mt-1"><MapButton addr={rentalStrategy.dropoff.addr} url={rentalStrategy.dropoff.url} lang={lang} /></div>
                         </div>
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "營業時間" : "Hours"}</div>
-                          <div className="text-xs" style={{ color: C.ink }}>{t(avisStrategy.dropoff.hours, lang)}</div>
+                          <div className="text-xs" style={{ color: C.ink }}>{t(rentalStrategy.dropoff.hours, lang)}</div>
                         </div>
                         <Separator style={{ background: C.tanLight }} />
                         <div>
-                          <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "建議還車時間" : "Drop-off time"}</div>
-                          <div className="font-mono text-base font-semibold mt-0.5" style={{ color: "#1e6e3a" }}>{t(avisStrategy.dropoff.dropoffTime, lang)}</div>
+                          <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "還車時間" : "Drop-off time"}</div>
+                          <div className="font-mono text-base font-semibold mt-0.5" style={{ color: "#1e6e3a" }}>{t(rentalStrategy.dropoff.dropoffTime, lang)}</div>
                         </div>
                         <div>
                           <div className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold" style={{ color: C.mute }}>{lang === "zh" ? "操作流程" : "Workflow"}</div>
-                          <div className="text-xs leading-relaxed mt-1" style={{ color: C.body }}>{t(avisStrategy.dropoff.flow, lang)}</div>
+                          <div className="text-xs leading-relaxed mt-1" style={{ color: C.body }}>{t(rentalStrategy.dropoff.flow, lang)}</div>
                         </div>
-                        <div className="rounded-md p-2.5 border flex gap-2 items-start mt-2" style={{ background: "#fff7ed", borderColor: "#e6c2a3" }}>
-                          <AlertTriangle className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: "#a8531e" }} />
-                          <div className="text-[11px] sm:text-xs leading-relaxed" style={{ color: C.body }}>{t(avisStrategy.dropoff.note, lang)}</div>
+                        <div className="rounded-md p-2.5 border flex gap-2 items-start mt-2" style={{ background: C.bgWarm, borderColor: C.tanLight }}>
+                          <Info className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: C.gold }} />
+                          <div className="text-[11px] sm:text-xs leading-relaxed" style={{ color: C.body }}>{t(rentalStrategy.dropoff.note, lang)}</div>
                         </div>
                       </CardContent>
                     </Card>
@@ -2464,7 +2476,7 @@ export default function App() {
                   <SectionTitle
                     eyebrow={bi("保險加購", "Optional Add-ons")}
                     title={bi("租車保險建議", "Insurance Recommendations")}
-                    subtitle={bi("以信用卡 Primary CDW 為基礎判斷，預估可省約 187 美元。", "Estimated savings of about $187, assuming a credit card with Primary CDW.")}
+                    subtitle={bi("以信用卡 Primary CDW 為基礎判斷，到櫃檯前已先選好接受與婉拒項目。", "Decisions are based on the credit card's Primary CDW; the keep / skip choices are pre-decided before reaching the counter.")}
                     lang={lang}
                   />
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
@@ -2476,7 +2488,7 @@ export default function App() {
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="pt-4 space-y-3.5">
-                        {avisStrategy.insurance.keep.map((item, i) => (
+                        {rentalStrategy.insurance.keep.map((item, i) => (
                           <div key={i} className="border-l-2 pl-3" style={{ borderColor: "#1e6e3a" }}>
                             <div className="flex justify-between items-baseline gap-2 flex-wrap">
                               <span className="font-semibold text-[13px] sm:text-sm" style={{ color: C.navy }}>{t(item.name, lang)}</span>
@@ -2494,12 +2506,9 @@ export default function App() {
                           <XCircle className="h-4 w-4" />
                           {lang === "zh" ? "建議取消" : "Skip"}
                         </CardTitle>
-                        <CardDescription className="text-[11px] sm:text-xs" style={{ color: "#8a1e1e" }}>
-                          {lang === "zh" ? "預估可省" : "Potential savings"} {t(avisStrategy.insurance.potentialSavings, lang)}
-                        </CardDescription>
                       </CardHeader>
                       <CardContent className="pt-4 space-y-3.5">
-                        {avisStrategy.insurance.skip.map((item, i) => (
+                        {rentalStrategy.insurance.skip.map((item, i) => (
                           <div key={i} className="border-l-2 pl-3" style={{ borderColor: "#a8531e" }}>
                             <div className="flex justify-between items-baseline gap-2 flex-wrap">
                               <span className="font-semibold text-[13px] sm:text-sm" style={{ color: C.navy }}>{t(item.name, lang)}</span>
@@ -2510,6 +2519,9 @@ export default function App() {
                         ))}
                       </CardContent>
                     </Card>
+                  </div>
+                  <div className="text-[11px] sm:text-xs italic rounded-md p-3 mt-3 leading-relaxed border" style={{ background: C.bgWarm, color: C.body, borderColor: C.tanLight }}>
+                    {t(rentalStrategy.insurance.note, lang)}
                   </div>
                 </div>
 
@@ -2769,7 +2781,7 @@ export default function App() {
               <div className="space-y-1.5 text-[12px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
                 <div>Amtrak: 1-800-USA-RAIL</div>
                 <div>MBTA: mbta.com</div>
-                <div>Avis BO4: (617) 534-1404</div>
+                <div>Enterprise: 1-855-266-9565</div>
               </div>
             </div>
           </div>
