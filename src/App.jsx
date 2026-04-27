@@ -214,7 +214,7 @@ const meta = {
   travelers: bi("家庭兩位旅客", "Two travelers"),
   segments: [
     { city: "Boston", cityZh: "波士頓", iconKey: "boston", dateRange: bi("4/26 至 5/2", "April 26 to May 2"), nights: bi("六晚", "6 nights"), theme: bi("畢業典禮主軸", "Graduation week"), color: C.navy },
-    { city: "Philadelphia", cityZh: "費城", iconKey: "philly", dateRange: bi("5/2 至 5/5", "May 2 to May 5"), nights: bi("三晚", "3 nights"), theme: bi("含 DC 一日往返", "With DC day trip"), color: C.teal },
+    { city: "Philadelphia", cityZh: "費城", iconKey: "philly", dateRange: bi("5/2 至 5/5", "May 2 to May 5"), nights: bi("三晚", "3 nights"), theme: bi("還車與費城慢遊", "Car return and easy Philadelphia time"), color: C.teal },
     { city: "New York", cityZh: "紐約", iconKey: "ny", dateRange: bi("5/5 至 5/11", "May 5 to May 11"), nights: bi("六晚", "6 nights"), theme: bi("自由行段落", "Self-guided segment"), color: C.plum },
   ],
 };
@@ -224,8 +224,8 @@ const routeNodes = [
   { id: "n1", iconKey: "plane", date: "4/26", label: bi("抵達 Boston", "Arrive Boston"), note: bi("AS536 早上 7:12 抵達 Logan", "AS536 lands at Logan 7:12 AM"), tone: "navy" },
   { id: "n2", iconKey: "graduation", date: "4/29 - 4/30", label: bi("畢業典禮", "Commencement"), note: bi("Fenway Park 與 Leader Bank Pavilion", "Fenway Park & Leader Bank Pavilion"), tone: "gold" },
   { id: "n3", iconKey: "car", date: "5/2", label: bi("自駕南下", "Drive south"), note: bi("經 American Dream 至費城", "Via American Dream to Philadelphia"), tone: "teal" },
-  { id: "n4", iconKey: "landmark", date: "5/4", label: bi("DC 往返", "DC round trip"), note: bi("從費城自駕一日往返", "Self-drive from Philadelphia"), tone: "plum" },
-  { id: "n5", iconKey: "train", date: "5/5", label: bi("鐵路進紐約", "Rail to NYC"), note: bi("Amtrak Northeast Regional", "Amtrak Northeast Regional"), tone: "navy" },
+  { id: "n4", iconKey: "landmark", date: "5/3 - 5/4", label: bi("費城慢遊", "Easy Philadelphia"), note: bi("UPenn、Old City、Reading Terminal Market", "UPenn, Old City, Reading Terminal Market"), tone: "plum" },
+  { id: "n5", iconKey: "train", date: "5/5", label: bi("鐵路進紐約", "Rail to NYC"), note: bi("SEPTA + NJ Transit 至法拉盛", "SEPTA + NJ Transit to Flushing"), tone: "navy" },
 ];
 
 const ICON_MAP = {
@@ -252,23 +252,13 @@ const iconOf = (key, className = "h-4 w-4") => {
 
 const travelTips = [
   {
-    id: "lirr",
+    id: "septa-njt",
     severity: "key",
     icon: Train,
-    title: bi("從費城到紐約搭的是 Amtrak", "Philadelphia to New York runs on Amtrak"),
+    title: bi("費城至紐約走 SEPTA 加 NJ Transit", "Philadelphia to New York via SEPTA + NJ Transit"),
     body: bi(
-      "Long Island Rail Road（LIRR）只行駛紐約市與長島之間，並不開到費城。費城至紐約這一段是 Amtrak Northeast Regional，從 30th Street Station 到 New York Penn Station／Moynihan Train Hall，車程約 1 小時 25 分鐘。下車後若還要前往長島，再從 Penn Station 轉 LIRR 即可。",
-      "Long Island Rail Road (LIRR) only operates between New York City and Long Island. It does not serve Philadelphia. The Philadelphia to New York leg is Amtrak Northeast Regional, running from 30th Street Station to New York Penn Station / Moynihan Train Hall, about 1 hour 25 minutes. After arriving at Penn Station, transfer to LIRR if Long Island is the next stop."
-    ),
-  },
-  {
-    id: "avis-ph4",
-    severity: "key",
-    icon: AlertTriangle,
-    title: bi("Avis 30th Street Station 已關閉", "Avis at 30th Street Station has closed"),
-    body: bi(
-      "Avis 在 Philadelphia 30th Street Station 的分點（PH4）自 2025 年 2 月 1 日起停業。本次行程改用 Convention Center Parking 分點（J5D），地址 1324 Arch Street，5/5 星期二營業時間 07:00 至 19:00。",
-      "The Avis branch at Philadelphia 30th Street Station (PH4) closed on February 1, 2025. This itinerary uses the Convention Center Parking branch (J5D) at 1324 Arch Street instead. Tuesday May 5 hours: 07:00 to 19:00."
+      "5/5 由費城前往紐約採 SEPTA Trenton Line 至 Trenton Transit Center 換乘 NJ Transit Northeast Corridor 抵達 New York Penn Station，全程約 2 小時，每人約 30 至 35 美元，班次密集。NJ TRANSIT App 可預先購票，但票券請於上車前再啟用。",
+      "On May 5, take SEPTA Trenton Line from Philadelphia to Trenton Transit Center, transfer to NJ Transit Northeast Corridor, and arrive at New York Penn Station. The trip is about 2 hours total at $30 to $35 per person, with frequent service. Buy tickets through the NJ TRANSIT app, and only activate them just before boarding."
     ),
   },
   {
@@ -856,20 +846,20 @@ const days = [
     cityKey: "transit",
     city: bi("波士頓 → 費城", "Boston → Philadelphia"),
     title: bi("American Dream 與跨州移動", "American Dream stop & interstate drive"),
-    subtitle: bi("整日由 Eugene 主開，紐澤西免稅服飾採買", "Eugene drives the full day; tax-free clothing stop in New Jersey"),
+    subtitle: bi("整日由 Eugene 主開，下午 American Dream 採買，晚間抵達費城", "Eugene drives the full day; afternoon stop at American Dream, evening arrival in Philadelphia"),
     icon: Car,
     intensity: "high",
     timeline: [
-      { time: "06:30", activity: bi("退房，行李集中於飯店大廳", "Check out; gather luggage in the lobby") },
-      { time: "06:45", activity: bi("Uber 從 The Revolution Hotel 至 100 Clarendon St，約 3 分鐘", "Uber from The Revolution Hotel to 100 Clarendon St, about 3 minutes") },
-      { time: "07:00", activity: bi("Avis Boston Back Bay Station Garage（BO4）取車", "Pick up at Avis Boston Back Bay Station Garage (BO4)") },
-      { time: "07:30", activity: bi("出發，從 Back Bay 直接上 I-90 W（Mass Pike）西行", "Depart, enter I-90 West (Mass Pike) directly from Back Bay") },
-      { time: "11:30", activity: bi("抵達 American Dream，車程約 4 小時", "Arrive at American Dream after about 4 hours of driving") },
-      { time: "12:00 - 13:00", activity: bi("商場內用餐（Yard House 或 Shake Shack）", "Lunch in the mall (Yard House or Shake Shack)") },
-      { time: "13:00 - 15:15", activity: bi("購物時段，免稅服飾類最划算", "Shopping; clothing flagships are the best value") },
-      { time: "15:30", activity: bi("離開 American Dream，走 NJ Turnpike S 往費城", "Depart American Dream; NJ Turnpike South toward Philadelphia") },
-      { time: "17:30 - 18:00", activity: bi("抵達 4211 Suites（4211 Chestnut St），辦理入住與停車", "Arrive at 4211 Suites (4211 Chestnut St); check in and park") },
-      { time: "19:00", activity: bi("University City 附近輕鬆晚餐", "Casual dinner in University City") },
+      { time: "08:30", activity: bi("退房，行李集中於飯店大廳", "Check out; gather luggage in the lobby") },
+      { time: "08:45", activity: bi("Uber 從 The Revolution Hotel 至 100 Clarendon St，約 3 分鐘", "Uber from The Revolution Hotel to 100 Clarendon St, about 3 minutes") },
+      { time: "09:00", activity: bi("Avis Boston Back Bay Station Garage（BO4）取車", "Pick up at Avis Boston Back Bay Station Garage (BO4)") },
+      { time: "09:30", activity: bi("出發，從 Back Bay 直接上 I-90 W（Mass Pike）西行", "Depart, enter I-90 West (Mass Pike) directly from Back Bay") },
+      { time: "13:30", activity: bi("抵達 American Dream，車程約 4 小時", "Arrive at American Dream after about 4 hours of driving") },
+      { time: "13:30 - 14:30", activity: bi("商場內用餐（Yard House 或 Shake Shack 等）", "Lunch in the mall (Yard House, Shake Shack, or similar)") },
+      { time: "14:30 - 17:00", activity: bi("購物時段，免稅服飾類最划算；最晚 17:00 離開", "Shopping; clothing flagships are the best value; depart by 5:00 PM at the latest") },
+      { time: "17:00", activity: bi("離開 American Dream，走 NJ Turnpike S 往費城", "Depart American Dream; NJ Turnpike South toward Philadelphia") },
+      { time: "18:30 - 19:00", activity: bi("抵達 4211 Suites（4211 Chestnut St），辦理入住與停車", "Arrive at 4211 Suites (4211 Chestnut St); check in and park") },
+      { time: "19:00", activity: bi("Royal Buffet & Grill 晚餐（2743 S 3rd St）", "Dinner at Royal Buffet & Grill (2743 S 3rd St)") },
     ],
     route: {
       title: bi("駕駛路線", "Driving route"),
@@ -883,19 +873,20 @@ const days = [
       ],
     },
     rules: [
-      bi("American Dream 停留上限 3.5 小時（含吃飯）", "Cap American Dream stay at 3.5 hours including lunch"),
-      bi("不玩水上樂園、室內滑雪、主題樂園", "Skip the water park, indoor ski slope, and theme park"),
+      bi("American Dream 停留上限約 3.5 小時（13:30 至 17:00，含午餐）", "Cap American Dream stay at about 3.5 hours (1:30 to 5:00 PM, including lunch)"),
+      bi("此次只做購物，不安排水上樂園、室內滑雪、主題樂園或摩天輪", "Shopping only; no water park, indoor ski, theme park, or Ferris wheel"),
       bi("停車費 6 美元（前 15 分鐘免費）", "Parking $6 (first 15 minutes free)"),
-      bi("免稅僅限服飾與鞋類；毛皮、配件、運動裝備仍課 6.625% 稅", "Tax exemption applies to clothing and footwear only; fur, accessories, and sports equipment remain taxed at 6.625%"),
-      bi("取消 Texas Roadhouse（與 American Dream 衝突）", "Drop Texas Roadhouse plan; it conflicts with American Dream"),
+      bi("紐澤西免稅僅限服飾與鞋類；毛皮、配件、運動裝備仍課 6.625% 稅", "New Jersey tax exemption applies to clothing and footwear only; fur, accessories, and sports equipment remain taxed at 6.625%"),
     ],
     warnings: [
       { title: bi("行李安全", "Luggage security"), body: bi("American Dream 停車後請勿在停車場開後車廂整理；護照、錢包、電腦隨身帶；停車後拍照記錄樓層與入口。", "Do not open the trunk in the lot at American Dream. Keep passports, wallets, and laptops on you. Photograph the level and entrance after parking.") },
+      { title: bi("Royal Buffet 提早預訂或致電確認", "Confirm Royal Buffet ahead of time"), body: bi("週六晚餐時段熱門，建議當天下午先以電話確認可入座時間，避免久候。", "Saturday dinner is busy; call ahead during the afternoon to confirm seating to avoid waits.") },
     ],
     locations: [
       { name: bi("Avis Boston Back Bay Station Garage（BO4）", "Avis Boston Back Bay Station Garage (BO4)"), addr: "100 Clarendon St, Boston, MA 02116", url: "https://maps.app.goo.gl/AxawRXqMk218nM318" },
       { name: bi("American Dream", "American Dream"), addr: "1 American Dream Way, East Rutherford, NJ 07073", url: "https://maps.app.goo.gl/TLGKBW3TUsU6es3U8" },
       { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
+      { name: bi("Royal Buffet & Grill", "Royal Buffet & Grill"), addr: "2743 S 3rd St, Philadelphia, PA 19148", url: "https://maps.app.goo.gl/LbNZ64fYvAYbiFdJ9" },
     ],
   },
   {
@@ -904,25 +895,32 @@ const days = [
     weekday: { zh: "週日", en: "Sun" },
     cityKey: "philly",
     city: bi("費城", "Philadelphia"),
-    title: bi("UPenn 校園與費城精華", "UPenn & Philadelphia highlights"),
-    subtitle: bi("晚啟動，自 University City 由西往東", "Late start, west-to-east route from University City"),
+    title: bi("還車與 UPenn 校園日", "Car return & UPenn campus"),
+    subtitle: bi("上午還車，下午步行 UPenn 與 University City", "Return the car in the morning; UPenn and University City on foot in the afternoon"),
     icon: GraduationCap,
     intensity: "mid",
     timeline: [
-      { time: "09:00 - 10:00", activity: bi("飯店悠閒早餐，恢復體力", "Slow breakfast at the hotel to recover") },
-      { time: "10:30", activity: bi("出發 UPenn 校園，從 4211 Chestnut 步行可達", "Walk to UPenn from 4211 Chestnut") },
-      { time: bi("上午", "Morning"), activity: bi("Locust Walk、College Hall 外觀、Fisher Fine Arts Library 外觀", "Locust Walk, College Hall facade, Fisher Fine Arts Library facade") },
+      { time: "08:30 - 09:30", activity: bi("4211 Suites 享用早餐，整理行李於房內，無需退房", "Breakfast at 4211 Suites; organize luggage in the room (no checkout today)") },
+      { time: "09:30 - 09:45", activity: bi("Eugene 單獨開車至 J5D（1324 Arch St），約 1.2 英里、7 分鐘", "Eugene drives solo to J5D (1324 Arch St), about 1.2 miles, 7 minutes") },
+      { time: "09:45 - 10:15", activity: bi("J5D 還車手續：油表、里程、損傷確認", "J5D drop-off: fuel level, mileage, damage check") },
+      { time: "10:15 - 10:30", activity: bi("Uber 從 J5D 回 4211 Suites，約 12 至 18 美元", "Uber from J5D back to 4211 Suites, $12 to $18") },
+      { time: "11:00", activity: bi("步行至 UPenn 校園，從 4211 Chestnut 即達", "Walk to the UPenn campus from 4211 Chestnut") },
+      { time: bi("上午至中午", "Late morning"), activity: bi("Locust Walk、College Hall 外觀、Fisher Fine Arts Library 外觀", "Locust Walk, College Hall facade, Fisher Fine Arts Library facade") },
       { time: "12:30", activity: bi("University City 用餐", "Lunch in University City") },
-      { time: "14:00 - 17:00", activity: bi("Philadelphia Museum of Art 外觀、Rocky Steps、Schuylkill River", "Philadelphia Museum of Art facade, Rocky Steps, Schuylkill River") },
+      { time: "14:00 - 17:00", activity: bi("Philadelphia Museum of Art 外觀、Rocky Steps、Schuylkill River 河岸", "Philadelphia Museum of Art facade, Rocky Steps, Schuylkill River") },
       { time: bi("傍晚", "Evening"), activity: bi("Rittenhouse Square 散步，於 Reading Terminal Market 採買晚餐", "Stroll Rittenhouse Square; pick up dinner at Reading Terminal Market") },
-      { time: "20:00", activity: bi("回 4211 Suites，準備隔天 DC", "Return to 4211 Suites and prep for DC") },
+      { time: "20:00", activity: bi("回 4211 Suites 休息", "Back to 4211 Suites to rest") },
     ],
     notes: [
-      bi("5/2 American Dream 拉長至晚上才入住，5/3 必須晚啟動。", "Because the American Dream stop pushes May 2 check-in late, May 3 must start later."),
+      bi("此次費城段只租車一天，5/3 上午就還車。費城市內景點集中，步行加 Uber 已足夠。", "The car rental for the Philadelphia segment is only one day; return it on the morning of May 3. Downtown sights are walkable, and Uber covers the rest."),
       bi("若特別想看自由鐘，可從 Reading Terminal Market 步行 10 分鐘到 Liberty Bell 外觀（不入內）。", "For Liberty Bell fans, the bell is a 10-minute walk from Reading Terminal Market; view the exterior only."),
-      bi("Independence Hall、Liberty Bell、Old City 不建議同日加排，體力會被透支。", "Adding Independence Hall, Liberty Bell, and Old City the same day will exhaust the group."),
+    ],
+    warnings: [
+      { title: bi("J5D 營業時間", "J5D hours"), body: bi("週日營業 08:00 至 13:00，請務必於上午前還車。", "Sunday hours are 8 AM to 1 PM. Return the car during this window.") },
     ],
     locations: [
+      { name: bi("Avis Convention Center Parking（J5D）", "Avis Convention Center Parking (J5D)"), addr: "1324 Arch St, Philadelphia, PA 19107", url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA" },
+      { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
       { name: bi("UPenn · Locust Walk", "UPenn · Locust Walk"), addr: "Locust Walk, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/sCkV7SbviTESNY8QA" },
       { name: bi("College Hall", "College Hall"), addr: "3451 Walnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/PAoFbQGmAE7YKPhV9" },
       { name: bi("Fisher Fine Arts Library", "Fisher Fine Arts Library"), addr: "220 S 34th St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/B6pkiH9Ykspwi37J7" },
@@ -936,51 +934,30 @@ const days = [
     id: "0504",
     date: "5/4",
     weekday: { zh: "週一", en: "Mon" },
-    cityKey: "dc",
-    city: bi("DC 一日往返", "DC Day Trip"),
-    title: bi("華盛頓特區一日遊", "Washington, DC day trip"),
-    subtitle: bi("全程最高體力日，由 Eugene 主開", "Highest-intensity day; Eugene drives"),
+    cityKey: "philly",
+    city: bi("費城", "Philadelphia"),
+    title: bi("費城歷史核心與市集", "Philadelphia historic core & markets"),
+    subtitle: bi("Old City 與 Reading Terminal Market 慢遊", "Easy day in Old City and Reading Terminal Market"),
     icon: Landmark,
-    intensity: "peak",
+    intensity: "mid",
     timeline: [
-      { time: "06:30", activity: bi("起床、早餐", "Wake up, breakfast") },
-      { time: "07:00", activity: bi("從費城出發", "Depart Philadelphia") },
-      { time: "10:00 - 10:30", activity: bi("抵達 DC，停 L'Enfant Plaza 或 Reagan Building 停車庫，每日約 25 至 30 美元", "Arrive in DC; park at L'Enfant Plaza or Reagan Building garage, $25-30 per day") },
-      { time: "10:30 - 12:00", activity: bi("U.S. Capitol 外觀、National Mall 東段步行", "U.S. Capitol facade, walk eastern National Mall") },
-      { time: "12:00 - 13:00", activity: bi("Smithsonian 區域用餐（Mitsitam Native Foods Cafe 或 Pavilion Cafe）", "Lunch in Smithsonian area (Mitsitam Native Foods Cafe or Pavilion Cafe)") },
-      { time: "13:00 - 15:30", activity: bi("Washington Monument 外觀、WWII Memorial、Lincoln Memorial（沿 Reflecting Pool 步行）", "Washington Monument facade, WWII Memorial, Lincoln Memorial along the Reflecting Pool") },
-      { time: "15:30 - 16:30", activity: bi("依體力進 Air & Space Museum 或 American History Museum，待 1 小時，或於咖啡店休息", "Energy permitting, visit Air & Space Museum or American History Museum for an hour, or rest at a cafe") },
-      { time: "17:00", activity: bi("回停車庫取車", "Return to parking garage") },
-      { time: "20:00 - 21:00", activity: bi("回到費城，4211 Suites 附近輕鬆晚餐", "Back in Philadelphia; casual dinner near 4211 Suites") },
+      { time: "09:00 - 10:00", activity: bi("飯店早餐，緩慢出發", "Breakfast at the hotel; easy start") },
+      { time: bi("上午", "Morning"), activity: bi("Uber 至 Old City，參觀 Independence Hall 與 Liberty Bell Center 外觀", "Uber to Old City; visit Independence Hall and Liberty Bell Center exteriors") },
+      { time: "12:00 - 13:30", activity: bi("Reading Terminal Market 慢慢吃午餐，多攤組合", "Long lunch at Reading Terminal Market; sample several stalls") },
+      { time: "14:00 - 16:00", activity: bi("Rittenhouse Square 與周邊街區散步、輕鬆採買", "Stroll Rittenhouse Square and surrounding blocks; light shopping") },
+      { time: bi("傍晚", "Evening"), activity: bi("回 4211 Suites 整理行李，準備隔天前往紐約", "Return to 4211 Suites; pack and prep for tomorrow's New York leg") },
+      { time: "19:00", activity: bi("University City 附近輕鬆晚餐，早睡", "Casual dinner near University City; early night") },
     ],
-    rules: [
-      bi("只停一次車", "Park only once"),
-      bi("不去 Georgetown", "Skip Georgetown"),
-      bi("不去 Arlington Cemetery", "Skip Arlington Cemetery"),
-      bi("不排白宮（要繞路且只能遠看）", "Skip the White House (detour required, distant view only)"),
-      bi("Smithsonian 只挑一館，待 1 小時", "Choose one Smithsonian museum, one hour maximum"),
-      bi("步數壓在 8,500 至 9,500，不能用滿 12,000 上限", "Hold step count to 8,500 to 9,500; do not push to the 12,000 ceiling"),
-    ],
-    costAnalysis: {
-      title: bi("自駕對比 Amtrak 真實成本", "Driving vs Amtrak: actual cost"),
-      items: [
-        { label: bi("自駕：停車費、油錢、過路費合計", "Driving: parking, fuel, tolls"), value: bi("約 90 美元", "About $90") },
-        { label: bi("Amtrak：兩人來回 Northeast Regional", "Amtrak: two round-trip Northeast Regional tickets"), value: bi("約 200 美元", "About $200") },
-        { label: bi("加上駕駛疲勞與時間", "Add driver fatigue and time"), value: bi("差距並不大", "Difference is modest") },
-      ],
-    },
-    warnings: [
-      { title: bi("National Mall 路邊停車多有 3 小時時限", "Mall street parking is capped at 3 hours"), body: bi("不能依賴路邊停整天，請直接停固定停車庫。", "Street parking will not last all day; use a paid garage from the start.") },
-      { title: bi("I-95 過路費密集", "I-95 has heavy tolls"), body: bi("Delaware Memorial Bridge、Maryland JFK Highway、其他 I-95 段，建議啟用 Avis E-Toll Unlimited。", "Delaware Memorial Bridge, Maryland JFK Highway, and other I-95 segments. Activate Avis E-Toll Unlimited.") },
+    notes: [
+      bi("此日全程不需用車，地點集中於 Center City 與 Old City 之間，可用步行與 Uber。", "No car needed today. The route stays between Center City and Old City; walking and Uber suffice."),
+      bi("Reading Terminal Market 為費城代表性市集，建議刻意預留充足用餐時間。", "Reading Terminal Market is a Philadelphia institution; deliberately leave plenty of time for lunch."),
+      bi("Independence Hall 入內參觀需提前於官網領票（旺季常售完），但若只看外觀則不需要。", "Independence Hall interior tickets sell out in peak season and must be reserved on the official site; the exterior view requires no ticket."),
     ],
     locations: [
-      { name: bi("U.S. Capitol", "U.S. Capitol"), addr: "First St SE, Washington, DC 20004", url: "https://maps.app.goo.gl/4yY8Lkqt2jKtkVCp9" },
-      { name: bi("L'Enfant Plaza Parking", "L'Enfant Plaza Parking"), addr: "470 L'Enfant Plaza SW, Washington, DC 20024", url: "https://maps.app.goo.gl/Hfo2X7rsYFWLsLK8A" },
-      { name: bi("Washington Monument", "Washington Monument"), addr: "2 15th St NW, Washington, DC 20024", url: "https://maps.app.goo.gl/wUxYfwZpdvRXhDZLA" },
-      { name: bi("World War II Memorial", "World War II Memorial"), addr: "1750 Independence Ave SW, Washington, DC 20024", url: "https://maps.app.goo.gl/CznrVe57LyXMGDTD7" },
-      { name: bi("Lincoln Memorial", "Lincoln Memorial"), addr: "2 Lincoln Memorial Cir NW, Washington, DC 20002", url: "https://maps.app.goo.gl/zQX7sndmMfmGaSuaA" },
-      { name: bi("National Air and Space Museum", "National Air and Space Museum"), addr: "600 Independence Ave SW, Washington, DC 20560", url: "https://maps.app.goo.gl/LurrJox7VVWSSfju7" },
-      { name: bi("National Museum of American History", "National Museum of American History"), addr: "1300 Constitution Ave NW, Washington, DC 20560", url: "https://maps.app.goo.gl/Bey9YXzvKdArsohx5" },
+      { name: bi("Independence Hall", "Independence Hall"), addr: "520 Chestnut St, Philadelphia, PA 19106", url: mapLink("Independence Hall, 520 Chestnut St, Philadelphia, PA 19106") },
+      { name: bi("Liberty Bell Center", "Liberty Bell Center"), addr: "526 Market St, Philadelphia, PA 19106", url: "https://maps.app.goo.gl/TrYyR2g5b4HL1vP19" },
+      { name: bi("Reading Terminal Market", "Reading Terminal Market"), addr: "1136 Arch St, Philadelphia, PA 19107", url: "https://maps.app.goo.gl/8BbsWj2JNYHzQvGP8" },
+      { name: bi("Rittenhouse Square", "Rittenhouse Square"), addr: "1800 Walnut St, Philadelphia, PA 19103", url: "https://maps.app.goo.gl/D9resvhuxGFxQWLh6" },
     ],
   },
   {
@@ -989,39 +966,47 @@ const days = [
     weekday: { zh: "週二", en: "Tue" },
     cityKey: "transit",
     city: bi("費城 → 紐約", "Philadelphia → New York"),
-    title: bi("還車、鐵路進城、Eugene 回波士頓", "Drop-off, train to NYC, Eugene returns to Boston"),
-    subtitle: bi("交接日，最重要的一天", "Handover day; the most important transition"),
+    title: bi("SEPTA + NJ Transit 進紐約", "SEPTA + NJ Transit to New York"),
+    subtitle: bi("經 Trenton 轉乘抵達紐約 Penn Station，再前往法拉盛民宿", "Transfer at Trenton, arrive at New York Penn Station, then continue to the Flushing apartment"),
     icon: Train,
     intensity: "mid",
     timeline: [
-      { time: "09:00", activity: bi("4211 Suites 退房，全家上車", "Check out of 4211 Suites; everyone in the car") },
-      { time: "09:15", activity: bi("抵達 30th Street Station，於上下車區卸下行李", "Arrive at 30th Street Station; unload luggage at the drop-off zone") },
-      { time: "09:15 - 09:30", activity: bi("於大廳候車區（有座位、冷氣、洗手間）", "Wait in the main hall (seating, air conditioning, restrooms)") },
-      { time: "09:30 - 09:45", activity: bi("Eugene 單獨開車至 J5D（1324 Arch St），1.2 英里、7 分鐘", "Eugene drives solo to J5D (1324 Arch St), 1.2 miles, 7 minutes") },
-      { time: "09:45 - 10:15", activity: bi("J5D 還車手續：油表、里程、損傷確認", "J5D drop-off: fuel level, mileage, damage check") },
-      { time: "10:15 - 10:30", activity: bi("Uber 從 J5D 回 30th Street Station，約 12 至 18 美元", "Uber from J5D back to 30th Street Station, $12 to $18") },
-      { time: "11:00 - 12:00", activity: bi("全員搭 Amtrak Northeast Regional 至 New York Penn Station", "Whole party boards Amtrak Northeast Regional to New York Penn Station") },
-      { time: bi("下午", "Afternoon"), activity: bi("到紐約飯店辦理入住", "Check in at the New York hotel") },
-      { time: bi("傍晚", "Evening"), activity: bi("Eugene 搭 Amtrak 回波士頓", "Eugene takes Amtrak back to Boston") },
-      { time: bi("晚上", "Night"), activity: bi("飯店附近輕鬆晚餐，不排遠景點", "Dinner near the hotel; no further sightseeing") },
+      { time: "08:30", activity: bi("4211 Suites 退房，行李整理上路", "Check out of 4211 Suites; luggage packed and ready") },
+      { time: "09:00", activity: bi("Uber 至 30th Street Station，約 5 分鐘", "Uber to 30th Street Station, about 5 minutes") },
+      { time: "09:30", activity: bi("於 30th Street Station 搭 SEPTA Trenton Line 前往 Trenton Transit Center", "Board SEPTA Trenton Line at 30th Street Station heading to Trenton Transit Center") },
+      { time: "10:45 - 11:00", activity: bi("抵達 Trenton，於 NJ Transit 月臺等候 Northeast Corridor 線往紐約", "Arrive at Trenton; wait at the NJ Transit platform for the Northeast Corridor line to New York") },
+      { time: "11:15 - 12:30", activity: bi("搭 NJ Transit 至 New York Penn Station", "Take NJ Transit to New York Penn Station") },
+      { time: "12:30 - 13:30", activity: bi("Penn Station 用午餐並轉地鐵至法拉盛", "Lunch near Penn Station; transfer to subway toward Flushing") },
+      { time: "14:30 - 15:30", activity: bi("抵達法拉盛民宿（143-36 37th Ave），辦理入住", "Arrive at the Flushing apartment (143-36 37th Ave); check in") },
+      { time: bi("傍晚", "Evening"), activity: bi("Eugene 搭 Amtrak 從 Penn Station 回波士頓", "Eugene takes Amtrak from Penn Station back to Boston") },
+      { time: bi("晚上", "Night"), activity: bi("法拉盛附近輕鬆晚餐，當地中式料理選擇豐富", "Casual dinner around Flushing; abundant Chinese food options nearby") },
     ],
     warnings: [
-      { title: bi("LIRR 名稱誤解", "LIRR confusion"), body: bi("Long Island Rail Road 不開到費城。費城至紐約是 Amtrak Northeast Regional，到 Penn Station 或 Moynihan Train Hall。", "LIRR does not run to Philadelphia. The Philadelphia to New York leg is Amtrak Northeast Regional, terminating at Penn Station / Moynihan Train Hall.") },
-      { title: bi("J5D 不提供 after-hours returns", "J5D has no after-hours return"), body: bi("5/5 星期二營業時間 07:00 至 19:00，請務必在這區間內還車。", "Tuesday May 5 hours are 7 AM to 7 PM. Return within this window.") },
+      { title: bi("NJ Transit 票券啟用時機", "NJ Transit ticket activation"), body: bi("使用 NJ TRANSIT App 購票後，請於上車前再啟用，啟用後通常只在限時內有效；建議啟用後截圖備份。", "When buying through the NJ TRANSIT app, activate the ticket only just before boarding; activation has a limited window. Take a screenshot as backup.") },
+      { title: bi("Trenton 月臺轉乘", "Trenton platform transfer"), body: bi("抵達 Trenton 時可能停在 Track 4，往紐約的 NJ Transit 多在 Track 1 或 Track 2，可能需上樓或搭電梯換月臺。若錯過原班次，Trenton 至紐約班次密集，問題不大。", "Arriving SEPTA may use Track 4; the New York-bound NJ Transit usually leaves from Track 1 or 2, so a level change may be needed. If you miss the connecting train, service from Trenton to New York is frequent.") },
+      { title: bi("法拉盛地鐵動線", "Subway route to Flushing"), body: bi("從 Penn Station 至法拉盛建議搭 7 號線終點站 Flushing-Main St，車程約 30 至 40 分鐘。建議使用 OMNY 直接感應。", "From Penn Station to Flushing, take the 7 line to its terminus at Flushing-Main St (about 30 to 40 minutes). Use OMNY contactless to tap in.") },
     ],
-    decision: {
-      title: bi("費城至紐約的兩種鐵路選擇", "Two rail options from Philadelphia to New York"),
-      items: [
-        { text: bi("Amtrak Northeast Regional：直達 New York Penn Station／Moynihan Train Hall，約 1 小時 25 分鐘；兩人單程約 100 美元（依時段浮動），無需轉車，行李攜帶最從容", "Amtrak Northeast Regional: direct from 30th Street Station to New York Penn Station / Moynihan Train Hall, about 1 hour 25 minutes; about $100 for two one-way (varies by time); no transfers, easiest with luggage") },
-        { text: bi("SEPTA Trenton Line 加 NJ Transit Northeast Corridor：先搭 SEPTA 至 Trenton 轉乘 NJ Transit 抵達 Penn Station，全程約 2 小時，兩人單程約 35 美元；班次密集、彈性高，但需中途換車", "SEPTA Trenton Line + NJ Transit Northeast Corridor: SEPTA to Trenton, transfer to NJ Transit, then to Penn Station; about 2 hours total, about $35 for two one-way; frequent service, more flexible, but requires a transfer") },
+    route: {
+      title: bi("鐵路換乘簡圖", "Rail transfer summary"),
+      steps: [
+        bi("Philadelphia 30th Street Station", "Philadelphia 30th Street Station"),
+        bi("→ SEPTA Trenton Line", "→ SEPTA Trenton Line"),
+        bi("→ Trenton Transit Center 換乘", "→ Transfer at Trenton Transit Center"),
+        bi("→ NJ Transit Northeast Corridor", "→ NJ Transit Northeast Corridor"),
+        bi("→ New York Penn Station", "→ New York Penn Station"),
+        bi("→ MTA 7 號線終點 Flushing-Main St", "→ MTA Line 7 to Flushing-Main St"),
       ],
-      caution: bi("此次行程帶有大件行李、且當天還有 Eugene 返回波士頓的轉接，建議仍以 Amtrak 直達為主，SEPTA 路線作為班次延誤或臨時改期的備案。", "Given the heavy luggage and Eugene's same-day return to Boston, take direct Amtrak as the main option; keep the SEPTA route as a backup if delays or schedule changes occur."),
     },
+    notes: [
+      bi("Eugene 仍會陪同至法拉盛民宿確認入住順利後，再從 Penn Station 搭 Amtrak 回波士頓。", "Eugene accompanies the family to the Flushing apartment to confirm a smooth check-in before returning from Penn Station to Boston via Amtrak."),
+      bi("SEPTA + NJ Transit 全程兩段票券總計約每人 30 至 35 美元，比 Amtrak 直達省下約 60%；代價是約多 30 至 45 分鐘車程與一次轉乘。", "SEPTA + NJ Transit costs about $30 to $35 per person across both segments, roughly 60% less than direct Amtrak; the trade-off is an extra 30 to 45 minutes and one transfer."),
+    ],
     locations: [
       { name: bi("4211 Suites", "4211 Suites"), addr: "4211 Chestnut St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/nbE7Pr2p3eFnyWoL7" },
-      { name: bi("30th Street Station（Amtrak）", "30th Street Station (Amtrak)"), addr: "2955 Market St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/UVXWHyTjnhNDQCDg8" },
-      { name: bi("Avis Convention Center Parking（J5D）", "Avis Convention Center Parking (J5D)"), addr: "1324 Arch St, Philadelphia, PA 19107", url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA" },
+      { name: bi("30th Street Station（SEPTA & Amtrak）", "30th Street Station (SEPTA & Amtrak)"), addr: "2955 Market St, Philadelphia, PA 19104", url: "https://maps.app.goo.gl/UVXWHyTjnhNDQCDg8" },
+      { name: bi("Trenton Transit Center", "Trenton Transit Center"), addr: "72 S Clinton Ave, Trenton, NJ 08609", url: mapLink("Trenton Transit Center, 72 S Clinton Ave, Trenton, NJ 08609") },
       { name: bi("New York Penn Station／Moynihan Train Hall", "New York Penn Station / Moynihan Train Hall"), addr: "421 8th Ave, New York, NY 10001", url: "https://maps.app.goo.gl/z1KQFirgT97eC4cg8" },
+      { name: bi("法拉盛民宿", "Flushing Apartment"), addr: "143-36 37th Ave, Flushing, NY 11354", url: mapLink("143-36 37th Ave, Flushing, NY 11354") },
     ],
   },
   {
@@ -1031,10 +1016,9 @@ const days = [
     cityKey: "ny",
     city: bi("紐約", "New York"),
     title: bi("中城經典", "Midtown Classics"),
-    subtitle: bi("待住宿確認後排序，原則為單區域單日", "Sequence pending hotel address; one borough per day"),
+    subtitle: bi("從法拉盛搭 7 號線進中城，單區域單日節奏", "From Flushing to Midtown via the 7 line; one area per day"),
     icon: Building2,
     intensity: "mid",
-    pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("Times Square、Bryant Park", "Times Square, Bryant Park") },
       { time: bi("中午", "Midday"), activity: bi("中城用餐", "Midtown lunch") },
@@ -1068,7 +1052,6 @@ const days = [
     subtitle: bi("步數較高的一天，安排在中段", "Higher step day; place mid-trip"),
     icon: Building2,
     intensity: "high",
-    pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("Wall Street、9/11 Memorial、Oculus", "Wall Street, 9/11 Memorial, Oculus") },
       { time: bi("中午", "Midday"), activity: bi("中午步行至 Lower East Side，Katz's Delicatessen 經典煙燻牛肉，或 Russ & Daughters 煙燻鮭魚 bagel", "Walk to Lower East Side for lunch: Katz's Delicatessen for classic pastrami, or Russ & Daughters for smoked salmon bagels") },
@@ -1100,7 +1083,6 @@ const days = [
     subtitle: bi("Met 與 AMNH 二選一", "Choose between The Met and AMNH"),
     icon: Trees,
     intensity: "mid",
-    pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("Central Park 南段（Bethesda Terrace、Bow Bridge、Strawberry Fields）", "Central Park south (Bethesda Terrace, Bow Bridge, Strawberry Fields)") },
       { time: bi("中午", "Midday"), activity: bi("Upper East Side 用餐", "Upper East Side lunch") },
@@ -1125,7 +1107,6 @@ const days = [
     subtitle: bi("DUMBO 與布魯克林大橋", "DUMBO and Brooklyn Bridge"),
     icon: Building,
     intensity: "high",
-    pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("搭地鐵至 DUMBO", "Subway to DUMBO") },
       { time: bi("中午", "Midday"), activity: bi("Junior's Brooklyn 經典芝士蛋糕，或 DUMBO 區內用餐", "Junior's Brooklyn for the classic cheesecake, or lunch within DUMBO") },
@@ -1150,7 +1131,6 @@ const days = [
     subtitle: bi("最後緩衝日，不排太多", "Final buffer day; keep it light"),
     icon: ShoppingBag,
     intensity: "low",
-    pendingInfo: true,
     timeline: [
       { time: bi("上午", "Morning"), activity: bi("SoHo 精品街，可順道 Hamburger America 享用招牌漢堡", "SoHo boutiques; Hamburger America for a classic burger nearby") },
       { time: bi("中午", "Midday"), activity: bi("Chelsea Market 用餐：LOS TACOS No.1 是市場內必試的招牌墨西哥小食", "Lunch at Chelsea Market; LOS TACOS No.1 inside the market is a classic must-try") },
@@ -1176,7 +1156,6 @@ const days = [
     subtitle: bi("依航班時間，待確認", "Pending flight details"),
     icon: Plane,
     intensity: "mid",
-    pendingInfo: true,
     notes: [
       bi("依機場（JFK／EWR／LGA）與航班時間決定起床時間。", "Wake-up time depends on the airport (JFK / EWR / LGA) and flight."),
       bi("國際線建議起飛前 3 小時抵達機場。", "International flights: arrive 3 hours before departure."),
@@ -1209,11 +1188,11 @@ const hotels = [
     note: bi("位於 University City，距 UPenn 約 1.3 公里；務必確認停車費與是否需事先預約。", "In University City, 1.3 km from UPenn. Confirm parking fees and whether reservation is required."),
   },
   {
-    name: bi("紐約飯店", "New York Hotel"),
+    name: bi("法拉盛民宿", "Flushing Apartment"),
     nights: bi("5/5 至 5/11，六晚", "May 5 to May 11, 6 nights"),
-    addr: bi("待提供", "To be confirmed"),
-    pending: true,
-    note: bi("確認後再決定每天景點順序與交通工具。", "Sequence of New York days will follow once the hotel is confirmed."),
+    addr: "143-36 37th Ave, Flushing, NY 11354",
+    url: mapLink("143-36 37th Ave, Flushing, NY 11354"),
+    note: bi("位於法拉盛核心，鄰近 7 號線終點 Flushing-Main St 站，搭地鐵至中曼哈頓約 30 至 40 分鐘。周邊華人餐飲與超市選擇豐富，採買與晚餐都很方便。", "In the heart of Flushing, close to the 7 line terminus at Flushing-Main St; about 30 to 40 minutes by subway to midtown Manhattan. The neighborhood is dense with Chinese restaurants and groceries, making meals and shopping easy."),
   },
 ];
 
@@ -1259,7 +1238,7 @@ const avisStrategy = {
     hours: bi("週一至週日 24 小時", "Open 24 hours, all days"),
     distFromHotel: bi("距 The Revolution Hotel 0.4 英里，步行 8 分鐘，Uber 約 3 分鐘 8 至 10 美元", "0.4 miles from The Revolution Hotel; 8-minute walk or 3-minute Uber at $8 to $10"),
     advantage: bi("與 Logan Airport 同樣 24 小時營業，但省去 Uber 至機場的時間與車資（25 至 35 美元），且 Mass Pike 入口僅 3 分鐘車程。", "Same 24-hour access as Logan Airport, but saves the $25 to $35 Uber to the airport and reaches the Mass Pike on-ramp in 3 minutes."),
-    pickupTime: bi("5/2 上午 7:00", "May 2, 7:00 AM"),
+    pickupTime: bi("5/2 上午 9:00", "May 2, 9:00 AM"),
   },
   dropoff: {
     code: "J5D",
@@ -1268,18 +1247,12 @@ const avisStrategy = {
     url: "https://maps.app.goo.gl/oscc1jPw7K4QZnhTA",
     hours: bi("週一至週五 07:00 至 19:00；週六、日 08:00 至 13:00", "Mon to Fri 7 AM to 7 PM; Sat to Sun 8 AM to 1 PM"),
     note: bi("不提供 after-hours returns，必須於營業時間內歸還。", "No after-hours returns. Must return during business hours."),
-    dropoffTime: bi("5/5 上午 10:00", "May 5, 10:00 AM"),
-    flow: bi("先到 30th Street Station 卸下行李，Eugene 單獨開車至 J5D 還車（1.2 英里），再 Uber 回車站（12 至 18 美元）。", "Unload luggage at 30th Street Station first. Eugene drives solo to J5D (1.2 miles) to return the car, then Ubers back to the station ($12 to $18)."),
-  },
-  closed: {
-    code: "PH4",
-    name: "30th Street Station Avis",
-    status: bi("已於 2025 年 2 月 1 日關閉", "Closed February 1, 2025"),
-    note: bi("雖位於同一棟建築，但已停業，預訂系統會直接拒絕。", "Same building but no longer operating. The booking system will reject this location."),
+    dropoffTime: bi("5/3 上午 10:00", "May 3, 10:00 AM"),
+    flow: bi("Eugene 單獨從 4211 Suites 開車至 J5D 還車（1.2 英里、約 7 分鐘），再 Uber 回 4211 Suites（12 至 18 美元）。費城段只租車一天。", "Eugene drives solo from 4211 Suites to J5D (1.2 miles, about 7 minutes) to return the car, then Ubers back to 4211 Suites ($12 to $18). The Philadelphia segment uses the car for one day only."),
   },
   insurance: {
     keep: [
-      { name: "E-Toll Unlimited", price: bi("每日 14.99 美元", "$14.99 per day"), reason: bi("Boston 至 DC 過路費密集，被動 toll-by-plate 每筆手續費 9.95 美元，數學上 Unlimited 較便宜。", "Tolls between Boston and DC are heavy. Passive toll-by-plate adds $9.95 per occurrence; Unlimited wins on the math.") },
+      { name: "E-Toll Unlimited", price: bi("每日 14.99 美元", "$14.99 per day"), reason: bi("Mass Pike 與紐澤西 Turnpike 過路費密集，被動 toll-by-plate 每筆手續費 9.95 美元，數學上 Unlimited 較便宜。", "Tolls on the Mass Pike and New Jersey Turnpike add up; passive toll-by-plate adds $9.95 per occurrence, so Unlimited wins on the math.") },
       { name: bi("Additional Driver", "Additional Driver"), price: bi("整租期 33.15 美元", "$33.15 per rental"), reason: bi("若行程中可能由其他人接手駕駛則加；若全程由 Eugene 主開可省。", "Add this if anyone else may take the wheel. Skip if Eugene drives the entire trip.") },
     ],
     skip: [
@@ -1330,9 +1303,9 @@ const checklist = [
     title: bi("車輛與駕駛", "Vehicle"),
     note: bi("Avis 取車與還車兩端時間皆為硬性約定。", "Both Avis pickup and return times are firm."),
     items: [
-      bi("5/2 上午 7:00 於 Avis BO4 取車（Boston Back Bay Station Garage，100 Clarendon St）。", "May 2 at 7:00 AM, pick up at Avis BO4 (Boston Back Bay Station Garage, 100 Clarendon St)."),
-      bi("5/5 上午 10:00 於 Avis J5D 還車（1324 Arch St，營業 07:00 至 19:00，不接受 after-hours）。", "May 5 at 10:00 AM, return at Avis J5D (1324 Arch St; hours 7 AM to 7 PM; no after-hours)."),
-      bi("Avis 訂單保留 E-Toll Unlimited；I-95 沿線過路費密集。", "Keep E-Toll Unlimited on the Avis booking; I-95 has heavy tolls."),
+      bi("5/2 上午 9:00 於 Avis BO4 取車（Boston Back Bay Station Garage，100 Clarendon St）。", "May 2 at 9:00 AM, pick up at Avis BO4 (Boston Back Bay Station Garage, 100 Clarendon St)."),
+      bi("5/3 上午 10:00 於 Avis J5D 還車（1324 Arch St，週日營業 08:00 至 13:00，不接受 after-hours）。", "May 3 at 10:00 AM, return at Avis J5D (1324 Arch St; Sunday hours 8 AM to 1 PM; no after-hours)."),
+      bi("Avis 訂單保留 E-Toll Unlimited；Mass Pike 與紐澤西 Turnpike 沿線過路費密集。", "Keep E-Toll Unlimited on the Avis booking; the Mass Pike and New Jersey Turnpike have heavy tolls."),
       bi("信用卡 Primary CDW 為基礎判斷依據，已決定可省去 LDW 等加購保險。", "Primary CDW from the credit card is the baseline; the supplemental LDW etc. can be declined."),
       bi("國際駕照與護照副本上車前帶在身上。", "Carry the international driving permit and a copy of the passport before pickup."),
     ],
@@ -2056,14 +2029,14 @@ export default function App() {
 
   const bostonDays = days.filter((d) => d.cityKey === "boston");
   const day0502 = days.find((d) => d.id === "0502");
-  const phillyDcDays = days.filter((d) => ["philly", "dc"].includes(d.cityKey) || d.id === "0505");
+  const phillyDays = days.filter((d) => d.cityKey === "philly" || d.id === "0505");
   const nyDays = days.filter((d) => d.cityKey === "ny");
 
   const navItems = [
     { value: "overview", icon: Compass, label: bi("總覽", "Overview") },
     { value: "ceremonies", icon: GraduationCap, label: bi("畢業典禮", "Ceremonies") },
     { value: "boston", icon: () => <CityIcon city="boston" className="h-4 w-4" />, label: bi("波士頓", "Boston") },
-    { value: "philly", icon: () => <CityIcon city="philly" className="h-4 w-4" />, label: bi("費城與 DC", "Philly + DC") },
+    { value: "philly", icon: () => <CityIcon city="philly" className="h-4 w-4" />, label: bi("費城", "Philadelphia") },
     { value: "ny", icon: () => <CityIcon city="ny" className="h-4 w-4" />, label: bi("紐約", "New York") },
     { value: "logistics", icon: Car, label: bi("交通與住宿", "Logistics") },
     { value: "dining", icon: Utensils, label: bi("餐飲", "Dining") },
@@ -2201,7 +2174,7 @@ export default function App() {
                   <SectionTitle
                     eyebrow={bi("出發前必讀", "Read Before Departure")}
                     title={bi("關鍵旅行提醒", "Key Travel Notes")}
-                    subtitle={bi("七個會直接影響行程的具體細節。", "Seven specifics that materially affect the trip.")}
+                    subtitle={bi("六個會直接影響行程的具體細節。", "Six specifics that materially affect the trip.")}
                     lang={lang}
                   />
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
@@ -2250,11 +2223,10 @@ export default function App() {
                       <div className="text-[13px] sm:text-sm">
                         {[
                           [bi("波士頓市內", "Within Boston"), bi("Uber 與 MBTA", "Uber + MBTA")],
-                          [bi("波士頓 → 費城", "Boston → Philly"), bi("Avis 自駕", "Avis self-drive")],
+                          [bi("波士頓 → 費城", "Boston → Philly"), bi("Avis 自駕（5/2 取車、5/3 還車）", "Avis self-drive (pick up May 2, return May 3)")],
                           [bi("費城市內", "Within Philly"), bi("步行加 Uber", "Walking + Uber")],
-                          [bi("費城 ↔ DC", "Philly ↔ DC"), bi("自駕往返", "Self-drive round trip")],
-                          [bi("費城 → 紐約", "Philly → NYC"), bi("Amtrak 直達；備案 SEPTA + NJ Transit", "Amtrak direct; backup SEPTA + NJ Transit")],
-                          [bi("紐約市內", "Within NYC"), bi("Subway 加 Uber", "Subway + Uber")],
+                          [bi("費城 → 紐約", "Philly → NYC"), bi("SEPTA Trenton Line + NJ Transit", "SEPTA Trenton Line + NJ Transit")],
+                          [bi("紐約市內", "Within NYC"), bi("Subway（OMNY 感應）加 Uber", "Subway (OMNY tap-to-pay) + Uber")],
                         ].map(([k, v], i) => (
                           <div key={i} className="flex justify-between gap-3 py-2.5 border-b last:border-0" style={{ borderColor: C.tanSoft }}>
                             <span style={{ color: C.body }}>{t(k, lang)}</span>
@@ -2296,17 +2268,17 @@ export default function App() {
               </div>
             </TabsContent>
 
-            {/* PHILLY + DC TAB */}
+            {/* PHILLY TAB */}
             <TabsContent value="philly" className="mt-0">
               <div className="py-8 sm:py-12 space-y-6 max-w-6xl mx-auto px-3 sm:px-4">
                 <SectionTitle
                   eyebrow={bi("第二段", "Segment Two")}
-                  title={bi("費城與華盛頓特區 · 5/2 至 5/5", "Philadelphia & Washington, DC · May 2 to May 5")}
-                  subtitle={bi("含 5/4 自駕往返 DC 一日遊與 5/5 還車後鐵路進紐約。", "Includes the May 4 self-drive day trip to DC and the May 5 train transfer to New York after car return.")}
+                  title={bi("費城 · 5/2 至 5/5", "Philadelphia · May 2 to May 5")}
+                  subtitle={bi("由 American Dream 進入費城，5/3 上午還車，5/3 至 5/4 步行與 Uber 慢遊，5/5 鐵路進紐約。", "Enter Philadelphia via American Dream, return the car on the morning of May 3, take May 3 and May 4 at an easy walking-plus-Uber pace, then rail to New York on May 5.")}
                   lang={lang}
                 />
                 <div className="space-y-5 sm:space-y-6">
-                  {phillyDcDays.map((d) => <DayCard key={d.id} day={d} lang={lang} />)}
+                  {phillyDays.map((d) => <DayCard key={d.id} day={d} lang={lang} />)}
                 </div>
               </div>
             </TabsContent>
@@ -2317,15 +2289,15 @@ export default function App() {
                 <SectionTitle
                   eyebrow={bi("第三段", "Segment Three")}
                   title={bi("紐約 · 5/5 至 5/11", "New York · May 5 to May 11")}
-                  subtitle={bi("自由行段。每日只做一個區域，待住宿地點確認後排序。", "Self-guided segment. One area per day. Sequence finalizes after the hotel is confirmed.")}
+                  subtitle={bi("以法拉盛民宿為起點，每日鎖定一個區域，搭 7 號線進城最為直接。", "Anchored in Flushing; cover one area per day, with the 7 line as the primary route into Manhattan.")}
                   lang={lang}
                 />
                 <Alert style={{ background: C.bgWarm, borderColor: C.tan }}>
                   <Info className="h-4 w-4" style={{ color: C.gold }} />
                   <AlertDescription className="text-[13px] sm:text-sm leading-relaxed" style={{ color: C.body }}>
                     {lang === "zh"
-                      ? "以下為五個分區模組（中城、下曼哈頓、中央公園、布魯克林、SoHo），確認紐約飯店地址後即可決定每天順序與最佳交通方式。"
-                      : "The five area modules below (Midtown, Lower Manhattan, Central Park, Brooklyn, SoHo) will be sequenced once the New York hotel address is confirmed."}
+                      ? "以下為五個分區（中城、下曼哈頓、中央公園、布魯克林、SoHo 與 Chelsea）日程模組，可依當天天氣與體力微調順序。"
+                      : "The five area modules below (Midtown, Lower Manhattan, Central Park, Brooklyn, SoHo & Chelsea) can be reshuffled day by day based on weather and energy."}
                   </AlertDescription>
                 </Alert>
                 <div className="space-y-5 sm:space-y-6">
@@ -2765,7 +2737,7 @@ export default function App() {
               <div className="space-y-1.5 text-[12px] sm:text-xs leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
                 <div>The Revolution Hotel · 40 Berkeley St</div>
                 <div>4211 Suites · 4211 Chestnut St</div>
-                <div>{lang === "zh" ? "紐約：待提供" : "New York: TBC"}</div>
+                <div>{lang === "zh" ? "法拉盛民宿 · 143-36 37th Ave" : "Flushing Apt · 143-36 37th Ave"}</div>
               </div>
             </div>
             <div>
